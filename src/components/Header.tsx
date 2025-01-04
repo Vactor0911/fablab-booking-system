@@ -41,6 +41,10 @@ const Header = () => {
       backgroundColor: color.primary,
       color: "white",
     },
+    "&:active": {
+      backgroundColor: color.primary,
+      color: "white",
+    },
   };
 
   // 다크모드
@@ -159,10 +163,13 @@ const Header = () => {
           </ListItemIcon>
           <ListItemText>내 예약정보</ListItemText>
         </MenuItem>
-        <MenuItem onClick={handleAccountMenuClose} sx={{
-          ...accountMenuStyle,
-          color: "red",
-        }}>
+        <MenuItem
+          onClick={handleAccountMenuClose}
+          sx={{
+            ...accountMenuStyle,
+            color: "red",
+          }}
+        >
           <ListItemIcon sx={{ color: "inherit" }}>
             <LogoutRoundedIcon />
           </ListItemIcon>
