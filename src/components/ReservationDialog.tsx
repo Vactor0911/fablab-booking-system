@@ -139,7 +139,7 @@ const ReservationDialog = (props: ReservationDialogProps) => {
               </li>
             </ol>
           </div>
-          <Button variant="contained">동의 후 예약</Button>
+          <Button variant="contained" sx={{ fontWeight: "bold" }}>동의 후 예약</Button>
         </DialogContent>
       </Dialog>
     </ThemeProvider>
