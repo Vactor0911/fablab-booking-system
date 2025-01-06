@@ -119,11 +119,6 @@ const Header = () => {
                 공지사항
               </Link>
             </li>
-            <li>
-              <Link to="/" css={NavLinkCss}>
-                내 예약정보
-              </Link>
-            </li>
           </ul>
           <div
             className="account"
