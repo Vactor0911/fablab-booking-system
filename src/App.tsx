@@ -1,10 +1,17 @@
+import { BrowserRouter, Routes, Route, Navigate } from "react-router";
+import Header from "./components/Header";
+
 function App() {
   return (
-    <>
-      <h1>FabLab 예약 시스템</h1>
-      <p>메인 화면</p>
-    </>
-  )
+    <BrowserRouter>
+      <Header />
+      <Routes>
+        <Route path="/" element={<Navigate to="/home" />} />
+        <Route path="/home" element={<h1>asdasd</h1>} />
+        <Route path="*" element={<Navigate to="/home" />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
