@@ -4,23 +4,62 @@ import { color } from "../utils/theme";
 // 좌석 버튼 속성
 interface SeatButtonProps {
   name: string;
+  isReserved?: boolean;
   onClick?: () => void;
-  css?: object;
 }
 
 // 좌석 버튼 컴포넌트
 const SeatButton = (props: SeatButtonProps) => {
-  const { name, onClick, css } = props;
+  const { name, isReserved = false, onClick } = props;
   return (
     <div
       onClick={onClick}
       css={{
+        display: "flex",
+        flexDirection: "column",
         border: "1px solid black",
         flex: "1",
-        ...css,
+        backgroundColor: "#fffcf2",
+        cursor: "pointer",
+        "& > p": {
+          fontWeight: "bold",
+        },
       }}
     >
-      {name}
+      {!isReserved && (
+        <p
+          css={{
+            padding: "0 5px",
+          }}
+        >
+          {name}
+        </p>
+      )}
+      {isReserved && (
+        <>
+          <p
+            css={{
+              backgroundColor: "#676767",
+              color: "white",
+              padding: "0 5px",
+            }}
+          >
+            {name}
+          </p>
+          <div
+            className="content"
+            css={{
+              height: "100%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "#d3d2cb",
+            }}
+          >
+            <p>사용중</p>
+          </div>
+        </>
+      )}
     </div>
   );
 };
@@ -81,7 +120,7 @@ const SeatLayout = () => {
         {/* 왼쪽 */}
         <div className="left" css={{ width: "7%" }}>
           {range(1, 7).map((index) => (
-            <SeatButton key={`A${index}`} name={`A${index}`} />
+            <SeatButton key={`A${index}`} name={`A${index}`} isReserved={true} />
           ))}
           <span css={{ flexGrow: "0.5" }} />
         </div>
