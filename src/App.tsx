@@ -1,14 +1,15 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router";
 import Header from "./components/Header";
+import { Home, Reservation } from "./pages";
 
 function App() {
   return (
     <BrowserRouter>
       <Header />
       <Routes>
-        <Route path="/" element={<Navigate to="/home" />} />
-        <Route path="/home" element={<h1>asdasd</h1>} />
-        <Route path="*" element={<Navigate to="/home" />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/reservation" element={<Reservation />} />
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </BrowserRouter>
   );

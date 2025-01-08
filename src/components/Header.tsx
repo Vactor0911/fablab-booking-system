@@ -58,7 +58,7 @@ const Header = () => {
     <>
       <header
         css={{
-          height: "70px",
+          height: "80px",
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
@@ -105,7 +105,7 @@ const Header = () => {
             }}
           >
             <li>
-              <Link to="/" css={NavLinkCss}>
+              <Link to="/reservation" css={NavLinkCss}>
                 예약하기
               </Link>
             </li>
@@ -120,6 +120,7 @@ const Header = () => {
               </Link>
             </li>
           </ul>
+          {/* 사용자 아이콘 버튼 TODO: 그림자 추가, 보더 색상 변경, 보더 두께 더 얇게 수정 */}
           <div
             className="account"
             css={{
