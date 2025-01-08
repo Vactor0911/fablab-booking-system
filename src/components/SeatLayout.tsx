@@ -120,7 +120,11 @@ const SeatLayout = () => {
         {/* 왼쪽 */}
         <div className="left" css={{ width: "7%" }}>
           {range(1, 7).map((index) => (
-            <SeatButton key={`A${index}`} name={`A${index}`} isReserved={true} />
+            <SeatButton
+              key={`A${index}`}
+              name={`A${index}`}
+              isReserved={true}
+            />
           ))}
           <span css={{ flexGrow: "0.5" }} />
         </div>
