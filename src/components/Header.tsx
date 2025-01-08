@@ -105,7 +105,7 @@ const Header = () => {
             }}
           >
             <li>
-              <Link to="/" css={NavLinkCss}>
+              <Link to="/reservation" css={NavLinkCss}>
                 예약하기
               </Link>
             </li>
