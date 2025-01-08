@@ -21,31 +21,31 @@ const SeatButton = (props: SeatButtonProps) => {
         flex: "1",
         backgroundColor: "#fffcf2",
         cursor: "pointer",
-        "& > p": {
-          fontWeight: "bold",
+        "& .mobile": {
+          display: "none",
+        },
+        "@media (max-width: 768px)": {
+          "& .mobile": {
+            display: "flex",
+          },
+          "& :not(.mobile)": {
+            display: "none",
+          },
         },
       }}
     >
-      {!isReserved && (
+      <>
         <p
           css={{
             padding: "0 5px",
+            backgroundColor: isReserved ? "#676767" : "inherit",
+            color: isReserved ? "white" : "black",
+            fontWeight: "bold",
           }}
         >
           {name}
         </p>
-      )}
-      {isReserved && (
-        <>
-          <p
-            css={{
-              backgroundColor: "#676767",
-              color: "white",
-              padding: "0 5px",
-            }}
-          >
-            {name}
-          </p>
+        {isReserved && (
           <div
             className="content"
             css={{
@@ -58,8 +58,21 @@ const SeatButton = (props: SeatButtonProps) => {
           >
             <p>사용중</p>
           </div>
-        </>
-      )}
+        )}
+        <div
+          className="mobile"
+          css={{
+            height: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: isReserved ? "#1abe33" : "inherit",
+            color: isReserved ? "white" : "black",
+          }}
+        >
+          <h3 className="mobile">{name}</h3>
+        </div>
+      </>
     </div>
   );
 };
