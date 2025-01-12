@@ -1,7 +1,12 @@
 import { color } from "../utils/theme";
-import Logo from "../assets/logo.png";
-import { Link } from "react-router";
-import { ListItemIcon, ListItemText, Menu, MenuItem } from "@mui/material";
+import { Link, useNavigate } from "react-router";
+import {
+  IconButton,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
+} from "@mui/material";
 import { useRef, useState } from "react";
 import { isDarkModeAtom } from "../states";
 import { useAtom } from "jotai";
@@ -12,6 +17,7 @@ import LightModeRoundedIcon from "@mui/icons-material/LightMode";
 import HelpOutlineRoundedIcon from "@mui/icons-material/HelpOutlineRounded";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import CalendarMonthRoundedIcon from "@mui/icons-material/CalendarMonthRounded";
+import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 
 const NavLinkCss = {
   textDecoration: "none",
@@ -32,7 +38,7 @@ const Header = () => {
     setAccountMenuOpen(false);
   };
 
-  const anchorAccountMenuElem = useRef<HTMLDivElement>(null);
+  const anchorAccountMenuElem = useRef<HTMLButtonElement>(null);
 
   const accountMenuStyle = {
     fontWeight: "bold",
@@ -54,6 +60,8 @@ const Header = () => {
     setIsDarkMode((prev) => !prev);
   };
 
+  const navigate = useNavigate();
+
   return (
     <>
       <header
@@ -64,37 +72,36 @@ const Header = () => {
           alignItems: "center",
           padding: "0 20px",
           backgroundColor: color.primary,
+          "@media (max-width: 600px)": {
+            height: "60px",
+            backgroundColor: "transparent",
+          },
         }}
       >
         <Link
           to="/"
           css={{
             textDecoration: "none",
+            color: "white",
+            "@media (max-width: 600px)": {
+              color: "black",
+            },
           }}
         >
-          <div
-            className="logo-container"
-            css={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              color: "white",
-              gap: "10px",
-            }}
-          >
-            <img
-              src={Logo}
-              alt="logo"
-              css={{
-                filter: "brightness(10)",
-                height: "50px",
-              }}
-            />
-            <h1>FabLab</h1>
-          </div>
+          <h1>FabLab</h1>
         </Link>
 
-        <nav css={{ display: "flex", alignItems: "center", gap: "30px" }}>
+        {/* 네비게이션 바 */}
+        <nav
+          css={{
+            display: "flex",
+            alignItems: "center",
+            gap: "30px",
+            "@media (max-width: 600px)": {
+              gap: "5px",
+            },
+          }}
+        >
           <ul
             css={{
               display: "flex",
@@ -102,44 +109,77 @@ const Header = () => {
               listStyle: "none",
               color: "white",
               fontWeight: "bold",
+              ".pc-item": {
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              },
+              ".mobile-item": {
+                display: "none",
+              },
+              "@media (max-width: 600px)": {
+                gap: "5px",
+                ".pc-item": {
+                  display: "none",
+                },
+                ".mobile-item": {
+                  display: "block",
+                },
+              },
             }}
           >
-            <li>
+            {/* PC, 태블릿용 네비게이션 링크 */}
+            <li className="pc-item">
               <Link to="/reservation" css={NavLinkCss}>
                 예약하기
               </Link>
             </li>
-            <li>
+            <li className="pc-item">
               <Link to="/" css={NavLinkCss}>
                 팹랩소개
               </Link>
             </li>
-            <li>
+            <li className="pc-item">
               <Link to="/" css={NavLinkCss}>
                 공지사항
               </Link>
             </li>
+            {/* 모바일용 아이콘 버튼 */}
+            <li className="mobile-item">
+              <IconButton
+                size="small"
+                onClick={() => {
+                  navigate("/");
+                }}
+              >
+                <HomeRoundedIcon fontSize="large" />
+              </IconButton>
+            </li>
+            {/* 내 계정 버튼튼 */}
+            <li className="btn-account">
+              <IconButton
+                onClick={handleAccountClick}
+                ref={anchorAccountMenuElem}
+                size="small"
+              >
+                <AccountCircleIcon
+                  fontSize="large"
+                  sx={{
+                    "@media (min-width: 601px)": {
+                      fontSize: "50px",
+                      color: "white",
+                    },
+                  }}
+                />
+              </IconButton>
+            </li>
           </ul>
-          {/* 사용자 아이콘 버튼 TODO: 그림자 추가, 보더 색상 변경, 보더 두께 더 얇게 수정 */}
-          <div
-            className="account"
-            css={{
-              width: "50px",
-              height: "50px",
-              border: "1px solid black",
-              borderRadius: "50%",
-              backgroundColor: "white",
-              cursor: "pointer",
-            }}
-            onClick={handleAccountClick}
-            ref={anchorAccountMenuElem}
-          ></div>
         </nav>
       </header>
 
       {/* 계정 드롭다운 메뉴 */}
       <Menu
-        id="basic-menu"
+        id="account-menu"
         anchorEl={anchorAccountMenuElem.current}
         open={accountMenuOpen}
         onClose={handleAccountMenuClose}
