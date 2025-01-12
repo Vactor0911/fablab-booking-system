@@ -12,6 +12,7 @@ import { isDarkModeAtom } from "../states";
 import { useAtom } from "jotai";
 
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
 import DarkModeRoundedIcon from "@mui/icons-material/DarkMode";
 import LightModeRoundedIcon from "@mui/icons-material/LightMode";
 import HelpOutlineRoundedIcon from "@mui/icons-material/HelpOutlineRounded";
@@ -189,7 +190,7 @@ const Header = () => {
       >
         <MenuItem onClick={handleAccountMenuClose} sx={accountMenuStyle}>
           <ListItemIcon sx={{ color: "inherit" }}>
-            <AccountCircleIcon />
+            <PersonRoundedIcon />
           </ListItemIcon>
           <ListItemText>내 정보</ListItemText>
         </MenuItem>
