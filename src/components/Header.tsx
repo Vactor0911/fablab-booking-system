@@ -81,6 +81,7 @@ const Header = () => {
           backgroundColor:
             location.pathname === "/" ? "transparent" : color.primary,
           position: location.pathname === "/" ? "absolute" : "relative",
+          zIndex: 100,
           "@media (max-width: 600px)": {
             height: "60px",
             backgroundColor: "transparent",
