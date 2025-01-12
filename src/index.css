@@ -29,14 +29,11 @@
 }
 
 html,
-body {
+body,
+#root {
   height: 100%;
 }
 
 body {
   background: var(--bg-color);
-}
-
-#root {
-  height: 100%;
 }
