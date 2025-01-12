@@ -1,5 +1,5 @@
 import { color } from "../utils/theme";
-import { Link, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import {
   IconButton,
   ListItemIcon,
@@ -12,7 +12,7 @@ import { isDarkModeAtom } from "../states";
 import { useAtom } from "jotai";
 
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
+import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import DarkModeRoundedIcon from "@mui/icons-material/DarkMode";
 import LightModeRoundedIcon from "@mui/icons-material/LightMode";
 import HelpOutlineRoundedIcon from "@mui/icons-material/HelpOutlineRounded";
@@ -59,20 +59,28 @@ const Header = () => {
 
   const handleThemeChangeClick = () => {
     setIsDarkMode((prev) => !prev);
+    document.documentElement.setAttribute(
+      "theme",
+      !isDarkMode ? "dark" : "light"
+    );
   };
 
+  const location = useLocation();
   const navigate = useNavigate();
 
   return (
     <>
       <header
         css={{
+          width: "100%",
           height: "80px",
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
           padding: "0 20px",
-          backgroundColor: color.primary,
+          backgroundColor:
+            location.pathname === "/" ? "transparent" : color.primary,
+          position: location.pathname === "/" ? "absolute" : "relative",
           "@media (max-width: 600px)": {
             height: "60px",
             backgroundColor: "transparent",
