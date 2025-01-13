@@ -22,7 +22,7 @@
   --bg-color: #262626;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 480px) {
   [theme="light"] {
     --bg-color: linear-gradient(#ffffff, #f6f6f6);
   }
