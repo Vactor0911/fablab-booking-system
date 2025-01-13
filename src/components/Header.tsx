@@ -82,9 +82,10 @@ const Header = () => {
             location.pathname === "/" ? "transparent" : color.primary,
           position: location.pathname === "/" ? "absolute" : "relative",
           zIndex: 100,
-          "@media (max-width: 600px)": {
+          "@media (max-width: 480px)": {
             height: "60px",
             backgroundColor: "transparent",
+            position: "relative",
           },
         }}
       >
@@ -93,7 +94,7 @@ const Header = () => {
           css={{
             textDecoration: "none",
             color: "white",
-            "@media (max-width: 600px)": {
+            "@media (max-width: 480px)": {
               color: "black",
             },
           }}
@@ -107,7 +108,7 @@ const Header = () => {
             display: "flex",
             alignItems: "center",
             gap: "30px",
-            "@media (max-width: 600px)": {
+            "@media (max-width: 480px)": {
               gap: "5px",
             },
           }}
@@ -127,7 +128,10 @@ const Header = () => {
               ".mobile-item": {
                 display: "none",
               },
-              "@media (max-width: 600px)": {
+              "@media (max-width: 520px)": {
+                gap: "15px",
+              },
+              "@media (max-width: 480px)": {
                 gap: "5px",
                 ".pc-item": {
                   display: "none",
@@ -165,7 +169,7 @@ const Header = () => {
                 <HomeRoundedIcon fontSize="large" />
               </IconButton>
             </li>
-            {/* 내 계정 버튼튼 */}
+            {/* 내 계정 버튼 */}
             <li className="btn-account">
               <IconButton
                 onClick={handleAccountClick}
@@ -175,7 +179,7 @@ const Header = () => {
                 <AccountCircleIcon
                   fontSize="large"
                   sx={{
-                    "@media (min-width: 601px)": {
+                    "@media (min-width: 480px)": {
                       fontSize: "50px",
                       color: "white",
                     },
