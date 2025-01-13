@@ -1,3 +1,4 @@
+/* 프리텐다드 폰트트 */
 @font-face {
   font-family: "Pretendard-Regular";
   src: url("https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff")
@@ -6,6 +7,7 @@
   font-style: normal;
 }
 
+/* 기본 CSS 스타일 */
 * {
   margin: 0;
   padding: 0;
@@ -14,7 +16,14 @@
   font-family: "Pretendard-Regular", sans-serif;
 }
 
-[theme="light"] {
+html,
+body,
+#root {
+  height: 100%;
+}
+
+/* 라이트, 다크 테마 */
+:root {
   --bg-color: #ffffff;
 }
 
@@ -23,17 +32,45 @@
 }
 
 @media (max-width: 480px) {
-  [theme="light"] {
+  :root {
     --bg-color: linear-gradient(#ffffff, #f6f6f6);
   }
-}
 
-html,
-body,
-#root {
-  height: 100%;
+  [theme="dark"] {
+    --bg-color: #262626;
+  }
 }
 
 body {
   background: var(--bg-color);
+}
+
+/* 폰트 크기 조정 */
+/* 태블릿 */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 1.5em;
+  }
+  h2 {
+    font-size: 1.25em;
+  }
+  h3 {
+    font-size: 1em;
+  }
+  h4 {
+    font-size: 0.875em;
+  }
+  h5 {
+    font-size: 0.75em;
+  }
+  h6 {
+    font-size: 0.625em;
+  }
+  p {
+    font-size: 0.75em;
+  }
+}
+
+/*모바일 */
+@media (max-width: 480px) {
 }
