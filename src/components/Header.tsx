@@ -16,7 +16,7 @@ import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import DarkModeRoundedIcon from "@mui/icons-material/DarkMode";
 import LightModeRoundedIcon from "@mui/icons-material/LightMode";
 import HelpOutlineRoundedIcon from "@mui/icons-material/HelpOutlineRounded";
-import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
+import ExitToAppRoundedIcon from '@mui/icons-material/ExitToAppRounded';
 import CalendarMonthRoundedIcon from "@mui/icons-material/CalendarMonthRounded";
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 
@@ -221,7 +221,7 @@ const Header = () => {
           }}
         >
           <ListItemIcon sx={{ color: "inherit" }}>
-            <LogoutRoundedIcon />
+            <ExitToAppRoundedIcon />
           </ListItemIcon>
           <ListItemText>퇴실하기</ListItemText>
         </MenuItem>
