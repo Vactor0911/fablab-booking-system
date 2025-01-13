@@ -41,7 +41,7 @@ body,
   }
 }
 
-body {
+:root {
   background: var(--bg-color);
 }
 
@@ -69,8 +69,4 @@ body {
   p {
     font-size: 0.75em;
   }
-}
-
-/*모바일 */
-@media (max-width: 480px) {
 }
