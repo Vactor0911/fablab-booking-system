@@ -7,7 +7,7 @@ import { color } from "./theme";
 export const theme = createTheme({
   palette: {
     primary: { main: color.primary },
-    secondary: { main: "#fff" },
+    secondary: { main: "#6e6e6e" },
   },
 });
 
