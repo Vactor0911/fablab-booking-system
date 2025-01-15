@@ -1,448 +1,421 @@
-import { Button, Divider } from "@mui/material";
+import {
+  Box,
+  Button,
+  Divider,
+  Stack,
+  ThemeProvider,
+  Typography,
+  Link as MuiLink,
+} from "@mui/material";
 import FabLabImage from "../assets/FabLabImage.jpg";
+import { theme } from "../utils";
 import { Link } from "react-router";
-import { color } from "../utils/theme";
+import SmapleImage from "../assets/SampleImage.png";
 
-import ExitToAppRoundedIcon from "@mui/icons-material/ExitToAppRounded";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
+import CircleRoundedIcon from "@mui/icons-material/CircleRounded";
 import CampaignRoundedIcon from "@mui/icons-material/CampaignRounded";
+import ExitToAppRoundedIcon from "@mui/icons-material/ExitToAppRounded";
 import CalendarMonthRoundedIcon from "@mui/icons-material/CalendarMonthRounded";
 import ImportContactsRoundedIcon from "@mui/icons-material/ImportContactsRounded";
 import LanguageRoundedIcon from "@mui/icons-material/LanguageRounded";
-import SampleImage from "../assets/SampleImage.png";
-import { CSSObject } from "@emotion/react";
+import { Interpolation, Theme } from "@emotion/react";
 
-const NavLinkCss = {
-  display: "flex",
-  justifyContent: "space-between",
+const LinkCss = {
   textDecoration: "none",
   color: "black",
-  ".title": {
-    width: "100%",
-    display: "flex",
-    alignItems: "center",
-  },
-  ".title > h4, .title > svg": {
-    color: "#666",
-  },
 };
 
-const MobileNavLinkCss = {
+const MobileNavLinkCss: Interpolation<Theme> = {
+  ...LinkCss,
   display: "flex",
   flexDirection: "column",
   justifyContent: "center",
   alignItems: "center",
-  gap: "5px",
-  textDecoration: "none",
-  color: "black",
 };
 
 const Home = () => {
   return (
-    <div
-      css={{
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        "@media (max-width: 480px)": {
-          padding: "0 20px",
-          height: "auto",
-        },
-      }}
-    >
-      {/* 메인 배너 */}
-      <div
-        className="banner"
-        css={{
-          height: "45%",
-          minHeight: "200px",
-          maxHeight: "600px",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          fontWeight: "bold",
-          fontSize: "2em",
-          color: "white",
-          position: "relative",
-          overflow: "hidden",
-          "&:before, &:after": {
-            content: '""',
-            position: "absolute",
-            width: "100%",
-            height: "100%",
-            top: "0",
-            left: "0",
-          },
-          "&:before": {
-            background: "linear-gradient(black, transparent)",
-            backgroundImage: `url(${FabLabImage})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            backgroundRepeat: "no-repeat",
-            filter: "blur(5px)",
-            transform: "scale(1.1)",
-            zIndex: "-3",
-          },
-          "&:after": {
-            background: "linear-gradient(rgba(0, 0, 0, 0.7), transparent 50%)",
-            zIndex: "-2",
-          },
-          "@media (max-width: 480px)": {
-            display: "none",
-          },
-        }}
-      >
-        <h1
-          css={{
-            padding: "0 30px",
-            textAlign: "center",
+    <ThemeProvider theme={theme}>
+      <Stack className="page-root" direction="column">
+        {/* 배너 */}
+        <Stack
+          height="45vh"
+          minHeight="300px"
+          maxHeight="500px"
+          padding="80px 0"
+          display={{
+            xs: "none",
+            sm: "flex",
           }}
-        >
-          깔끔하고 공부하기 좋은 공간
-        </h1>
-      </div>
-      {/* 하단 메뉴 */}
-      <div
-        className="content"
-        css={{
-          width: "100%",
-          height: "auto",
-          padding: "20px 0",
-          display: "flex",
-          ".notice-container, .my-reservation-container": {
-            height: "100%",
-            padding: "20px 40px",
-            display: "flex",
-            flexDirection: "column",
-            gap: "20px",
-          },
-          "@media (max-width: 768px)": {
-            flexDirection: "column",
-            ".notice-container, .my-reservation-container": { height: "auto" },
-          },
-          "@media (max-width: 480px)": {
-            height: "100%",
-            padding: "0",
-            flexDirection: "column-reverse",
-            justifyContent: "flex-end",
-            ".notice-container, .my-reservation-container": {
-              padding: "20px 0",
-            },
-          },
-        }}
-      >
-        {/* 공지사항 */}
-        <div
-          className="notice-container"
-          css={{
-            width: "55%",
-            "@media (max-width: 768px)": {
+          justifyContent="center"
+          alignItems="center"
+          position="relative"
+          overflow="hidden"
+          sx={{
+            "&:before, &:after": {
+              content: "''",
+              position: "absolute",
               width: "100%",
+              height: "100%",
+              top: "0",
+              left: "0",
+            },
+            "&:before": {
+              background: "linear-gradient(black, transparent)",
+              backgroundImage: `url(${FabLabImage})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              backgroundRepeat: "no-repeat",
+              filter: "blur(5px)",
+              transform: "scale(1.1)",
+              zIndex: "-2",
+            },
+            "&:after": {
+              background:
+                "linear-gradient(rgba(0, 0, 0, 0.7), transparent 50%)",
+              zIndex: "-1",
             },
           }}
         >
-          <Link to="/notice" css={NavLinkCss}>
-            <div className="title">
-              <h2>공지사항</h2>
-              <h4
-                css={{
-                  display: "none",
-                  "@media (max-width: 480px)": {
-                    marginLeft: "auto",
-                    display: "block",
-                  },
-                }}
-              >
-                더보기
-              </h4>
-              <ChevronRightRoundedIcon fontSize="large" />
-            </div>
-          </Link>
-          <div
-            className="notice-items"
-            css={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "30px",
-              "@media (max-width: 480px)": {
-                padding: "20px 10px",
-                gap: "20px",
-                border: "1px solid #afafaf",
-                borderRadius: "10px",
-                backgroundColor: "white",
-              },
-            }}
+          <Typography
+            variant="h2"
+            padding="0 30px"
+            textAlign="center"
+            fontWeight="bold"
+            color="white"
           >
-            {[
-              "공지사항1",
-              "공지사항2공지사항2공지사항2공지사항2공지사항2공지사항2공지사항2공지사항2공지사항2공지사항2공지사항2공지사항2",
-              "공지사항3",
-              "공지사항4공지사항4공지사항4공지사항4공지사항4공지사항4공지사항4공지사항4공지사항4공지사항4공지사항4공지사항4공지사항4공지사항4공지사항4",
-              "공지사항5",
-              "공지사항6",
-            ].map((notice, index) => (
+            FabLab 슬로건 입력될 자리
+          </Typography>
+        </Stack>
+
+        {/* 하단 메뉴 */}
+        <Stack
+          direction={{ xs: "column-reverse", sm: "column", md: "row" }}
+          spacing={{
+            xs: 3,
+            md: 0,
+          }}
+          padding={{
+            xs: "20px",
+            sm: "50px 30px",
+            md: "50px 0",
+          }}
+          justifyContent={{
+            xs: "flex-start",
+            md: "space-evenly",
+          }}
+        >
+          {/* 공지사항 */}
+          <Stack
+            direction="column"
+            spacing={5}
+            width={{
+              xs: "100%",
+              md: "45vw",
+            }}
+            overflow="hidden"
+          >
+            {/* 공지사항 링크 */}
+            <Stack direction="row">
               <Link
                 to="/notice"
-                key={`notice${index}`}
                 css={{
+                  ...LinkCss,
                   display: "flex",
-                  justifyContent: "flex-start",
-                  alignItems: "center",
-                  gap: "10px",
-                  overflow: "hidden",
-                  textDecoration: "none",
-                  color: "black",
                 }}
               >
-                <span
-                  css={{
-                    width: "1em",
-                    height: "1em",
-                    borderRadius: "50%",
-                    backgroundColor: color.primary,
-                    flexShrink: "0",
-                    "@media (max-width: 480px)": {
-                      display: "none",
-                    },
-                  }}
-                />
-                <CampaignRoundedIcon
-                  sx={{
-                    display: "none",
-                    "@media (max-width: 480px)": {
-                      display: "inline",
-                    },
-                  }}
-                />
-                <span
-                  css={{
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  {notice}
-                </span>
+                <Typography variant="h5" fontWeight="bold">
+                  공지사항
+                </Typography>
+                <ChevronRightRoundedIcon fontSize="large" color="secondary" />
               </Link>
-            ))}
-          </div>
-          <Link
-            to="/notice"
-            css={{
-              display: "flex",
-              justifyContent: "flex-end",
-              textDecoration: "none",
-              color: "#666",
-              "@media (max-width: 480px)": {
-                display: "none",
-              },
-            }}
-          >
-            <h4>더보기</h4>
-          </Link>
-        </div>
-        {/* PC용 세로 구분선 */}
-        <Divider
-          orientation="vertical"
-          flexItem
-          sx={{
-            borderWidth: "2px",
-            borderRadius: "10px",
-            "@media (max-width: 768px)": {
-              display: "none",
-            },
-          }}
-        />
-        {/* 모바일용 컴포넌트 */}
-        <div
-          className="mobile-only"
-          css={{
-            margin: "10px 0",
-            display: "none",
-            flexDirection: "column",
-            gap: "30px",
-            "@media (max-width: 480px)": {
-              display: "flex",
-            },
-          }}
-        >
-          {/* 모바일용 네비게이션 메뉴 */}
-          <div
-            className="mobile-nav"
-            css={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <Link to="/reservation" css={MobileNavLinkCss as CSSObject}>
-              <CalendarMonthRoundedIcon />
-              <h3>예약하기</h3>
-            </Link>
-            <Link to="/about" css={MobileNavLinkCss as CSSObject}>
-              <ImportContactsRoundedIcon />
-              <h3>팹랩소개</h3>
-            </Link>
-            <a
-              href="https://www.mokwon.ac.kr/"
-              css={MobileNavLinkCss as CSSObject}
+            </Stack>
+
+            {/* 공지사항 목록 */}
+            <Stack
+              direction="column"
+              spacing={2}
+              padding={{
+                xs: "20px 10px",
+                sm: "0",
+              }}
+              border={{
+                xs: "1px solid #afafaf",
+                sm: "none",
+              }}
+              borderRadius="10px"
             >
-              <LanguageRoundedIcon />
-              <h3>목원홈</h3>
-            </a>
-            <a
-              href="https://www.mokwon.ac.kr/computer/"
-              css={MobileNavLinkCss as CSSObject}
+              {[
+                "공지사항1",
+                "공지사항2공지사항2공지사항2공지사항2공지사항2공지사항2공지사항2공지사항2공지사항2공지사항2공지사항2공지사항2",
+                "공지사항3",
+                "공지사항4공지사항4공지사항4공지사항4공지사항4공지사항4공지사항4공지사항4공지사항4공지사항4공지사항4공지사항4공지사항4공지사항4공지사항4",
+                "공지사항5",
+                "공지사항6",
+              ].map((notice, index) => (
+                <Stack key={`notice${index}`} direction="row">
+                  <Link
+                    to="/notice"
+                    css={{
+                      ...LinkCss,
+                      display: "flex",
+                      alignItems: "center",
+                      overflow: "hidden",
+                      gap: "10px",
+                    }}
+                  >
+                    <CircleRoundedIcon
+                      fontSize="small"
+                      color="primary"
+                      sx={{
+                        display: { xs: "none", sm: "inline-block" },
+                      }}
+                    />
+                    <CampaignRoundedIcon
+                      sx={{
+                        display: { xs: "inline-block", sm: "none" },
+                      }}
+                    />
+                    <Typography
+                      variant="subtitle1"
+                      whiteSpace="nowrap"
+                      overflow="hidden"
+                      textOverflow="ellipsis"
+                    >
+                      {notice}
+                    </Typography>
+                  </Link>
+                </Stack>
+              ))}
+            </Stack>
+
+            {/* 더보기 버튼 */}
+            <Stack
+              direction="row"
+              justifyContent="flex-end"
+              display={{ xs: "none", sm: "flex" }}
             >
-              <LanguageRoundedIcon />
-              <h3>컴공홈</h3>
-            </a>
-          </div>
-          {/* 모바일용 종정시 링크 버튼 */}
-          <a
+              <Link to="/notice" css={LinkCss}>
+                <Typography
+                  variant="subtitle1"
+                  color="secondary"
+                  fontWeight="bold"
+                >
+                  더보기
+                </Typography>
+              </Link>
+            </Stack>
+          </Stack>
+
+          {/* 구분선 */}
+          <Divider
+            flexItem
+            sx={{
+              borderWidth: "2px",
+              borderRadius: "10px",
+              [theme.breakpoints.down("md")]: { display: "none" },
+            }}
+          />
+
+          {/* 모바일용 종합정보시스템 링크 */}
+          <MuiLink
             href="https://i.mokwon.ac.kr/"
-            css={{
-              width: "100%",
-              height: "70px",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              gap: "10px",
-              border: "1px solid #afafaf",
-              borderRadius: "15px",
-              backgroundColor: color.primary,
-              textDecoration: "none",
-              color: "white",
+            underline="none"
+            padding="20px 0"
+            display={{
+              xs: "flex",
+              sm: "none",
+            }}
+            justifyContent="center"
+            alignItems="center"
+            gap={1}
+            border="1px solid #afafaf"
+            borderRadius="15px"
+            color="white"
+            sx={{
+              backgroundColor: theme.palette.primary.main,
             }}
           >
-            {/* TODO: 목원대 로고 추가 필요 */}
-            <img src="" alt="목원대학교" />
-            <h3>종합정보시스템</h3>
-          </a>
-        </div>
-        {/* 내 예약현황 */}
-        <div
-          className="my-reservation-container"
-          css={{
-            width: "45%",
-            "@media (max-width: 768px)": {
-              width: "100%",
-            },
-          }}
-        >
-          <Link to="/my-reservation" css={NavLinkCss}>
-            <div className="title">
-              <h2>내 예약현황</h2>
-              <ChevronRightRoundedIcon fontSize="large" />
-            </div>
-          </Link>
-          <Link
-            to="my-reservation"
-            css={{ textDecoration: "none", color: "black" }}
+            <Box component="img" alt="목원대 로고" src="" />
+            <Typography variant="subtitle1" fontWeight="bold">
+              종합 정보 시스템
+            </Typography>
+          </MuiLink>
+
+          {/* 모바일용 네비게이션 바 */}
+          <Stack
+            display={{
+              xs: "flex",
+              sm: "none",
+            }}
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
           >
-            <div
-              className="my-reservation"
-              css={{
-                width: "100%",
-                display: "flex",
-                justifyContent: "space-between",
-                gap: "10px",
-                "@media (max-width: 480px)": {
-                  padding: "20px",
-                  flexDirection: "row-reverse",
-                  border: "1px solid #afafaf",
-                  borderRadius: "10px",
+            <Link to="/reservation" css={MobileNavLinkCss}>
+              <CalendarMonthRoundedIcon />
+              <Typography variant="subtitle1" fontWeight="bold">
+                예약하기
+              </Typography>
+            </Link>
+            <Link to="/about" css={MobileNavLinkCss}>
+              <ImportContactsRoundedIcon />
+              <Typography variant="subtitle1" fontWeight="bold">
+                팹랩소개
+              </Typography>
+            </Link>
+            <MuiLink
+              href="https://www.mokwon.ac.kr/"
+              underline="none"
+              display="flex"
+              flexDirection="column"
+              justifyContent="center"
+              alignItems="center"
+              color="black"
+            >
+              <LanguageRoundedIcon />
+              <Typography variant="subtitle1" fontWeight="bold">
+                목원홈
+              </Typography>
+            </MuiLink>
+            <MuiLink
+              href="https://www.mokwon.ac.kr/computer/"
+              underline="none"
+              display="flex"
+              flexDirection="column"
+              justifyContent="center"
+              alignItems="center"
+              color="black"
+            >
+              <LanguageRoundedIcon />
+              <Typography variant="subtitle1" fontWeight="bold">
+                컴공홈
+              </Typography>
+            </MuiLink>
+          </Stack>
+
+          {/* 내 예약현황 */}
+          <Stack
+            direction="column"
+            spacing={{ xs: 2, sm: 3, md: 5 }}
+            width={{
+              xs: "100%",
+              md: "35vw",
+            }}
+          >
+            {/* 내 예약현황 링크 */}
+            <Stack direction="row">
+              <Link to="/my-reservation" css={{ ...LinkCss, display: "flex" }}>
+                <Typography variant="h5" fontWeight="bold">
+                  내 예약현황
+                </Typography>
+                <ChevronRightRoundedIcon fontSize="large" color="secondary" />
+              </Link>
+            </Stack>
+
+            {/* 예약 좌석 */}
+            <Link to="/my-reservation" css={LinkCss}>
+              <Stack
+                direction={{
+                  xs: "row-reverse",
+                  sm: "row",
+                }}
+                spacing={2}
+                alignItems="center"
+                padding={{
+                  xs: "15px",
+                  sm: "0",
+                }}
+                border={{
+                  xs: "1px solid #afafaf",
+                  sm: "none",
+                }}
+                borderRadius={"10px"}
+              >
+                {/* 좌석 사진 */}
+                <Box
+                  component="img"
+                  alt="좌석 사진"
+                  src={SmapleImage}
+                  width={{ xs: "80px", sm: "150px", md: "130px" }}
+                  borderRadius="10px"
+                />
+
+                {/* 예약 정보 */}
+                <Stack direction="column" flex={1}>
+                  <Typography variant="h6" fontWeight="bold">
+                    예약 좌석
+                  </Typography>
+                  <Stack
+                    direction="row"
+                    spacing={{
+                      xs: 0,
+                      sm: 1,
+                    }}
+                    flexWrap={"wrap"}
+                  >
+                    <Typography
+                      variant="subtitle1"
+                      color="secondary"
+                      width={"60px"}
+                      display={{ xs: "none", sm: "block" }}
+                      fontWeight="bold"
+                    >
+                      예약 날짜
+                    </Typography>
+                    <Typography variant="subtitle1">
+                      1월 15일 (수) 13:00 ~ 22:00
+                    </Typography>
+                  </Stack>
+                  <Stack direction="row" spacing={1}>
+                    <Typography
+                      variant="subtitle1"
+                      color="secondary"
+                      width={"60px"}
+                      fontWeight="bold"
+                    >
+                      선택 좌석
+                    </Typography>
+                    <Typography variant="subtitle1">A11</Typography>
+                  </Stack>
+                  <Stack direction="row" spacing={1}>
+                    <Typography
+                      variant="subtitle1"
+                      color="secondary"
+                      width={"60px"}
+                      fontWeight="bold"
+                    >
+                      PC 지원
+                    </Typography>
+                    <Typography variant="subtitle1">Windows 11</Typography>
+                  </Stack>
+                </Stack>
+              </Stack>
+            </Link>
+
+            {/* 퇴실하기 버튼 */}
+            <Button
+              fullWidth
+              variant="outlined"
+              color="error"
+              startIcon={<ExitToAppRoundedIcon />}
+              size="large"
+              sx={{
+                ".MuiSvgIcon-root": {
+                  fontSize: "2em",
+                },
+                [theme.breakpoints.only("xs")]: {
+                  display: "none",
                 },
               }}
             >
-              {/* 좌석 사진 */}
-              <div
-                className="image-wrapper"
-                css={{
-                  width: "20%",
-                  maxWidth: "150px",
-                  minWidth: "100px",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  img: {
-                    width: "100%",
-                    aspectRatio: "1 / 1",
-                    borderRadius: "10px",
-                  },
-                  "@media (max-width: 480px)": {
-                    width: "10%",
-                    minWidth: "80px",
-                  },
-                }}
-              >
-                <img src={SampleImage} alt="좌석 사진" />
-              </div>
-              {/* 예약 정보 */}
-              <div
-                className="detail"
-                css={{
-                  width: "75%",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                  gap: "10px",
-                  ".column": {
-                    display: "flex",
-                    flexWrap: "wrap",
-                    h4: {
-                      width: "4em",
-                      color: "#555",
-                    },
-                  },
-                }}
-              >
-                <div className="title">
-                  <h3>예약 좌석</h3>
-                </div>
-                <div className="column">
-                  <h4
-                    css={{
-                      "@media (max-width: 480px)": {
-                        display: "none",
-                      },
-                    }}
-                  >
-                    예약 날짜
-                  </h4>
-                  <p>1월 13일 (월) 13:00 ~ 22:00</p>
-                </div>
-                <div className="column">
-                  <h4>선택 좌석</h4>
-                  <p>A11</p>
-                </div>
-                <div className="column">
-                  <h4>PC 지원</h4>
-                  <p>Windows 11</p>
-                </div>
-              </div>
-            </div>
-          </Link>
-          <Button
-            fullWidth
-            variant="outlined"
-            color="error"
-            startIcon={<ExitToAppRoundedIcon />}
-            sx={{
-              marginTop: "20px",
-              ".MuiSvgIcon-root": {
-                fontSize: "2em",
-              },
-              "@media (max-width: 480px)": {
-                display: "none",
-              },
-            }}
-          >
-            <h2>퇴실하기</h2>
-          </Button>
-        </div>
-      </div>
-    </div>
+              <h2>퇴실하기</h2>
+            </Button>
+          </Stack>
+        </Stack>
+      </Stack>
+    </ThemeProvider>
   );
 };
 
