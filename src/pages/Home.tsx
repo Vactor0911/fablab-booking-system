@@ -37,7 +37,7 @@ const MobileNavLinkCss: Interpolation<Theme> = {
 const Home = () => {
   return (
     <ThemeProvider theme={theme}>
-      <Stack className="page-root" direction="column">
+      <Stack className="page-root" direction="column" minHeight="100vh">
         {/* 배너 */}
         <Stack
           height="45vh"
