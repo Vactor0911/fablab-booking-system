@@ -9,6 +9,9 @@ export const theme = createTheme({
     primary: { main: color.primary },
     secondary: { main: "#6e6e6e" },
   },
+  typography: {
+    fontFamily: ["Pretendard-Regular", "sans-serif"].join(","),
+  },
 });
 
 /**
@@ -19,8 +22,8 @@ export const theme = createTheme({
  * @returns N부터 M까지 K씩 증가하는 배열 객체
  */
 export const range = (startOrEnd: number, end?: number, step = 1) => {
-  const start = (end === undefined ? 0 : startOrEnd);
-  const finalEnd = (end === undefined ? startOrEnd : end);
+  const start = end === undefined ? 0 : startOrEnd;
+  const finalEnd = end === undefined ? startOrEnd : end;
   return Array.from(
     { length: (finalEnd - start - 1) / step + 1 },
     (_, i) => start + i * step
