@@ -1,160 +1,200 @@
-import { color } from "../utils/theme";
-import Logo from "../assets/logo.png";
-import { Link } from "react-router";
-import { ListItemIcon, ListItemText, Menu, MenuItem } from "@mui/material";
-import { useRef, useState } from "react";
-import { isDarkModeAtom } from "../states";
+import {
+  AppBar,
+  Button,
+  IconButton,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
+  Stack,
+  ThemeProvider,
+  Toolbar,
+  Tooltip,
+  Typography,
+} from "@mui/material";
+import { theme } from "../utils";
+import { Link, useLocation, useNavigate } from "react-router";
+import { useCallback, useRef, useState } from "react";
 import { useAtom } from "jotai";
+import { isDarkModeAtom } from "../states";
 
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
+import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
+import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
+import CalendarMonthRoundedIcon from "@mui/icons-material/CalendarMonthRounded";
+import ExitToAppRoundedIcon from "@mui/icons-material/ExitToAppRounded";
 import DarkModeRoundedIcon from "@mui/icons-material/DarkMode";
 import LightModeRoundedIcon from "@mui/icons-material/LightMode";
 import HelpOutlineRoundedIcon from "@mui/icons-material/HelpOutlineRounded";
-import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
-import CalendarMonthRoundedIcon from "@mui/icons-material/CalendarMonthRounded";
 
-const NavLinkCss = {
+const LinkCss = {
   textDecoration: "none",
   color: "white",
-  fontWeight: "bold",
-  fontSize: "1.2em",
+};
+
+const MenuItemCss = {
+  "&:hover, &:active": {
+    backgroundColor: theme.palette.primary.main,
+    color: "white",
+    "& .MuiSvgIcon-root": {
+      color: "white",
+    },
+  },
 };
 
 const Header = () => {
-  // 계정 드롭다운 메뉴
+  const location = useLocation();
+
+  // 네비게이션 링크 버튼
+  const navigate = useNavigate();
+  const NavLinkButton = (text: string, to: string) => {
+    return (
+      <Button
+        variant="text"
+        sx={{
+          margin: "10px 0",
+          color: "white",
+          fontSize: "1.25em",
+          fontWeight: "bold",
+        }}
+        onClick={() => navigate(to)}
+      >
+        {text}
+      </Button>
+    );
+  };
+
+  // 내 계정 드롭다운 메뉴
+  const anchorAccountMenuElem = useRef<HTMLButtonElement>(null);
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
-
-  const handleAccountClick = () => {
+  const handleAccountClick = useCallback(() => {
     setAccountMenuOpen(true);
-  };
-
-  const handleAccountMenuClose = () => {
+  }, []);
+  const handleAccountMenuClose = useCallback(() => {
     setAccountMenuOpen(false);
-  };
-
-  const anchorAccountMenuElem = useRef<HTMLDivElement>(null);
-
-  const accountMenuStyle = {
-    fontWeight: "bold",
-    color: "#666",
-    "&:hover": {
-      backgroundColor: color.primary,
-      color: "white",
-    },
-    "&:active": {
-      backgroundColor: color.primary,
-      color: "white",
-    },
-  };
+  }, []);
 
   // 다크모드
   const [isDarkMode, setIsDarkMode] = useAtom(isDarkModeAtom);
 
-  const handleThemeChangeClick = () => {
+  const handleThemeChangeClick = useCallback(() => {
     setIsDarkMode((prev) => !prev);
-  };
+  }, [setIsDarkMode]);
 
   return (
-    <>
-      <header
-        css={{
-          height: "80px",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          padding: "0 20px",
-          backgroundColor: color.primary,
+    <ThemeProvider theme={theme}>
+      <AppBar
+        position="static"
+        sx={{
+          boxShadow: "none",
+          backgroundColor:
+            location.pathname === "/"
+              ? "transparent"
+              : theme.palette.primary.main,
+          position: location.pathname === "/" ? "absolute" : "relative",
+          zIndex: 100,
+          [theme.breakpoints.only("xs")]: {
+            backgroundColor: "transparent",
+            position: "relative",
+          },
         }}
       >
-        <Link
-          to="/"
-          css={{
-            textDecoration: "none",
+        <Toolbar
+          sx={{
+            height: "80px",
+            [theme.breakpoints.only("xs")]: {
+              height: "60px",
+            },
+            justifyContent: "space-between",
           }}
         >
-          <div
-            className="logo-container"
-            css={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              color: "white",
-              gap: "10px",
-            }}
-          >
-            <img
-              src={Logo}
-              alt="logo"
-              css={{
-                filter: "brightness(10)",
-                height: "50px",
+          {/* 로고 */}
+          <Link to="/" css={LinkCss}>
+            <Typography
+              variant="h4"
+              fontWeight="bold"
+              sx={{
+                color: "white",
+                [theme.breakpoints.only("xs")]: { color: "black" },
               }}
-            />
-            <h1>FabLab</h1>
-          </div>
-        </Link>
+            >
+              FabLab
+            </Typography>
+          </Link>
 
-        <nav css={{ display: "flex", alignItems: "center", gap: "30px" }}>
-          <ul
-            css={{
-              display: "flex",
-              gap: "30px",
-              listStyle: "none",
-              color: "white",
-              fontWeight: "bold",
+          {/* 네비게이션 바 */}
+          <Stack
+            direction="row"
+            gap={{
+              xs: 0,
+              sm: 2,
             }}
           >
-            <li>
-              <Link to="/reservation" css={NavLinkCss}>
-                예약하기
-              </Link>
-            </li>
-            <li>
-              <Link to="/" css={NavLinkCss}>
-                팹랩소개
-              </Link>
-            </li>
-            <li>
-              <Link to="/" css={NavLinkCss}>
-                공지사항
-              </Link>
-            </li>
-          </ul>
-          {/* 사용자 아이콘 버튼 TODO: 그림자 추가, 보더 색상 변경, 보더 두께 더 얇게 수정 */}
-          <div
-            className="account"
-            css={{
-              width: "50px",
-              height: "50px",
-              border: "1px solid black",
-              borderRadius: "50%",
-              backgroundColor: "white",
-              cursor: "pointer",
-            }}
-            onClick={handleAccountClick}
-            ref={anchorAccountMenuElem}
-          ></div>
-        </nav>
-      </header>
+            {/* PC, 태블릿용 네비게이션 바 */}
+            <Stack direction="row" gap={2} display={{ xs: "none", sm: "flex" }}>
+              {NavLinkButton("예약하기", "/reservation")}
+              {NavLinkButton("팹랩소개", "/about")}
+              {NavLinkButton("공지사항", "/notice")}
+            </Stack>
 
-      {/* 계정 드롭다운 메뉴 */}
+            {/* 모바일용 네비게이션 바 */}
+            <Stack display={{ xs: "flex", sm: "none" }}>
+              <Tooltip title="메인으로">
+                <IconButton onClick={() => navigate("/")}>
+                  <HomeRoundedIcon fontSize="large" />
+                </IconButton>
+              </Tooltip>
+            </Stack>
+
+            {/* 내 계정 버튼 */}
+            <Stack justifyContent="center">
+              <Tooltip title="내 계정">
+                <IconButton
+                  onClick={handleAccountClick}
+                  ref={anchorAccountMenuElem}
+                  sx={{ p: 0 }}
+                >
+                  <AccountCircleRoundedIcon
+                    fontSize="large"
+                    sx={{
+                      [theme.breakpoints.up("sm")]: {
+                        color: "white",
+                        fontSize: "2em",
+                      },
+                    }}
+                  />
+                </IconButton>
+              </Tooltip>
+            </Stack>
+          </Stack>
+        </Toolbar>
+      </AppBar>
+
+      {/* 내 계정 드롭다운 메뉴 */}
       <Menu
-        id="basic-menu"
         anchorEl={anchorAccountMenuElem.current}
         open={accountMenuOpen}
         onClose={handleAccountMenuClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
         sx={{
           marginTop: "5px",
         }}
       >
-        <MenuItem onClick={handleAccountMenuClose} sx={accountMenuStyle}>
-          <ListItemIcon sx={{ color: "inherit" }}>
-            <AccountCircleIcon />
+        <MenuItem onClick={handleAccountMenuClose} sx={MenuItemCss}>
+          <ListItemIcon>
+            <PersonRoundedIcon />
           </ListItemIcon>
           <ListItemText>내 정보</ListItemText>
         </MenuItem>
-        <MenuItem onClick={handleAccountMenuClose} sx={accountMenuStyle}>
-          <ListItemIcon sx={{ color: "inherit" }}>
+        <MenuItem onClick={handleAccountMenuClose} sx={MenuItemCss}>
+          <ListItemIcon>
             <CalendarMonthRoundedIcon />
           </ListItemIcon>
           <ListItemText>내 예약정보</ListItemText>
@@ -162,12 +202,12 @@ const Header = () => {
         <MenuItem
           onClick={handleAccountMenuClose}
           sx={{
-            ...accountMenuStyle,
+            ...MenuItemCss,
             color: "red",
           }}
         >
-          <ListItemIcon sx={{ color: "inherit" }}>
-            <LogoutRoundedIcon />
+          <ListItemIcon>
+            <ExitToAppRoundedIcon sx={{ color: "red" }} />
           </ListItemIcon>
           <ListItemText>퇴실하기</ListItemText>
         </MenuItem>
@@ -177,9 +217,9 @@ const Header = () => {
               handleAccountMenuClose();
               handleThemeChangeClick();
             }}
-            sx={accountMenuStyle}
+            sx={MenuItemCss}
           >
-            <ListItemIcon sx={{ color: "inherit" }}>
+            <ListItemIcon>
               <LightModeRoundedIcon />
             </ListItemIcon>
             <ListItemText>라이트모드</ListItemText>
@@ -191,22 +231,22 @@ const Header = () => {
               handleAccountMenuClose();
               handleThemeChangeClick();
             }}
-            sx={accountMenuStyle}
+            sx={MenuItemCss}
           >
-            <ListItemIcon sx={{ color: "inherit" }}>
+            <ListItemIcon>
               <DarkModeRoundedIcon />
             </ListItemIcon>
             <ListItemText>다크모드</ListItemText>
           </MenuItem>
         )}
-        <MenuItem onClick={handleAccountMenuClose} sx={accountMenuStyle}>
-          <ListItemIcon sx={{ color: "inherit" }}>
+        <MenuItem onClick={handleAccountMenuClose} sx={MenuItemCss}>
+          <ListItemIcon>
             <HelpOutlineRoundedIcon />
           </ListItemIcon>
           <ListItemText>도움말</ListItemText>
         </MenuItem>
       </Menu>
-    </>
+    </ThemeProvider>
   );
 };
 

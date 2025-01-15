@@ -1,6 +1,40 @@
+/* 프리텐다드 폰트트 */
+@font-face {
+  font-family: "Pretendard-Regular";
+  src: url("https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff")
+    format("woff");
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* 기본 CSS 스타일 */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   word-break: keep-all;
+  font-family: "Pretendard-Regular", sans-serif;
 }
+
+#root {
+  height: 100vh;
+}
+
+/* 라이트, 다크 테마 */
+/* [theme="light"] {
+  --bg-color: #ffffff;
+}
+
+[theme="dark"] {
+  --bg-color: #262626;
+}
+
+@media (max-width: 480px) {
+  [theme="light"] {
+    --bg-color: linear-gradient(#ffffff, #f6f6f6);
+  }
+
+  [theme="dark"] {
+    --bg-color: #262626;
+  }
+} */
