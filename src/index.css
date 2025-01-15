@@ -16,14 +16,12 @@
   font-family: "Pretendard-Regular", sans-serif;
 }
 
-html,
-body,
 #root {
-  height: 100%;
+  height: 100vh;
 }
 
 /* 라이트, 다크 테마 */
-:root {
+/* [theme="light"] {
   --bg-color: #ffffff;
 }
 
@@ -32,41 +30,11 @@ body,
 }
 
 @media (max-width: 480px) {
-  :root {
+  [theme="light"] {
     --bg-color: linear-gradient(#ffffff, #f6f6f6);
   }
 
   [theme="dark"] {
     --bg-color: #262626;
   }
-}
-
-:root {
-  background: var(--bg-color);
-}
-
-/* 폰트 크기 조정 */
-/* 태블릿 */
-@media (max-width: 768px) {
-  h1 {
-    font-size: 1.5em;
-  }
-  h2 {
-    font-size: 1.25em;
-  }
-  h3 {
-    font-size: 1em;
-  }
-  h4 {
-    font-size: 0.875em;
-  }
-  h5 {
-    font-size: 0.75em;
-  }
-  h6 {
-    font-size: 0.625em;
-  }
-  p {
-    font-size: 0.75em;
-  }
-}
+} */
