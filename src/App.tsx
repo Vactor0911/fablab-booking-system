@@ -1,10 +1,20 @@
+import { BrowserRouter, Routes, Route, Navigate } from "react-router";
+import Header from "./components/Header";
+import { Home, Login, Register, Reservation } from "./pages";
+
 function App() {
   return (
-    <>
-      <h1>FabLab 예약 시스템</h1>
-      <p>메인 화면</p>
-    </>
-  )
+    <BrowserRouter>
+      <Header />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/reservation" element={<Reservation />} />
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
