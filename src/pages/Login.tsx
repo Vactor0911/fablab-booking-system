@@ -5,19 +5,20 @@ import {
   IconButton,
   InputAdornment,
   OutlinedInput,
+  Stack,
   TextField,
   ThemeProvider,
+  Typography,
 } from "@mui/material";
+import { theme } from "../utils";
 import { useCallback, useState } from "react";
 
 import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
 import VisibilityOffRoundedIcon from "@mui/icons-material/VisibilityOffRounded";
-import { theme } from "../utils";
 import { Link } from "react-router";
 
 const LinkCss = {
   textDecoration: "none",
-  color: "#6e6e6e",
 };
 
 const Login = () => {
@@ -36,37 +37,30 @@ const Login = () => {
     setIsLoginStateSave((prev) => !prev);
   }, []);
 
-  // 로그인 버튼 클릭
-
   return (
     <ThemeProvider theme={theme}>
-      <div
-        css={{
-          height: "100%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
+      <Stack
+        className="page-root"
+        direction="row"
+        minHeight={{
+          xs: "calc(100vh - 60px)",
+          sm: "calc(100vh - 80px)",
         }}
+        justifyContent="center"
+        alignItems="center"
       >
-        <div
-          className="login-container"
-          css={{
-            width: "50%",
-            maxWidth: "600px",
-            padding: "20px",
-            display: "flex",
-            flexDirection: "column",
-            gap: "20px",
-            "@media (max-width: 786px)": {
-              width: "80%",
-            },
-            "@media (max-width: 480px)": {
-              width: "90%",
-            },
+        <Stack
+          width={{
+            xs: "90%",
+            sm: "65%",
           }}
+          maxWidth="600px"
+          gap={3}
         >
           {/* 페이지명 */}
-          <h1 css={{ textAlign: "center", marginBottom: "20px" }}>로그인</h1>
+          <Typography variant="h4" fontWeight="bold">
+            로그인
+          </Typography>
 
           {/* 학번 입력란 */}
           <TextField
@@ -76,14 +70,7 @@ const Login = () => {
             fullWidth
           />
 
-          <div
-            className="wrapper"
-            css={{
-              width: "100%",
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
+          <Stack>
             {/* 비밀번호 입력란 */}
             <OutlinedInput
               type={isPasswordVisible ? "text" : "password"}
@@ -104,55 +91,55 @@ const Login = () => {
                 </InputAdornment>
               }
             />
+
             {/* 로그인 상태 유지 체크박스 */}
-            <div className="checkbox-wrapper">
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={isLoginStateSave}
-                    onChange={handleLoginStateSaveChange}
-                    color="primary"
-                  />
-                }
-                label="로그인 상태 유지"
-              />
-            </div>
-          </div>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={isLoginStateSave}
+                  onChange={handleLoginStateSaveChange}
+                  color="primary"
+                />
+              }
+              label="로그인 상태 유지"
+              sx={{
+                marginTop: "5px",
+              }}
+            />
+          </Stack>
 
-          {/* 로그인 버튼 */}
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={() => {}}
-            fullWidth
-            sx={{
-              fontSize: "1.5em",
-              fontWeight: "bold",
-              textTransform: "none",
-            }}
-          >
-            FabLab 로그인
-          </Button>
+          <Stack gap={1}>
+            {/* 로그인 버튼 */}
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={() => {}}
+              fullWidth
+              sx={{
+                fontSize: "1.5em",
+                fontWeight: "bold",
+                textTransform: "none",
+              }}
+            >
+              FabLab 로그인
+            </Button>
 
-          {/* 페이지 링크 */}
-          <div
-            className="link-container"
-            css={{
-              width: "100%",
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <Link to="/register" css={LinkCss}>
-              비밀번호 재설정
-            </Link>
-            <Link to="/register" css={LinkCss}>
-              회원가입
-            </Link>
-          </div>
-        </div>
-      </div>
+            {/* 하단 링크 */}
+            <Stack direction="row" justifyContent="space-between">
+              <Link to="/" css={LinkCss}>
+                <Typography variant="subtitle1" color="secondary">
+                  비밀번호 찾기
+                </Typography>
+              </Link>
+              <Link to="/register" css={LinkCss}>
+                <Typography variant="subtitle1" color="secondary">
+                  회원가입
+                </Typography>
+              </Link>
+            </Stack>
+          </Stack>
+        </Stack>
+      </Stack>
     </ThemeProvider>
   );
 };
