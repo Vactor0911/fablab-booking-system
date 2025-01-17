@@ -15,8 +15,8 @@ import {
 import { theme } from "../utils";
 import { Link, useLocation, useNavigate } from "react-router";
 import { useCallback, useRef, useState } from "react";
-import { useAtom } from "jotai";
-import { isDarkModeAtom } from "../states";
+import { useAtom, useAtomValue } from "jotai";
+import { isDarkModeAtom, loginStateAtom } from "../states";
 
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
@@ -27,11 +27,13 @@ import DarkModeRoundedIcon from "@mui/icons-material/DarkMode";
 import LightModeRoundedIcon from "@mui/icons-material/LightMode";
 import HelpOutlineRoundedIcon from "@mui/icons-material/HelpOutlineRounded";
 
+// Link 요소 CSS
 const LinkCss = {
   textDecoration: "none",
   color: "white",
 };
 
+// 메뉴 아이템 CSS
 const MenuItemCss = {
   "&:hover, &:active": {
     backgroundColor: theme.palette.primary.main,
@@ -44,9 +46,9 @@ const MenuItemCss = {
 
 const Header = () => {
   const location = useLocation();
+  const navigate = useNavigate();
 
   // 네비게이션 링크 버튼
-  const navigate = useNavigate();
   const NavLinkButton = (text: string, to: string) => {
     return (
       <Button
@@ -65,18 +67,28 @@ const Header = () => {
   };
 
   // 내 계정 드롭다운 메뉴
-  const anchorAccountMenuElem = useRef<HTMLButtonElement>(null);
-  const [accountMenuOpen, setAccountMenuOpen] = useState(false);
+  const anchorAccountMenuElem = useRef<HTMLButtonElement>(null); // 내 계정 메뉴 버튼 엘리먼트
+  const [accountMenuOpen, setAccountMenuOpen] = useState(false); // 내 계정 메뉴 열림 상태
+  const loginState = useAtomValue(loginStateAtom); // 로그인 상태
+
+  // 내 계정 버튼 클릭
   const handleAccountClick = useCallback(() => {
+    if (!loginState) {
+      navigate("/login");
+      return;
+    }
     setAccountMenuOpen(true);
-  }, []);
+  }, [loginState, navigate]);
+
+  // 내 계정 메뉴 닫기
   const handleAccountMenuClose = useCallback(() => {
     setAccountMenuOpen(false);
   }, []);
 
   // 다크모드
-  const [isDarkMode, setIsDarkMode] = useAtom(isDarkModeAtom);
+  const [isDarkMode, setIsDarkMode] = useAtom(isDarkModeAtom); // 다크모드 상태
 
+  // 테마 변경 버튼 클릭
   const handleThemeChangeClick = useCallback(() => {
     setIsDarkMode((prev) => !prev);
   }, [setIsDarkMode]);
