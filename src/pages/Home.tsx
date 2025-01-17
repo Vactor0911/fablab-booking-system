@@ -11,6 +11,9 @@ import FabLabImage from "../assets/FabLabImage.jpg";
 import { theme } from "../utils";
 import { Link } from "react-router";
 import SmapleImage from "../assets/SampleImage.png";
+import { Interpolation, Theme } from "@emotion/react";
+import { useAtomValue } from "jotai";
+import { loginStateAtom } from "../states";
 
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 import CircleRoundedIcon from "@mui/icons-material/CircleRounded";
@@ -19,7 +22,7 @@ import ExitToAppRoundedIcon from "@mui/icons-material/ExitToAppRounded";
 import CalendarMonthRoundedIcon from "@mui/icons-material/CalendarMonthRounded";
 import ImportContactsRoundedIcon from "@mui/icons-material/ImportContactsRounded";
 import LanguageRoundedIcon from "@mui/icons-material/LanguageRounded";
-import { Interpolation, Theme } from "@emotion/react";
+import VpnKeyRoundedIcon from "@mui/icons-material/VpnKeyRounded";
 
 const LinkCss = {
   textDecoration: "none",
@@ -35,6 +38,8 @@ const MobileNavLinkCss: Interpolation<Theme> = {
 };
 
 const Home = () => {
+  const loginState = useAtomValue(loginStateAtom); // 로그인 상태
+
   return (
     <ThemeProvider theme={theme}>
       <Stack className="page-root" direction="column" minHeight="100vh">
@@ -298,7 +303,7 @@ const Home = () => {
           {/* 내 예약현황 */}
           <Stack
             direction="column"
-            spacing={{ xs: 2, sm: 3, md: 5 }}
+            spacing={loginState ? { xs: 2, sm: 3, md: 5 } : 0}
             width={{
               xs: "100%",
               md: "35vw",
@@ -315,7 +320,13 @@ const Home = () => {
             </Stack>
 
             {/* 예약 좌석 */}
-            <Link to="/my-reservation" css={LinkCss}>
+            <Link
+              to="/my-reservation"
+              css={{
+                ...LinkCss,
+                display: loginState ? "flex" : "none",
+              }}
+            >
               <Stack
                 direction={{
                   xs: "row-reverse",
@@ -402,6 +413,7 @@ const Home = () => {
               startIcon={<ExitToAppRoundedIcon />}
               size="large"
               sx={{
+                display: loginState ? "inline-flex" : "none",
                 ".MuiSvgIcon-root": {
                   fontSize: "2em",
                 },
@@ -412,6 +424,27 @@ const Home = () => {
             >
               <h2>퇴실하기</h2>
             </Button>
+
+            {/* 로그인 버튼 */}
+            <Stack justifyContent="center" flex={1}>
+              <Button
+                variant="outlined"
+                color="secondary"
+                startIcon={<VpnKeyRoundedIcon />}
+                size="large"
+                sx={{
+                  display: loginState ? "none" : "inline-flex",
+                  ".MuiSvgIcon-root": {
+                    fontSize: "2em",
+                  },
+                  [theme.breakpoints.only("xs")]: {
+                    display: "none",
+                  },
+                }}
+              >
+                <h2>로그인</h2>
+              </Button>
+            </Stack>
           </Stack>
         </Stack>
       </Stack>
