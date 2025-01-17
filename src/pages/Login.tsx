@@ -12,20 +12,20 @@ import {
 } from "@mui/material";
 import { theme } from "../utils";
 import { useCallback, useState } from "react";
+import { Link } from "react-router";
 
 import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
 import VisibilityOffRoundedIcon from "@mui/icons-material/VisibilityOffRounded";
-import { Link } from "react-router";
 
 const LinkCss = {
   textDecoration: "none",
 };
 
 const Login = () => {
-  const [studentId, setStudentId] = useState("");
-  const [password, setPassword] = useState("");
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [isLoginStateSave, setIsLoginStateSave] = useState(false);
+  const [studentId, setStudentId] = useState(""); // 학번
+  const [password, setPassword] = useState(""); // 비밀번호
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false); // 비밀번호 표시 여부
+  const [isLoginStateSave, setIsLoginStateSave] = useState(false); // 로그인 상태 유지 여부
 
   // 비밀번호 표시/숨김
   const handlePasswordVisibleClick = useCallback(() => {
