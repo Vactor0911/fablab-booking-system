@@ -42,10 +42,6 @@ const Login = () => {
       <Stack
         className="page-root"
         direction="row"
-        minHeight={{
-          xs: "calc(100vh - 60px)",
-          sm: "calc(100vh - 80px)",
-        }}
         justifyContent="center"
         alignItems="center"
       >

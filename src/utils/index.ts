@@ -5,6 +5,24 @@ import { color } from "./theme";
  * MUI 테마 객체
  */
 export const theme = createTheme({
+  components: {
+    MuiStack: {
+      styleOverrides: {
+        root: {
+          "&.page-root": {
+            // xs
+            "@media (max-width: 600px)": {
+              minHeight: "calc(100vh - 60px)",
+            },
+            // sm
+            "@media (max-width: 900px)": {
+              minHeight: "calc(100vh - 80px)",
+            },
+          },
+        },
+      },
+    },
+  },
   palette: {
     primary: { main: color.primary },
     secondary: { main: "#6e6e6e" },
