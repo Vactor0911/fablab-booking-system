@@ -5,49 +5,36 @@ import {
   Stack,
   ThemeProvider,
   Typography,
-  Link as MuiLink,
 } from "@mui/material";
 import FabLabImage from "../assets/FabLabImage.jpg";
 import { theme } from "../utils";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import SmapleImage from "../assets/SampleImage.png";
+import { useAtomValue } from "jotai";
+import { loginStateAtom } from "../states";
 
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 import CircleRoundedIcon from "@mui/icons-material/CircleRounded";
-import CampaignRoundedIcon from "@mui/icons-material/CampaignRounded";
 import ExitToAppRoundedIcon from "@mui/icons-material/ExitToAppRounded";
-import CalendarMonthRoundedIcon from "@mui/icons-material/CalendarMonthRounded";
-import ImportContactsRoundedIcon from "@mui/icons-material/ImportContactsRounded";
-import LanguageRoundedIcon from "@mui/icons-material/LanguageRounded";
-import { Interpolation, Theme } from "@emotion/react";
+import VpnKeyRoundedIcon from "@mui/icons-material/VpnKeyRounded";
 
 const LinkCss = {
   textDecoration: "none",
   color: "black",
 };
 
-const MobileNavLinkCss: Interpolation<Theme> = {
-  ...LinkCss,
-  display: "flex",
-  flexDirection: "column",
-  justifyContent: "center",
-  alignItems: "center",
-};
-
 const Home = () => {
+  const loginState = useAtomValue(loginStateAtom); // 로그인 상태
+  const navigate = useNavigate(); // 페이지 이동
+
   return (
     <ThemeProvider theme={theme}>
-      <Stack className="page-root" direction="column" minHeight="100vh">
+      <Stack direction="column" minHeight="100vh">
         {/* 배너 */}
         <Stack
-          height="45vh"
+          height={{ xs: "auto", sm: "45vh"}}
           minHeight="300px"
           maxHeight="500px"
-          padding="80px 0"
-          display={{
-            xs: "none",
-            sm: "flex",
-          }}
           justifyContent="center"
           alignItems="center"
           position="relative"
@@ -80,6 +67,7 @@ const Home = () => {
         >
           <Typography
             variant="h2"
+            margin="80px 0"
             padding="0 30px"
             textAlign="center"
             fontWeight="bold"
@@ -91,13 +79,13 @@ const Home = () => {
 
         {/* 하단 메뉴 */}
         <Stack
-          direction={{ xs: "column-reverse", sm: "column", md: "row" }}
+          direction={{ xs: "column", md: "row" }}
           spacing={{
-            xs: 3,
+            xs: 5,
             md: 0,
           }}
           padding={{
-            xs: "20px",
+            xs: "50px 20px",
             sm: "50px 30px",
             md: "50px 0",
           }}
@@ -109,7 +97,7 @@ const Home = () => {
           {/* 공지사항 */}
           <Stack
             direction="column"
-            spacing={5}
+            spacing={3}
             width={{
               xs: "100%",
               md: "45vw",
@@ -136,14 +124,6 @@ const Home = () => {
             <Stack
               direction="column"
               spacing={2}
-              padding={{
-                xs: "20px 10px",
-                sm: "0",
-              }}
-              border={{
-                xs: "1px solid #afafaf",
-                sm: "none",
-              }}
               borderRadius="10px"
             >
               {[
@@ -168,14 +148,6 @@ const Home = () => {
                     <CircleRoundedIcon
                       fontSize="small"
                       color="primary"
-                      sx={{
-                        display: { xs: "none", sm: "inline-block" },
-                      }}
-                    />
-                    <CampaignRoundedIcon
-                      sx={{
-                        display: { xs: "inline-block", sm: "none" },
-                      }}
                     />
                     <Typography
                       variant="subtitle1"
@@ -194,7 +166,7 @@ const Home = () => {
             <Stack
               direction="row"
               justifyContent="flex-end"
-              display={{ xs: "none", sm: "flex" }}
+              display="flex"
             >
               <Link to="/notice" css={LinkCss}>
                 <Typography
@@ -218,87 +190,10 @@ const Home = () => {
             }}
           />
 
-          {/* 모바일용 종합정보시스템 링크 */}
-          <MuiLink
-            href="https://i.mokwon.ac.kr/"
-            underline="none"
-            padding="20px 0"
-            display={{
-              xs: "flex",
-              sm: "none",
-            }}
-            justifyContent="center"
-            alignItems="center"
-            gap={1}
-            border="1px solid #afafaf"
-            borderRadius="15px"
-            color="white"
-            sx={{
-              backgroundColor: theme.palette.primary.main,
-            }}
-          >
-            <Box component="img" alt="목원대 로고" src="" />
-            <Typography variant="subtitle1" fontWeight="bold">
-              종합 정보 시스템
-            </Typography>
-          </MuiLink>
-
-          {/* 모바일용 네비게이션 바 */}
-          <Stack
-            display={{
-              xs: "flex",
-              sm: "none",
-            }}
-            direction="row"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Link to="/reservation" css={MobileNavLinkCss}>
-              <CalendarMonthRoundedIcon />
-              <Typography variant="subtitle1" fontWeight="bold">
-                예약하기
-              </Typography>
-            </Link>
-            <Link to="/about" css={MobileNavLinkCss}>
-              <ImportContactsRoundedIcon />
-              <Typography variant="subtitle1" fontWeight="bold">
-                팹랩소개
-              </Typography>
-            </Link>
-            <MuiLink
-              href="https://www.mokwon.ac.kr/"
-              underline="none"
-              display="flex"
-              flexDirection="column"
-              justifyContent="center"
-              alignItems="center"
-              color="black"
-            >
-              <LanguageRoundedIcon />
-              <Typography variant="subtitle1" fontWeight="bold">
-                목원홈
-              </Typography>
-            </MuiLink>
-            <MuiLink
-              href="https://www.mokwon.ac.kr/computer/"
-              underline="none"
-              display="flex"
-              flexDirection="column"
-              justifyContent="center"
-              alignItems="center"
-              color="black"
-            >
-              <LanguageRoundedIcon />
-              <Typography variant="subtitle1" fontWeight="bold">
-                컴공홈
-              </Typography>
-            </MuiLink>
-          </Stack>
-
           {/* 내 예약현황 */}
           <Stack
             direction="column"
-            spacing={{ xs: 2, sm: 3, md: 5 }}
+            spacing={loginState ? { xs: 3, md: 5 } : 0}
             width={{
               xs: "100%",
               md: "35vw",
@@ -315,22 +210,17 @@ const Home = () => {
             </Stack>
 
             {/* 예약 좌석 */}
-            <Link to="/my-reservation" css={LinkCss}>
+            <Link
+              to="/my-reservation"
+              css={{
+                ...LinkCss,
+                display: loginState ? "flex" : "none",
+              }}
+            >
               <Stack
-                direction={{
-                  xs: "row-reverse",
-                  sm: "row",
-                }}
+                direction="row"
                 spacing={2}
                 alignItems="center"
-                padding={{
-                  xs: "15px",
-                  sm: "0",
-                }}
-                border={{
-                  xs: "1px solid #afafaf",
-                  sm: "none",
-                }}
                 borderRadius={"10px"}
               >
                 {/* 좌석 사진 */}
@@ -349,17 +239,13 @@ const Home = () => {
                   </Typography>
                   <Stack
                     direction="row"
-                    spacing={{
-                      xs: 0,
-                      sm: 1,
-                    }}
+                    spacing={1}
                     flexWrap={"wrap"}
                   >
                     <Typography
                       variant="subtitle1"
                       color="secondary"
                       width={"60px"}
-                      display={{ xs: "none", sm: "block" }}
                       fontWeight="bold"
                     >
                       예약 날짜
@@ -402,16 +288,38 @@ const Home = () => {
               startIcon={<ExitToAppRoundedIcon />}
               size="large"
               sx={{
+                display: loginState ? "inline-flex" : "none",
                 ".MuiSvgIcon-root": {
                   fontSize: "2em",
-                },
-                [theme.breakpoints.only("xs")]: {
-                  display: "none",
                 },
               }}
             >
               <h2>퇴실하기</h2>
             </Button>
+
+            {/* 로그인 버튼 */}
+            <Stack justifyContent="center" flex={1}>
+              <Button
+                variant="outlined"
+                color="secondary"
+                startIcon={<VpnKeyRoundedIcon />}
+                size="large"
+                sx={{
+                  display: loginState ? "none" : "inline-flex",
+                  ".MuiSvgIcon-root": {
+                    fontSize: "2em",
+                  },
+                  [theme.breakpoints.down("md")]: {
+                    marginTop: "30px",
+                  },
+                }}
+                onClick={() => {
+                  navigate("/login");
+                }}
+              >
+                <h2>로그인</h2>
+              </Button>
+            </Stack>
           </Stack>
         </Stack>
       </Stack>
