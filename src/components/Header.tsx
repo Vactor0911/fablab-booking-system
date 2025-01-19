@@ -160,7 +160,10 @@ const Header = () => {
       >
         <Toolbar
           sx={{
-            height: "80px",
+            height: {
+              xs: "60px",
+              sm: "80px",
+            },
             justifyContent: "space-between",
           }}
         >
@@ -204,7 +207,7 @@ const Header = () => {
                     fontSize="large"
                     sx={{
                       color: "white",
-                      fontSize: "2em",
+                      fontSize: { xs: "1.5em", sm: "2em" },
                     }}
                   />
                 </IconButton>
@@ -229,7 +232,7 @@ const Header = () => {
                     fontSize="large"
                     sx={{
                       color: "white",
-                      fontSize: "2em",
+                      fontSize: { xs: "1.5em", sm: "2em" },
                     }}
                   />
                 </IconButton>
