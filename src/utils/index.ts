@@ -5,19 +5,6 @@ import { color } from "./theme";
  * MUI 테마 객체
  */
 export const theme = createTheme({
-  components: {
-    MuiStack: {
-      styleOverrides: {
-        root: {
-          "&.page-root": {
-            "@media (max-width: 600px)": {
-              background: "linear-gradient(#ffffff, #f3f3f3)",
-            },
-          },
-        },
-      },
-    },
-  },
   palette: {
     primary: { main: color.primary },
     secondary: { main: "#6e6e6e" },
