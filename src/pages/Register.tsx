@@ -404,8 +404,8 @@ const Register = () => {
                 color: theme.palette.secondary.main,
               }}
             >
-              <Typography variant="subtitle1" color="secondary">
-                이미 FabLab 회원이신가요?
+              <Typography variant="subtitle1" color="primary">
+                로그인으로 돌아가기
               </Typography>
             </Link>
           </Stack>

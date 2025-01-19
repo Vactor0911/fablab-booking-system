@@ -133,7 +133,7 @@ const Login = () => {
                 </Typography>
               </Link>
               <Link to="/register" css={LinkCss}>
-                <Typography variant="subtitle1" color="secondary">
+                <Typography variant="subtitle1" color="primary">
                   회원가입
                 </Typography>
               </Link>
