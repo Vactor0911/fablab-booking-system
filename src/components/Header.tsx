@@ -30,6 +30,7 @@ import LightModeRoundedIcon from "@mui/icons-material/LightMode";
 import HelpOutlineRoundedIcon from "@mui/icons-material/HelpOutlineRounded";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
 
 // Link 요소 CSS
 const LinkCss = {
@@ -259,18 +260,23 @@ const Header = () => {
           marginTop: "5px",
         }}
       >
+        {/* 내 정보 */}
         <MenuItem onClick={handleAccountMenuClose} sx={MenuItemCss}>
           <ListItemIcon>
             <PersonRoundedIcon />
           </ListItemIcon>
           <ListItemText>내 정보</ListItemText>
         </MenuItem>
+
+        {/* 내 예약정보 */}
         <MenuItem onClick={handleAccountMenuClose} sx={MenuItemCss}>
           <ListItemIcon>
             <CalendarMonthRoundedIcon />
           </ListItemIcon>
           <ListItemText>내 예약정보</ListItemText>
         </MenuItem>
+
+        {/* 퇴실하기 */}
         <MenuItem
           onClick={handleAccountMenuClose}
           sx={{
@@ -283,6 +289,8 @@ const Header = () => {
           </ListItemIcon>
           <ListItemText>퇴실하기</ListItemText>
         </MenuItem>
+
+        {/* 라이트모드 */}
         {isDarkMode && (
           <MenuItem
             onClick={() => {
@@ -297,6 +305,8 @@ const Header = () => {
             <ListItemText>라이트모드</ListItemText>
           </MenuItem>
         )}
+
+        {/* 다크모드 */}
         {!isDarkMode && (
           <MenuItem
             onClick={() => {
@@ -311,11 +321,21 @@ const Header = () => {
             <ListItemText>다크모드</ListItemText>
           </MenuItem>
         )}
+
+        {/* 도움말 */}
         <MenuItem onClick={handleAccountMenuClose} sx={MenuItemCss}>
           <ListItemIcon>
             <HelpOutlineRoundedIcon />
           </ListItemIcon>
           <ListItemText>도움말</ListItemText>
+        </MenuItem>
+
+        {/* 로그아웃 */}
+        <MenuItem onClick={handleAccountMenuClose} sx={MenuItemCss}>
+          <ListItemIcon>
+            <MeetingRoomIcon />
+          </ListItemIcon>
+          <ListItemText>로그아웃</ListItemText>
         </MenuItem>
       </Menu>
 
