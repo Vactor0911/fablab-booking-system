@@ -29,7 +29,7 @@ const Home = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <Stack className="page-root" direction="column" minHeight="100vh">
+      <Stack direction="column" minHeight="100vh">
         {/* 배너 */}
         <Stack
           height={{ xs: "auto", sm: "45vh"}}
