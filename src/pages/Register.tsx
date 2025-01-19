@@ -17,7 +17,7 @@ import { Link } from "react-router";
 
 import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
 import VisibilityOffRoundedIcon from "@mui/icons-material/VisibilityOffRounded";
-import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
+import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
 
 // 스크롤 있는 Stack 요소
 const ScrollBox: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -108,12 +108,7 @@ const Register = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <Stack
-        className="page-root"
-        direction="row"
-        justifyContent="center"
-        alignItems="center"
-      >
+      <Stack className="page-root">
         <Stack
           width={{
             xs: "90%",
@@ -189,9 +184,7 @@ const Register = () => {
                   {formatTime(confirmTimeLeft)}
                 </Typography>
               )}
-              {isConfirmCodeChecked && (
-                <CheckRoundedIcon color="success" />
-              )}
+              {isConfirmCodeChecked && <CheckRoundedIcon color="success" />}
             </Box>
 
             {/* 인증 확인 버튼 */}

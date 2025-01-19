@@ -39,12 +39,7 @@ const Login = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <Stack
-        className="page-root"
-        direction="row"
-        justifyContent="center"
-        alignItems="center"
-      >
+      <Stack className="page-root">
         <Stack
           width={{
             xs: "90%",

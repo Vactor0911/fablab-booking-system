@@ -10,6 +10,9 @@ export const theme = createTheme({
       styleOverrides: {
         root: {
           "&.page-root": {
+            direction: "row",
+            justifyContent: "center",
+            alignItems: "center",
             // xs
             "@media (max-width: 600px)": {
               minHeight: "calc(100vh - 60px)",
