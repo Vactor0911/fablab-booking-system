@@ -39,22 +39,14 @@ const Login = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <Stack
-        className="page-root"
-        direction="row"
-        minHeight={{
-          xs: "calc(100vh - 60px)",
-          sm: "calc(100vh - 80px)",
-        }}
-        justifyContent="center"
-        alignItems="center"
-      >
+      <Stack className="page-root">
         <Stack
           width={{
             xs: "90%",
             sm: "65%",
           }}
           maxWidth="600px"
+          padding="80px 0"
           gap={3}
         >
           {/* 페이지명 */}
@@ -126,13 +118,13 @@ const Login = () => {
 
             {/* 하단 링크 */}
             <Stack direction="row" justifyContent="space-between">
-              <Link to="/" css={LinkCss}>
+              <Link to="/find-password" css={LinkCss}>
                 <Typography variant="subtitle1" color="secondary">
                   비밀번호 찾기
                 </Typography>
               </Link>
               <Link to="/register" css={LinkCss}>
-                <Typography variant="subtitle1" color="secondary">
+                <Typography variant="subtitle1" color="primary">
                   회원가입
                 </Typography>
               </Link>

@@ -17,7 +17,8 @@ import { Link } from "react-router";
 
 import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
 import VisibilityOffRoundedIcon from "@mui/icons-material/VisibilityOffRounded";
-import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
+import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
+import CircleRoundedIcon from "@mui/icons-material/CircleRounded";
 
 // 스크롤 있는 Stack 요소
 const ScrollBox: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -106,18 +107,12 @@ const Register = () => {
     setIsGuidelineAgreed((prev) => !prev);
   }, []);
 
+  // 회원가입 버튼 클릭
+  const handleRegisterButtonClick = useCallback(() => {}, []);
+
   return (
     <ThemeProvider theme={theme}>
-      <Stack
-        className="page-root"
-        direction="row"
-        minHeight={{
-          xs: "calc(100vh - 60px)",
-          sm: "calc(100vh - 80px)",
-        }}
-        justifyContent="center"
-        alignItems="center"
-      >
+      <Stack className="page-root">
         <Stack
           width={{
             xs: "90%",
@@ -193,9 +188,7 @@ const Register = () => {
                   {formatTime(confirmTimeLeft)}
                 </Typography>
               )}
-              {isConfirmCodeChecked && (
-                <CheckRoundedIcon color="success" />
-              )}
+              {isConfirmCodeChecked && <CheckRoundedIcon color="success" />}
             </Box>
 
             {/* 인증 확인 버튼 */}
@@ -207,26 +200,57 @@ const Register = () => {
             </Button>
           </Stack>
 
-          {/* 비밀번호 입력란 */}
-          <OutlinedInput
-            type={isPasswordVisible ? "text" : "password"}
-            placeholder="비밀번호"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            // 비밀번호 보임/안보임
-            endAdornment={
-              <InputAdornment position="end">
-                <IconButton onClick={handlePasswordVisibleClick}>
-                  {isPasswordVisible ? (
-                    <VisibilityRoundedIcon />
-                  ) : (
-                    <VisibilityOffRoundedIcon />
-                  )}
-                </IconButton>
-              </InputAdornment>
-            }
-          />
+          <Stack gap={1}>
+            {/* 비밀번호 입력란 */}
+            <OutlinedInput
+              type={isPasswordVisible ? "text" : "password"}
+              placeholder="비밀번호"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              // 비밀번호 보임/안보임
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton onClick={handlePasswordVisibleClick}>
+                    {isPasswordVisible ? (
+                      <VisibilityRoundedIcon />
+                    ) : (
+                      <VisibilityOffRoundedIcon />
+                    )}
+                  </IconButton>
+                </InputAdornment>
+              }
+            />
+
+            {/* 비밀번호 필요 조건 */}
+            <Stack>
+              <Stack direction="row" alignItems="center" gap={1}>
+                <CircleRoundedIcon color="primary" sx={{ fontSize: "0.8em" }} />{" "}
+                <Typography>8글자 이상</Typography>
+                <CheckRoundedIcon
+                  color="success"
+                  sx={{
+                    display: password.length >= 8 ? "block" : "none",
+                  }}
+                />
+              </Stack>
+              <Stack direction="row" alignItems="center" gap={1}>
+                <CircleRoundedIcon color="primary" sx={{ fontSize: "0.8em" }} />{" "}
+                <Typography>영문, 숫자, 특수문자 포함</Typography>
+                <CheckRoundedIcon
+                  color="success"
+                  sx={{
+                    display:
+                      /[a-zA-Z]/.test(password) &&
+                      /[0-9]/.test(password) &&
+                      /[~!@#$%?]/.test(password)
+                        ? "block"
+                        : "none",
+                  }}
+                />
+              </Stack>
+            </Stack>
+          </Stack>
 
           {/* 비밀번호 재입력 입력란 */}
           <OutlinedInput
@@ -386,7 +410,7 @@ const Register = () => {
             <Button
               variant="contained"
               color="secondary"
-              onClick={() => {}}
+              onClick={handleRegisterButtonClick}
               fullWidth
               sx={{
                 fontSize: "1.5em",
@@ -404,8 +428,8 @@ const Register = () => {
                 color: theme.palette.secondary.main,
               }}
             >
-              <Typography variant="subtitle1" color="secondary">
-                이미 FabLab 회원이신가요?
+              <Typography variant="subtitle1" color="primary">
+                로그인으로 돌아가기
               </Typography>
             </Link>
           </Stack>
