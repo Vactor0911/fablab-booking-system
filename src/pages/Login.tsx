@@ -55,6 +55,7 @@ const Login = () => {
             sm: "65%",
           }}
           maxWidth="600px"
+          padding="80px 0"
           gap={3}
         >
           {/* 페이지명 */}
