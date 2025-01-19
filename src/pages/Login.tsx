@@ -118,7 +118,7 @@ const Login = () => {
 
             {/* 하단 링크 */}
             <Stack direction="row" justifyContent="space-between">
-              <Link to="/" css={LinkCss}>
+              <Link to="/find-password" css={LinkCss}>
                 <Typography variant="subtitle1" color="secondary">
                   비밀번호 찾기
                 </Typography>
