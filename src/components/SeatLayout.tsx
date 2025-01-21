@@ -1,223 +1,232 @@
-import { range } from "../utils";
-import { color } from "../utils/theme";
+import {
+  Box,
+  Button,
+  Grid2,
+  Stack,
+  ThemeProvider,
+  Typography,
+} from "@mui/material";
+import { theme } from "../utils";
 
-// 좌석 버튼 속성
+import { StackProps } from "@mui/material/Stack";
+import { useCallback } from "react";
+
 interface SeatButtonProps {
-  name: string;
-  isReserved?: boolean;
-  onClick?: () => void;
+  seatName: string;
+  isOccupied?: boolean;
+  isRestricted?: boolean;
 }
 
-// 좌석 버튼 컴포넌트
-const SeatButton = (props: SeatButtonProps) => {
-  const { name, isReserved = false, onClick } = props;
-  return (
-    <div
-      onClick={onClick}
-      css={{
-        display: "flex",
-        flexDirection: "column",
-        border: "1px solid black",
-        flex: "1",
-        backgroundColor: "#fffcf2",
-        cursor: "pointer",
-        "& .mobile": {
-          display: "none",
-        },
-        "@media (max-width: 768px)": {
-          "& .mobile": {
-            display: "flex",
-          },
-          "& :not(.mobile)": {
-            display: "none",
-          },
-        },
-      }}
-    >
-      <>
-        <p
-          css={{
-            padding: "0 5px",
-            backgroundColor: isReserved ? "#676767" : "inherit",
-            color: isReserved ? "white" : "black",
-            fontWeight: "bold",
+const SeatLayout = (props: StackProps) => {
+  // 좌석 버튼 클릭
+  const handleSeatButtonClick = useCallback((seatName: string) => {
+    console.log(`${seatName} 클릭됨`);
+  }, []);
+
+  // 좌석 버튼
+  const SeatButton = (props: SeatButtonProps) => {
+    const { seatName, isOccupied = false, isRestricted = false } = props;
+
+    let backgroundColor = "#fffcf2";
+    let text;
+    if (isRestricted) {
+      backgroundColor = "#d3d2cb";
+      text = "예약불가";
+    } else if (isOccupied) {
+      backgroundColor = "#44eb4d";
+      text = "사용중";
+    }
+
+    return (
+      <Stack
+        component={Button}
+        key={seatName}
+        fullWidth
+        minWidth={0}
+        minHeight={{
+          xs: "0",
+          md: "70px",
+        }}
+        justifyContent="center"
+        alignItems="center"
+        border="1px solid #666"
+        flex={1}
+        position="relative"
+        overflow="hidden"
+        sx={{
+          backgroundColor: backgroundColor,
+          color: "black",
+        }}
+        onClick={() => handleSeatButtonClick(seatName)}
+      >
+        {/* 중앙 텍스트 */}
+        <Typography
+          variant="h6"
+          display={{
+            xs: "block",
+            md: "none",
           }}
         >
-          {name}
-        </p>
-        {isReserved && (
-          <div
-            className="content"
-            css={{
-              height: "100%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              backgroundColor: "#d3d2cb",
-            }}
-          >
-            <p>사용중</p>
-          </div>
-        )}
-        <div
-          className="mobile"
-          css={{
-            height: "100%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            backgroundColor: isReserved ? "#1abe33" : "inherit",
-            color: isReserved ? "white" : "black",
+          {seatName}
+        </Typography>
+        <Typography
+          variant="h6"
+          display={{
+            xs: "none",
+            md: "block",
           }}
         >
-          <h3 className="mobile">{name}</h3>
-        </div>
-      </>
-    </div>
-  );
-};
+          {text}
+        </Typography>
 
-const SeatLayout = () => {
-  return (
-    <div
-      css={{
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-      }}
-    >
-      {/* 입구 및 사물함 */}
-      <div
-        className="top-container"
-        css={{
-          width: "100%",
-          display: "flex",
-          gap: "5%",
-          height: "5%",
-          "& span": {
-            display: "flex",
-            flex: "1",
-            justifyContent: "center",
-            alignItems: "center",
-            backgroundColor: color.primary,
-            fontWeight: "bold",
-            color: "white",
-          },
-          "& span.fullwidth": {
-            flexGrow: "6",
-          },
-        }}
-      >
-        <span>출입구</span>
-        <span className="fullwidth">사물함</span>
-        <span>고정문</span>
-      </div>
-
-      {/* 좌석 */}
-      <div
-        className="layout-root"
-        css={{
-          height: "90%",
-          display: "flex",
-          justifyContent: "space-between",
-          "& > div": {
-            height: "100%",
-            display: "flex",
-            flexDirection: "column",
-            gap: "2%",
-          },
-        }}
-      >
-        {/* 왼쪽 */}
-        <div className="left" css={{ width: "7%" }}>
-          {range(1, 7).map((index) => (
-            <SeatButton
-              key={`A${index}`}
-              name={`A${index}`}
-              isReserved={true}
-            />
-          ))}
-          <span css={{ flexGrow: "0.5" }} />
-        </div>
-        {/* 중앙 */}
-        <div
-          className="middle"
-          css={{ width: "80%", justifyContent: "space-between" }}
+        {/* 좌석 이름 */}
+        <Typography
+          variant="subtitle1"
+          position="absolute"
+          top={0}
+          left={5}
+          fontWeight="bold"
+          sx={{
+            [theme.breakpoints.down("md")]: {
+              display: "none",
+            },
+          }}
         >
-          <span />
-          {/* 중앙 */}
-          <div
-            className="middle"
-            css={{
-              width: "100%",
-              height: "67%",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-between",
-            }}
-          >
-            {range(2).map((i) => (
-              <div
-                key={`row${i}`}
-                css={{
-                  width: "100%",
-                  height: "40%",
-                  display: "flex",
-                  justifyContent: "space-around",
-                }}
+          {seatName}
+        </Typography>
+      </Stack>
+    );
+  };
+
+  return (
+    <ThemeProvider theme={theme}>
+      <Stack
+        {...props}
+        minWidth="700px"
+        gap={3}
+        position="relative"
+        sx={{
+          border: "1px solid black",
+        }}
+      >
+        {/* 상단 라벨 */}
+        <Stack direction="row" gap={2}>
+          {["출입구", "사물함", "고정문"].map((text, index) => (
+            <Stack
+              key={`top-label${index}`}
+              flex={index === 1 ? 6 : 1}
+              justifyContent="center"
+              sx={{
+                backgroundColor: theme.palette.primary.main,
+              }}
+            >
+              <Typography
+                variant="h6"
+                textAlign="center"
+                color="white"
+                fontWeight="bold"
               >
-                {range(4).map((j) => (
-                  <div
-                    key={`column${j}`}
-                    css={{
-                      width: "19%",
-                      display: "grid",
-                      gridTemplateColumns: "repeat(2, 1fr)",
-                      gridTemplateRows: "repeat(2, 1fr)",
-                      gap: "2px",
-                    }}
-                  >
-                    {range(1, 5).map((index) => (
-                      <SeatButton
-                        key={`B${i * 16 + j * 4 + index}`}
-                        name={`B${i * 16 + j * 4 + index}`}
-                      />
-                    ))}
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
-          {/* 중앙 하단 */}
-          <div
-            className="bottom"
-            css={{
-              height: "13.5%",
-              display: "flex",
-              gap: "2%",
-            }}
-          >
-            {range(1, 6).map((index) => (
-              <>
-                <SeatButton key={`C${index}`} name={`C${index}`} />
-                {index !== 5 && (
-                  <SeatButton key={`D${index}`} name={`D${index}`} />
-                )}
-              </>
-            ))}
-          </div>
-        </div>
-        {/* 오른쪽 */}
-        <div className="right" css={{ width: "7%" }}>
-          {range(7, 13).map((index) => (
-            <SeatButton key={`A${index}`} name={`A${index}`} />
+                {text}
+              </Typography>
+            </Stack>
           ))}
-          <span css={{ flexGrow: "0.5" }} />
-        </div>
-      </div>
-    </div>
+        </Stack>
+
+        {/* 중앙 좌석 배치도 */}
+        <Stack direction="row" gap={2} flex={1}>
+          {/* 좌측 */}
+          <Stack direction="row" flex={1}>
+            <Stack flex={3} gap={2}>
+              {Array.from({ length: 6 }, (_, index) => index + 1).map(
+                (number) =>
+                  SeatButton({
+                    seatName: `A${number}`,
+                  })
+              )}
+              <Box flex={0.5} />
+            </Stack>
+
+            <Box flex={1} />
+          </Stack>
+
+          {/* 중앙 */}
+          <Stack flex={6} justifyContent="space-evenly" gap={2}>
+            {/* 1행 */}
+            <Stack direction="row" justifyContent="space-between" gap={2}>
+              {Array.from({ length: 4 }, (_, index) => index).map((number) => (
+                <Grid2 flex={1} container key={`row1-${number}`}>
+                  {Array.from({ length: 4 }, (_, index) => index + 1).map(
+                    (number2) => (
+                      <Grid2 size={6} key={`row2-${number}-${number2}`}>
+                        {SeatButton({
+                          seatName: `B${number * 4 + number2}`,
+                          isRestricted: true,
+                        })}
+                      </Grid2>
+                    )
+                  )}
+                </Grid2>
+              ))}
+            </Stack>
+
+            {/* 2행 */}
+            <Stack direction="row" justifyContent="space-between" gap={2}>
+              {Array.from({ length: 4 }, (_, index) => index + 4).map(
+                (number) => (
+                  <Grid2 flex={1} container key={`row2-${number}`}>
+                    {Array.from({ length: 4 }, (_, index) => index + 1).map(
+                      (number2) => (
+                        <Grid2 size={6} key={`row2-${number}-${number2}`}>
+                          {SeatButton({
+                            seatName: `B${number * 4 + number2}`,
+                            isOccupied: true,
+                          })}
+                        </Grid2>
+                      )
+                    )}
+                  </Grid2>
+                )
+              )}
+            </Stack>
+          </Stack>
+
+          {/* 우측 */}
+          <Stack direction="row" flex={1}>
+            <Box flex={1} />
+
+            <Stack flex={3} gap={2}>
+              {Array.from({ length: 6 }, (_, index) => index + 7).map(
+                (number) =>
+                  SeatButton({
+                    seatName: `A${number}`,
+                  })
+              )}
+            </Stack>
+          </Stack>
+        </Stack>
+
+        {/* 하단 여백 */}
+        <Typography variant="h6"></Typography>
+
+        {/* 하단 좌석 배치도 */}
+        <Stack direction="row" position="absolute" bottom={0} width="100%">
+          <Box flex={1} />
+          <Stack
+            direction="row"
+            flex={7}
+            justifyContent="space-between"
+            gap={2}
+          >
+            {Array.from({ length: 9 }, (_, index) => index + 1).map((number) =>
+              SeatButton({
+                seatName: `C${number}`,
+              })
+            )}
+          </Stack>
+          <Box flex={1} />
+        </Stack>
+      </Stack>
+    </ThemeProvider>
   );
 };
 
