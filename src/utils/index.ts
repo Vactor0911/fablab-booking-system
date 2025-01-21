@@ -10,7 +10,6 @@ export const theme = createTheme({
       styleOverrides: {
         root: {
           "&.page-root": {
-            direction: "row",
             justifyContent: "center",
             alignItems: "center",
             // xs
@@ -18,8 +17,20 @@ export const theme = createTheme({
               minHeight: "calc(100vh - 60px)",
             },
             // sm
-            "@media (max-width: 900px)": {
+            "@media (min-width: 601px)": {
               minHeight: "calc(100vh - 80px)",
+            },
+          },
+          "&.base-layout": {
+            padding: "50px 0",
+            justifyContent: "center",
+            // xs
+            "@media (max-width: 600px)": {
+              width: "90%",
+            },
+            // sm
+            "@media (min-width: 601px)": {
+              width: "80%",
             },
           },
         },
