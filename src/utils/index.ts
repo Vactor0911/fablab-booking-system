@@ -30,7 +30,7 @@ export const theme = createTheme({
             },
             // sm
             "@media (min-width: 601px)": {
-              width: "80%",
+              width: "75%",
             },
           },
         },
