@@ -1,6 +1,14 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router";
 import Header from "./components/Header";
-import { Home, Login, Register, FindPassword, Reservation, About } from "./pages";
+import {
+  Home,
+  Login,
+  Register,
+  FindPassword,
+  Reservation,
+  About,
+  Notice,
+} from "./pages";
 
 function App() {
   return (
@@ -13,6 +21,7 @@ function App() {
         <Route path="/find-password" element={<FindPassword />} />
         <Route path="/reservation" element={<Reservation />} />
         <Route path="/about" element={<About />} />
+        <Route path="/notice" element={<Notice />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </BrowserRouter>

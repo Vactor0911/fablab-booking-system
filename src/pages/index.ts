@@ -4,5 +4,6 @@ import Register from './Register';
 import FindPassword from './FindPassword';
 import Reservation from './Reservation';
 import About from "./About";
+import Notice from './Notice';
 
-export { Home, Login, Register, FindPassword, Reservation, About };
+export { Home, Login, Register, FindPassword, Reservation, About, Notice };
