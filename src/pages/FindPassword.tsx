@@ -92,7 +92,7 @@ const FindPassword = () => {
           gap={3}
         >
           {/* 페이지명 */}
-          <Typography variant="h4" fontWeight="bold">
+          <Typography variant="h2" fontWeight="bold">
             비밀번호 찾기
           </Typography>
 
@@ -139,10 +139,11 @@ const FindPassword = () => {
               onChange={(e) => setConfirmCode(e.target.value)}
               sx={{
                 flex: "1",
+                minWidth: "120px",
               }}
             />
 
-            {/* 남은 시간 타이머머 */}
+            {/* 남은 시간 타이머 */}
             <Box display="flex" alignItems="center" flex={1}>
               {!isConfirmCodeChecked && (
                 <Typography variant="subtitle1" color="primary">
@@ -165,7 +166,7 @@ const FindPassword = () => {
           <Box display={isConfirmCodeChecked ? "block" : "none"}>
             {/* 비밀번호 재설정 제목 */}
             <Typography
-              variant="h6"
+              variant="h3"
               color="primary"
               marginBottom={1}
               fontWeight="bold"
@@ -203,7 +204,7 @@ const FindPassword = () => {
                       color="primary"
                       sx={{ fontSize: "0.8em" }}
                     />
-                    <Typography>8글자 이상</Typography>
+                    <Typography variant="subtitle1">8글자 이상</Typography>
                     <CheckRoundedIcon
                       color="success"
                       sx={{
@@ -216,7 +217,9 @@ const FindPassword = () => {
                       color="primary"
                       sx={{ fontSize: "0.8em" }}
                     />
-                    <Typography>영문, 숫자, 특수문자 포함</Typography>
+                    <Typography variant="subtitle1">
+                      영문, 숫자, 특수문자 포함
+                    </Typography>
                     <CheckRoundedIcon
                       color="success"
                       sx={{

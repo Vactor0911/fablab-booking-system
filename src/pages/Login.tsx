@@ -50,7 +50,7 @@ const Login = () => {
           gap={3}
         >
           {/* 페이지명 */}
-          <Typography variant="h4" fontWeight="bold">
+          <Typography variant="h2" fontWeight="bold">
             로그인
           </Typography>
 

@@ -171,8 +171,7 @@ const Header = () => {
           {/* 로고 */}
           <Link to="/" css={LinkCss}>
             <Typography
-              variant="h4"
-              fontWeight="bold"
+              variant="h1"
               sx={{
                 color: "white",
               }}

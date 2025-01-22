@@ -42,7 +42,7 @@ const ReservationDialog = (props: ReservationDialogProps) => {
         fullWidth
       >
         <DialogTitle
-          variant="h5"
+          variant="h2"
           sx={{
             display: "flex",
             justifyContent: "space-between",
@@ -68,7 +68,7 @@ const ReservationDialog = (props: ReservationDialogProps) => {
           }}
         >
           {/* 좌석명 */}
-          <Typography variant="h4">{seatName} 좌석</Typography>
+          <Typography variant="h2">{seatName} 좌석</Typography>
 
           {/* 좌석 정보 */}
           <Stack
@@ -153,25 +153,27 @@ const ReservationDialog = (props: ReservationDialogProps) => {
           {/* 주의사항 */}
           <Stack>
             {/* 주의사항 제목 */}
-            <Typography variant="subtitle1" color="primary" fontWeight="bold">* 주의사항 *</Typography>
+            <Typography variant="subtitle1" color="primary" fontWeight="bold">
+              * 주의사항 *
+            </Typography>
 
             {/* 내용 */}
             <Stack padding="5px 15px" sx={{ backgroundColor: "#f4f4f6" }}>
-            <TextField
-              multiline
-              defaultValue={caution}
-              variant="standard"
-              disabled
-              sx={{
-                "& .MuiInput-input": {
-                  WebkitTextFillColor: "black !important",
-                },
-                "& .MuiInputBase-root:before": {
-                  content: "none",
-                },
-              }}
-            />
-          </Stack>
+              <TextField
+                multiline
+                defaultValue={caution}
+                variant="standard"
+                disabled
+                sx={{
+                  "& .MuiInput-input": {
+                    WebkitTextFillColor: "black !important",
+                  },
+                  "& .MuiInputBase-root:before": {
+                    content: "none",
+                  },
+                }}
+              />
+            </Stack>
           </Stack>
 
           {/* 예약 버튼 */}

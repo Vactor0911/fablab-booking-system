@@ -123,7 +123,7 @@ const Register = () => {
           gap={3}
         >
           {/* 페이지명 */}
-          <Typography variant="h4" fontWeight="bold">
+          <Typography variant="h2" fontWeight="bold">
             회원가입
           </Typography>
 
@@ -178,10 +178,11 @@ const Register = () => {
               onChange={(e) => setConfirmCode(e.target.value)}
               sx={{
                 flex: "1",
+                minWidth: "120px",
               }}
             />
 
-            {/* 남은 시간 타이머머 */}
+            {/* 남은 시간 타이머 */}
             <Box display="flex" alignItems="center" flex={1}>
               {!isConfirmCodeChecked && (
                 <Typography variant="subtitle1" color="primary">
@@ -226,7 +227,7 @@ const Register = () => {
             <Stack>
               <Stack direction="row" alignItems="center" gap={1}>
                 <CircleRoundedIcon color="primary" sx={{ fontSize: "0.8em" }} />{" "}
-                <Typography>8글자 이상</Typography>
+                <Typography variant="subtitle1">8글자 이상</Typography>
                 <CheckRoundedIcon
                   color="success"
                   sx={{
@@ -236,7 +237,9 @@ const Register = () => {
               </Stack>
               <Stack direction="row" alignItems="center" gap={1}>
                 <CircleRoundedIcon color="primary" sx={{ fontSize: "0.8em" }} />{" "}
-                <Typography>영문, 숫자, 특수문자 포함</Typography>
+                <Typography variant="subtitle1">
+                  영문, 숫자, 특수문자 포함
+                </Typography>
                 <CheckRoundedIcon
                   color="success"
                   sx={{
@@ -278,7 +281,7 @@ const Register = () => {
             <Stack>
               {/* 개인정보 동의서 제목 */}
               <Typography
-                variant="h6"
+                variant="h3"
                 color="primary"
                 marginBottom={1}
                 fontWeight="bold"
@@ -343,7 +346,7 @@ const Register = () => {
             <Stack>
               {/* 주의사항 확인서 제목 */}
               <Typography
-                variant="h6"
+                variant="h3"
                 color="primary"
                 marginBottom={1}
                 fontWeight="bold"
