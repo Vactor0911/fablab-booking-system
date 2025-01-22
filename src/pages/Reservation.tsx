@@ -17,9 +17,13 @@ const Reservation = () => {
         </Box>
 
         {/* 좌석 배치도 */}
-        <Stack width="100%" flex={1} sx={{
-          overflowX: "auto",
-        }}>
+        <Stack
+          width="100%"
+          flex={1}
+          sx={{
+            overflowX: "auto",
+          }}
+        >
           <SeatLayout flex={1} margin="20px 20px" />
         </Stack>
       </Stack>
