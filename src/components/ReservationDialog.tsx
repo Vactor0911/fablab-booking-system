@@ -14,7 +14,7 @@ import {
 import SampleImage from "../assets/SampleImage.png";
 
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
-import { theme } from "../utils";
+import { dateFormatter, theme } from "../utils";
 
 interface ReservationDialogProps {
   seatName: string;
@@ -113,8 +113,8 @@ const ReservationDialog = (props: ReservationDialogProps) => {
 
               {/* 값 */}
               <Stack spacing={0.5}>
-                <Typography variant="subtitle1">A1</Typography>
-                <Typography variant="subtitle1">2025.01.05</Typography>
+                <Typography variant="subtitle1">{seatName}</Typography>
+                <Typography variant="subtitle1">{dateFormatter.format(new Date())}</Typography>
                 <Typography variant="subtitle1">08:00 ~ 22:00</Typography>
                 <Typography variant="subtitle1">Windows 11</Typography>
               </Stack>
