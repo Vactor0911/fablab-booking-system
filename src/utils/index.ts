@@ -10,7 +10,6 @@ export const theme = createTheme({
       styleOverrides: {
         root: {
           "&.page-root": {
-            justifyContent: "center",
             alignItems: "center",
             // xs
             "@media (max-width: 600px)": {
@@ -23,7 +22,6 @@ export const theme = createTheme({
           },
           "&.base-layout": {
             padding: "50px 0",
-            justifyContent: "center",
             // xs
             "@media (max-width: 600px)": {
               width: "90%",

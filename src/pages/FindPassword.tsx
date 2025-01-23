@@ -81,7 +81,7 @@ const FindPassword = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <Stack className="page-root">
+      <Stack className="page-root" justifyContent="center">
         <Stack
           width={{
             xs: "90%",
