@@ -43,56 +43,66 @@ const Notice = () => {
   // 공지사항 목록
   const notices = [
     {
-      title: "공지사항1",
-      date: "2021-10-01",
-      views: 10,
+      id: 10,
+      title:
+        "공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10",
+      date: "2021-10-10",
+      views: 100,
     },
     {
-      title: "공지사항2공지사항2공지사항2공지사항2",
-      date: "2021-10-02",
-      views: 20,
+      id: 9,
+      title: "공지사항9",
+      date: "2021-10-09",
+      views: 90,
     },
     {
-      title: "공지사항3",
-      date: "2021-10-03",
-      views: 30,
+      id: 8,
+      title: "공지사항8",
+      date: "2021-10-08",
+      views: 80,
     },
     {
-      title: "공지사항4",
-      date: "2021-10-04",
-      views: 40,
+      id: 7,
+      title: "공지사항7",
+      date: "2021-10-07",
+      views: 70,
     },
     {
-      title: "공지사항5",
-      date: "2021-10-05",
-      views: 50,
-    },
-    {
+      id: 6,
       title:
         "공지사항6공지사항6공지사항6공지사항6공지사항6공지사항6공지사항6공지사항6공지사항6공지사항6",
       date: "2021-10-06",
       views: 60,
     },
     {
-      title: "공지사항7",
-      date: "2021-10-07",
-      views: 70,
+      id: 5,
+      title: "공지사항5",
+      date: "2021-10-05",
+      views: 50,
     },
     {
-      title: "공지사항8",
-      date: "2021-10-08",
-      views: 80,
+      id: 4,
+      title: "공지사항4",
+      date: "2021-10-04",
+      views: 40,
     },
     {
-      title: "공지사항9",
-      date: "2021-10-09",
-      views: 90,
+      id: 3,
+      title: "공지사항3",
+      date: "2021-10-03",
+      views: 30,
     },
     {
-      title:
-        "공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10",
-      date: "2021-10-10",
-      views: 100,
+      id: 2,
+      title: "공지사항2공지사항2공지사항2공지사항2",
+      date: "2021-10-02",
+      views: 20,
+    },
+    {
+      id: 1,
+      title: "공지사항1",
+      date: "2021-10-01",
+      views: 10,
     },
   ];
 
@@ -100,8 +110,7 @@ const Notice = () => {
   const navigate = useNavigate();
   const handleNoticeClick = useCallback(
     (id: number) => {
-      // navigate(`/notice/${id}`);
-      console.log(`공지사항 ${id} 클릭`);
+      navigate(`/notice/${id}`);
     },
     [navigate]
   );
@@ -122,7 +131,7 @@ const Notice = () => {
           >
             {/* 탭 메뉴 */}
             <Tabs value={tabIndex} onChange={handleTabIndexChange}>
-              <Tab label="전체" value="all" />
+              <Tab label="전체" value="all" sx={{ fontSize: "1.17em", fontWeight: "bold" }} />
             </Tabs>
 
             {/* 제목 검색 */}
@@ -180,11 +189,11 @@ const Notice = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {notices.map((notice, index) => (
+                {notices.slice((page-1)*9, (page-1)*9+9).map((notice) => (
                   <TableRow
-                    key={`notice${index}`}
+                    key={`notice${notice.id}`}
                     onClick={() => {
-                      handleNoticeClick(index);
+                      handleNoticeClick(notice.id);
                     }}
                     sx={{
                       cursor: "pointer",
@@ -193,10 +202,8 @@ const Notice = () => {
                           xs: "10px 15px",
                           sm: "15px",
                         },
-                      },
-                      "&:first-child td": {
-                        backgroundColor: theme.palette.primary.main,
-                        color: "white",
+                        backgroundColor: notice.id === notices[0].id ? theme.palette.primary.main : "none",
+                        color: notice.id === notices[0].id ? "white" : "black",
                       },
                       "&:hover td": {
                         backgroundColor: theme.palette.primary.main,
@@ -204,7 +211,7 @@ const Notice = () => {
                       },
                     }}
                   >
-                    <TableCell>{notices.length - index}</TableCell>
+                    <TableCell>{notice.id}</TableCell>
                     <TableCell
                       sx={{
                         flex: 1,
