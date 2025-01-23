@@ -11,21 +11,29 @@ import { theme } from "../utils";
 import { StackProps } from "@mui/material/Stack";
 import { useCallback } from "react";
 
+interface SeatLayoutProps extends StackProps {
+  onSeatButtonClick?: (seatName: string) => void;
+}
+
 interface SeatButtonProps {
   seatName: string;
   isOccupied?: boolean;
   isRestricted?: boolean;
 }
 
-const SeatLayout = (props: StackProps) => {
+const SeatLayout = (props: SeatLayoutProps) => {
   // 좌석 버튼 클릭
-  const handleSeatButtonClick = useCallback((seatName: string) => {
-    console.log(`${seatName} 클릭됨`);
-  }, []);
+  const handleSeatButtonClick = useCallback(
+    (seatName: string) => {
+      console.log(`${seatName} 클릭됨`);
+      props.onSeatButtonClick?.(seatName);
+    },
+    [props]
+  );
 
   // 좌석 버튼
-  const SeatButton = (props: SeatButtonProps) => {
-    const { seatName, isOccupied = false, isRestricted = false } = props;
+  const SeatButton = (btnProps: SeatButtonProps) => {
+    const { seatName, isOccupied = false, isRestricted = false } = btnProps;
 
     let backgroundColor = "#fffcf2";
     let text;
@@ -57,7 +65,9 @@ const SeatLayout = (props: StackProps) => {
           backgroundColor: backgroundColor,
           color: "black",
         }}
-        onClick={() => handleSeatButtonClick(seatName)}
+        onClick={() => {
+          handleSeatButtonClick(seatName);
+        }}
       >
         {/* 중앙 텍스트 */}
         <Typography
