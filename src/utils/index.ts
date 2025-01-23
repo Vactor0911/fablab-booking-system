@@ -97,3 +97,6 @@ export const range = (startOrEnd: number, end?: number, step = 1) => {
     (_, i) => start + i * step
   );
 };
+
+// 날짜 포맷터
+export const dateFormatter = Intl.DateTimeFormat("sv-SE");
