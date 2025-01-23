@@ -8,6 +8,7 @@ import {
   Reservation,
   About,
   Notice,
+  NoticeDetail,
 } from "./pages";
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
         <Route path="/reservation" element={<Reservation />} />
         <Route path="/about" element={<About />} />
         <Route path="/notice" element={<Notice />} />
+        <Route path="/notice/:noticeid" element={<NoticeDetail />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </BrowserRouter>
