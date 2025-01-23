@@ -3,8 +3,22 @@ import NoticeBanner from "../components/NoticeBanner";
 import SeatLayout from "../components/SeatLayout";
 import { theme } from "../utils";
 import ReservationDialog from "../components/ReservationDialog";
+import { useCallback, useState } from "react";
 
 const Reservation = () => {
+  const [seatName, setSeatName] = useState("");
+  const [reservationDialogOpen, setReservationDialogOpen] = useState(false);
+
+  const handleReservationDialogOpen = useCallback((seatName: string) => {
+    setSeatName(seatName);
+    setReservationDialogOpen(true);
+  }, []);
+
+  // 예약 대화상자 닫기
+  const handleReservationDialogClose = useCallback(() => {
+    setReservationDialogOpen(false);
+  }, []);
+
   return (
     <ThemeProvider theme={theme}>
       <Stack className="page-root">
@@ -24,11 +38,11 @@ const Reservation = () => {
             overflowX: "auto",
           }}
         >
-          <SeatLayout flex={1} margin="20px 20px" />
+          <SeatLayout flex={1} margin="20px 20px" onSeatButtonClick={handleReservationDialogOpen} />
         </Stack>
       </Stack>
 
-      <ReservationDialog seatName="A1" open={true} onClose={() => {}} />
+      <ReservationDialog seatName={seatName} open={reservationDialogOpen} onClose={handleReservationDialogClose} />
     </ThemeProvider>
   );
 };
