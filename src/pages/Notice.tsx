@@ -131,7 +131,11 @@ const Notice = () => {
           >
             {/* 탭 메뉴 */}
             <Tabs value={tabIndex} onChange={handleTabIndexChange}>
-              <Tab label="전체" value="all" sx={{ fontSize: "1.17em", fontWeight: "bold" }} />
+              <Tab
+                label="전체"
+                value="all"
+                sx={{ fontSize: "1.17em", fontWeight: "bold" }}
+              />
             </Tabs>
 
             {/* 제목 검색 */}
@@ -167,6 +171,8 @@ const Notice = () => {
             onChange={handlePageChange}
             siblingCount={1}
             boundaryCount={0}
+            showFirstButton
+            showLastButton
             sx={{
               alignSelf: "flex-end",
             }}
@@ -189,50 +195,56 @@ const Notice = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {notices.slice((page-1)*9, (page-1)*9+9).map((notice) => (
-                  <TableRow
-                    key={`notice${notice.id}`}
-                    onClick={() => {
-                      handleNoticeClick(notice.id);
-                    }}
-                    sx={{
-                      cursor: "pointer",
-                      "& td": {
-                        padding: {
-                          xs: "10px 15px",
-                          sm: "15px",
+                {notices
+                  .slice((page - 1) * 9, (page - 1) * 9 + 9)
+                  .map((notice) => (
+                    <TableRow
+                      key={`notice${notice.id}`}
+                      onClick={() => {
+                        handleNoticeClick(notice.id);
+                      }}
+                      sx={{
+                        cursor: "pointer",
+                        "& td": {
+                          padding: {
+                            xs: "10px 15px",
+                            sm: "15px",
+                          },
+                          backgroundColor:
+                            notice.id === notices[0].id
+                              ? theme.palette.primary.main
+                              : "none",
+                          color:
+                            notice.id === notices[0].id ? "white" : "black",
                         },
-                        backgroundColor: notice.id === notices[0].id ? theme.palette.primary.main : "none",
-                        color: notice.id === notices[0].id ? "white" : "black",
-                      },
-                      "&:hover td": {
-                        backgroundColor: theme.palette.primary.main,
-                        color: "white",
-                      },
-                    }}
-                  >
-                    <TableCell>{notice.id}</TableCell>
-                    <TableCell
-                      sx={{
-                        flex: 1,
-                        maxWidth: "300px",
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
+                        "&:hover td": {
+                          backgroundColor: theme.palette.primary.main,
+                          color: "white",
+                        },
                       }}
                     >
-                      {notice.title}
-                    </TableCell>
-                    <TableCell
-                      sx={{
-                        whiteSpace: "nowrap",
-                      }}
-                    >
-                      {notice.date}
-                    </TableCell>
-                    <TableCell>{notice.views}</TableCell>
-                  </TableRow>
-                ))}
+                      <TableCell>{notice.id}</TableCell>
+                      <TableCell
+                        sx={{
+                          flex: 1,
+                          maxWidth: "300px",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                        }}
+                      >
+                        {notice.title}
+                      </TableCell>
+                      <TableCell
+                        sx={{
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {notice.date}
+                      </TableCell>
+                      <TableCell>{notice.views}</TableCell>
+                    </TableRow>
+                  ))}
               </TableBody>
             </Table>
           </TableContainer>
