@@ -71,7 +71,7 @@ const SeatLayout = (props: SeatLayoutProps) => {
       >
         {/* 중앙 텍스트 */}
         <Typography
-          variant="h6"
+          variant="h3"
           display={{
             xs: "block",
             md: "none",
@@ -80,7 +80,7 @@ const SeatLayout = (props: SeatLayoutProps) => {
           {seatName}
         </Typography>
         <Typography
-          variant="h6"
+          variant="h3"
           display={{
             xs: "none",
             md: "block",
@@ -131,7 +131,7 @@ const SeatLayout = (props: SeatLayoutProps) => {
               }}
             >
               <Typography
-                variant="h6"
+                variant="h3"
                 textAlign="center"
                 color="white"
                 fontWeight="bold"
