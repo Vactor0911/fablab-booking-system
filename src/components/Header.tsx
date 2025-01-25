@@ -1,6 +1,7 @@
 import {
   AppBar,
   Button,
+  Drawer,
   IconButton,
   List,
   ListItemButton,
@@ -9,7 +10,6 @@ import {
   Menu,
   MenuItem,
   Stack,
-  SwipeableDrawer,
   ThemeProvider,
   Toolbar,
   Tooltip,
@@ -339,11 +339,10 @@ const Header = () => {
       </Menu>
 
       {/* 드로어 메뉴 */}
-      <SwipeableDrawer
+      <Drawer
         anchor="right"
         open={drawerOpen}
         onClose={handleDrawerClose}
-        onOpen={handleDrawerOpen}
       >
         <Stack
           width={250}
@@ -362,7 +361,7 @@ const Header = () => {
             <IconButton onClick={handleDrawerClose} sx={{ p: 0 }}>
               <CloseRoundedIcon
                 sx={{
-                  fontSize: "2em",
+                  fontSize: "1.5em",
                   color: "white",
                 }}
               />
@@ -382,7 +381,7 @@ const Header = () => {
             {DrawerNavButton("공지사항", "/notice")}
           </List>
         </Stack>
-      </SwipeableDrawer>
+      </Drawer>
     </ThemeProvider>
   );
 };
