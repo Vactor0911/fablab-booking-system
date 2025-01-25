@@ -26,7 +26,7 @@ const NoticeBanner = (props: NoticeBannerProps) => {
       }}
     >
       <Typography
-        variant="h5"
+        variant="h3"
         fontWeight="bold"
         whiteSpace="nowrap"
         overflow="hidden"
@@ -34,7 +34,7 @@ const NoticeBanner = (props: NoticeBannerProps) => {
       >
         {message}
       </Typography>
-      <Typography variant="h5" fontWeight="bold">
+      <Typography variant="h3" fontWeight="bold">
         {moreCount && `+${moreCount}`}
       </Typography>
     </Stack>
