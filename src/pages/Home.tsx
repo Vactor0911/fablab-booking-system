@@ -32,7 +32,7 @@ const Home = () => {
       <Stack direction="column" minHeight="100vh">
         {/* 배너 */}
         <Stack
-          height={{ xs: "auto", sm: "45vh"}}
+          height={{ xs: "auto", sm: "45vh" }}
           minHeight="300px"
           maxHeight="500px"
           justifyContent="center"
@@ -66,11 +66,15 @@ const Home = () => {
           }}
         >
           <Typography
-            variant="h2"
+            variant="h1"
+            fontSize={{
+              xs: "2em",
+              sm: "3em",
+              md: "4em",
+            }}
             margin="80px 0"
             padding="0 30px"
             textAlign="center"
-            fontWeight="bold"
             color="white"
           >
             FabLab 슬로건 입력될 자리
@@ -111,9 +115,10 @@ const Home = () => {
                 css={{
                   ...LinkCss,
                   display: "flex",
+                  alignItems: "center",
                 }}
               >
-                <Typography variant="h5" fontWeight="bold">
+                <Typography variant="h2" fontWeight="bold">
                   공지사항
                 </Typography>
                 <ChevronRightRoundedIcon fontSize="large" color="secondary" />
@@ -121,11 +126,7 @@ const Home = () => {
             </Stack>
 
             {/* 공지사항 목록 */}
-            <Stack
-              direction="column"
-              spacing={2}
-              borderRadius="10px"
-            >
+            <Stack direction="column" spacing={2} borderRadius="10px">
               {[
                 "공지사항1",
                 "공지사항2공지사항2공지사항2공지사항2공지사항2공지사항2공지사항2공지사항2공지사항2공지사항2공지사항2공지사항2",
@@ -145,10 +146,7 @@ const Home = () => {
                       gap: "10px",
                     }}
                   >
-                    <CircleRoundedIcon
-                      fontSize="small"
-                      color="primary"
-                    />
+                    <CircleRoundedIcon fontSize="small" color="primary" />
                     <Typography
                       variant="subtitle1"
                       whiteSpace="nowrap"
@@ -163,11 +161,7 @@ const Home = () => {
             </Stack>
 
             {/* 더보기 버튼 */}
-            <Stack
-              direction="row"
-              justifyContent="flex-end"
-              display="flex"
-            >
+            <Stack direction="row" justifyContent="flex-end" display="flex">
               <Link to="/notice" css={LinkCss}>
                 <Typography
                   variant="subtitle1"
@@ -201,10 +195,11 @@ const Home = () => {
           >
             {/* 내 예약현황 링크 */}
             <Stack direction="row">
-              <Link to="/my-reservation" css={{ ...LinkCss, display: "flex" }}>
-                <Typography variant="h5" fontWeight="bold">
-                  내 예약현황
-                </Typography>
+              <Link
+                to="/my-reservation"
+                css={{ ...LinkCss, display: "flex", alignItems: "center" }}
+              >
+                <Typography variant="h2">내 예약현황</Typography>
                 <ChevronRightRoundedIcon fontSize="large" color="secondary" />
               </Link>
             </Stack>
@@ -237,11 +232,7 @@ const Home = () => {
                   <Typography variant="h6" fontWeight="bold">
                     예약 좌석
                   </Typography>
-                  <Stack
-                    direction="row"
-                    spacing={1}
-                    flexWrap={"wrap"}
-                  >
+                  <Stack direction="row" spacing={1} flexWrap={"wrap"}>
                     <Typography
                       variant="subtitle1"
                       color="secondary"
