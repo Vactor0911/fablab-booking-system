@@ -39,7 +39,7 @@ const Login = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <Stack className="page-root">
+      <Stack className="page-root" justifyContent="center">
         <Stack
           width={{
             xs: "90%",
@@ -50,7 +50,7 @@ const Login = () => {
           gap={3}
         >
           {/* 페이지명 */}
-          <Typography variant="h4" fontWeight="bold">
+          <Typography variant="h2" fontWeight="bold">
             로그인
           </Typography>
 

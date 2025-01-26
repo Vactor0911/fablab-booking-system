@@ -10,16 +10,25 @@ export const theme = createTheme({
       styleOverrides: {
         root: {
           "&.page-root": {
-            direction: "row",
-            justifyContent: "center",
             alignItems: "center",
             // xs
             "@media (max-width: 600px)": {
               minHeight: "calc(100vh - 60px)",
             },
             // sm
-            "@media (max-width: 900px)": {
+            "@media (min-width: 601px)": {
               minHeight: "calc(100vh - 80px)",
+            },
+          },
+          "&.base-layout": {
+            padding: "50px 0",
+            // xs
+            "@media (max-width: 600px)": {
+              width: "90%",
+            },
+            // sm
+            "@media (min-width: 601px)": {
+              width: "75%",
             },
           },
         },
@@ -32,6 +41,44 @@ export const theme = createTheme({
   },
   typography: {
     fontFamily: ["Pretendard-Regular", "sans-serif"].join(","),
+    h1: {
+      fontSize: "2em",
+      lineHeight: "2em",
+      fontWeight: "bold",
+    },
+    h2: {
+      fontSize: "1.5em",
+      lineHeight: "1.5em",
+      fontWeight: "bold",
+    },
+    h3: {
+      fontSize: "1.17em",
+      lineHeight: "1.17em",
+      fontWeight: "bold",
+    },
+    h4: {
+      fontSize: "1em",
+      lineHeight: "1em",
+      fontWeight: "bold",
+    },
+    h5: {
+      fontSize: "0.83em",
+      lineHeight: "0.83em",
+      fontWeight: "bold",
+    },
+    h6: {
+      fontSize: "0.67em",
+      lineHeight: "0.67em",
+      fontWeight: "bold",
+    },
+    subtitle1: {
+      fontSize: "1em",
+      lineHeight: "1.5em",
+    },
+    subtitle2: {
+      fontSize: "0.83em",
+      lineHeight: "0.125em",
+    },
   },
 });
 
@@ -50,3 +97,6 @@ export const range = (startOrEnd: number, end?: number, step = 1) => {
     (_, i) => start + i * step
   );
 };
+
+// 날짜 포맷터
+export const dateFormatter = Intl.DateTimeFormat("sv-SE");

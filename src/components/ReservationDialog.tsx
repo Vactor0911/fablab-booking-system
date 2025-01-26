@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Dialog,
   DialogContent,
@@ -6,23 +7,26 @@ import {
   Divider,
   IconButton,
   Stack,
+  TextField,
   ThemeProvider,
+  Typography,
 } from "@mui/material";
-import Logo from "../assets/logo.png";
 import SampleImage from "../assets/SampleImage.png";
 
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
-import { color } from "../utils/theme";
-import { theme } from "../utils";
+import { dateFormatter, theme } from "../utils";
 
 interface ReservationDialogProps {
+  seatName: string;
   open: boolean;
   onClose: () => void;
 }
 
 const ReservationDialog = (props: ReservationDialogProps) => {
-  const open = props.open;
-  const onClose = props.onClose;
+  const { seatName, open, onClose } = props;
+  const ettiqutte = `1. 좌석 사용시 자리 정돈 기본매너\n2. 다른 사람에게 피해 주지 않기\n3. 사용자끼리 존중 해주기\n4. 음식 취식 불가`;
+  const caution = `칸막이가 따로 없는 좌석입니다.`;
+
   return (
     <ThemeProvider theme={theme}>
       <Dialog
@@ -30,116 +34,155 @@ const ReservationDialog = (props: ReservationDialogProps) => {
         onClose={onClose}
         sx={{
           padding: "20px",
+          "& .MuiDialog-paper": {
+            margin: "0",
+            width: "100%",
+          },
         }}
         fullWidth
       >
         <DialogTitle
+          variant="h2"
           sx={{
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
           }}
         >
-          <img
-            src={Logo}
-            alt="Logo"
-            css={{
-              height: "40px",
-            }}
-          />
+          {/* 대화상자 제목 */}
+          FabLab
+          {/* 닫기 버튼 */}
           <IconButton aria-label="close" onClick={onClose}>
             <CloseRoundedIcon />
           </IconButton>
         </DialogTitle>
+
+        {/* 구분선 */}
         <Divider variant="middle" />
+
         <DialogContent
           sx={{
             display: "flex",
             flexDirection: "column",
-            gap: "30px",
+            gap: "20px",
           }}
         >
-          <h1>A1 좌석</h1>
-          <div
-            className="info-container"
-            css={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              flexWrap: "wrap-reverse",
-              gap: "20px",
-            }}
+          {/* 좌석명 */}
+          <Typography variant="h2">{seatName} 좌석</Typography>
+
+          {/* 좌석 정보 */}
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+            flexWrap="wrap-reverse"
+            gap={2}
           >
             <Stack direction="row" spacing={2}>
-              <Stack direction="column" spacing={2} sx={{
-                "& span": {
-                  color: color.primary,
-                  fontWeight: "bold",
-                }
-              }}>
-                <span>예약좌석</span>
-                <span>예약날짜</span>
-                <span>예약시간</span>
-                <span>PC 지원</span>
+              {/* 컬럼명 */}
+              <Stack gap={0.5}>
+                <Typography
+                  variant="subtitle1"
+                  color="primary"
+                  fontWeight="bold"
+                >
+                  예약좌석
+                </Typography>
+                <Typography
+                  variant="subtitle1"
+                  color="primary"
+                  fontWeight="bold"
+                >
+                  예약날짜
+                </Typography>
+                <Typography
+                  variant="subtitle1"
+                  color="primary"
+                  fontWeight="bold"
+                >
+                  예약시간
+                </Typography>
+                <Typography
+                  variant="subtitle1"
+                  color="primary"
+                  fontWeight="bold"
+                >
+                  PC 지원
+                </Typography>
               </Stack>
-              <Stack direction="column" spacing={2}>
-                <span>A1</span>
-                <span>2025.01.05</span>
-                <span>08:00~22:00</span>
-                <span>Windows10</span>
+
+              {/* 값 */}
+              <Stack spacing={0.5}>
+                <Typography variant="subtitle1">{seatName}</Typography>
+                <Typography variant="subtitle1">{dateFormatter.format(new Date())}</Typography>
+                <Typography variant="subtitle1">08:00 ~ 22:00</Typography>
+                <Typography variant="subtitle1">Windows 11</Typography>
               </Stack>
             </Stack>
-            <div
-              css={{
-                borderRadius: "10px",
-                boxShadow: "3px 3px 3px rgba(0,0,0,0.4)",
-                overflow: "hidden",
+
+            {/* 좌석 사진 */}
+            <Box
+              component="img"
+              alt="좌석 사진"
+              src={SampleImage}
+              width="130px"
+              border="1px solid #727272"
+              borderRadius="10px"
+              boxShadow="3px 3px 3px rgba(0,0,0,0.4)"
+            />
+          </Stack>
+
+          {/* 기본 예절 */}
+          <Stack padding="5px 15px" sx={{ backgroundColor: "#f4f4f6" }}>
+            <TextField
+              multiline
+              defaultValue={ettiqutte}
+              variant="standard"
+              disabled
+              sx={{
+                "& .MuiInput-input": {
+                  WebkitTextFillColor: "black !important",
+                },
+                "& .MuiInputBase-root:before": {
+                  content: "none",
+                },
               }}
-            >
-              <img
-                src={SampleImage}
-                alt="A1 좌석"
-                css={{
-                  height: "100px",
-                  objectFit: "cover",
+            />
+          </Stack>
+
+          {/* 주의사항 */}
+          <Stack>
+            {/* 주의사항 제목 */}
+            <Typography variant="subtitle1" color="primary" fontWeight="bold">
+              * 주의사항 *
+            </Typography>
+
+            {/* 내용 */}
+            <Stack padding="5px 15px" sx={{ backgroundColor: "#f4f4f6" }}>
+              <TextField
+                multiline
+                defaultValue={caution}
+                variant="standard"
+                disabled
+                sx={{
+                  "& .MuiInput-input": {
+                    WebkitTextFillColor: "black !important",
+                  },
+                  "& .MuiInputBase-root:before": {
+                    content: "none",
+                  },
                 }}
               />
-            </div>
-          </div>
-          <div
-            className="rules-container"
-            css={{
-              backgroundColor: "#f4f4f4",
-            }}
+            </Stack>
+          </Stack>
+
+          {/* 예약 버튼 */}
+          <Button
+            variant="contained"
+            sx={{ fontSize: "1.5em", fontWeight: "bold" }}
           >
-            <ol
-              css={{
-                padding: "10px",
-                paddingLeft: "30px",
-                "& li::marker": {
-                  fontWeight: "bold",
-                },
-                "& li span": {
-                  color: color.primary,
-                  fontWeight: "bold",
-                },
-              }}
-            >
-              <li>
-                좌석 사용시 <span>자리 정돈</span> 기본 매너
-              </li>
-              <li>
-                다른 사람에게 <span>피해 주지 않기</span>
-              </li>
-              <li>
-                사용자끼리 <span>존중</span> 해주기
-              </li>
-              <li>
-                음식물 <span>취식 불가</span>
-              </li>
-            </ol>
-          </div>
-          <Button variant="contained" sx={{ fontWeight: "bold" }}>동의 후 예약</Button>
+            동의 후 예약
+          </Button>
         </DialogContent>
       </Dialog>
     </ThemeProvider>
