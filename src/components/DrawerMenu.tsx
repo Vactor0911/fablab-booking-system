@@ -153,7 +153,7 @@ const DrawerMenu = (props: DrawerMenuProps) => {
                       text="예약 제한 관리"
                       to="/book-restrictions"
                     />
-                    <DrawerNavButton text="사용자 관리" to="/uers" />
+                    <DrawerNavButton text="사용자 관리" to="/users" />
                     <DrawerNavButton text="로그 관리" to="/logs" />
                   </List>
                 </Collapse>
