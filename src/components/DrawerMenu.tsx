@@ -28,19 +28,13 @@ const DrawerMenu = (props: DrawerMenuProps) => {
   const navigate = useNavigate();
   const loginState = useAtomValue(loginStateAtom);
 
-  // 드로어 메뉴 닫기
-  const handleDrawerClose = useCallback(() => {
-    drawerClose();
-    setManageMenuOpen(false);
-  }, [drawerClose]);
-
   // 드로어 메뉴 네비게이션 버튼 클릭
   const handleDrawerNavButtonClick = useCallback(
     (to: string) => {
-      handleDrawerClose();
+      drawerClose();
       navigate(to);
     },
-    [handleDrawerClose, navigate]
+    [drawerClose, navigate]
   );
 
   // 관리 메뉴
@@ -52,10 +46,21 @@ const DrawerMenu = (props: DrawerMenuProps) => {
   }, [manageMenuOpen]);
 
   // 드로어 네비게이션 버튼
-  const DrawerNavButton = (text: string, to: string) => {
+  const DrawerNavButton = ({
+    text,
+    to,
+    onClick,
+  }: {
+    text: string;
+    to: string;
+    onClick?: () => void;
+  }) => {
     return (
       <ListItemButton
-        onClick={() => handleDrawerNavButtonClick(to)}
+        onClick={() => {
+          handleDrawerNavButtonClick(to);
+          if (onClick) onClick();
+        }}
         sx={{
           backgroundColor: location.pathname === to ? "white" : "transparent",
           color:
@@ -72,7 +77,7 @@ const DrawerMenu = (props: DrawerMenuProps) => {
 
   return (
     <ThemeProvider theme={theme}>
-      <Drawer anchor="right" open={drawerOpen} onClose={handleDrawerClose}>
+      <Drawer anchor="right" open={drawerOpen} onClose={drawerClose}>
         <Stack
           width={250}
           height="100%"
@@ -87,7 +92,7 @@ const DrawerMenu = (props: DrawerMenuProps) => {
             justifyContent="flex-end"
             boxShadow={2}
           >
-            <IconButton onClick={handleDrawerClose} sx={{ p: 0 }}>
+            <IconButton onClick={drawerClose} sx={{ p: 0 }}>
               <CloseRoundedIcon
                 sx={{
                   fontSize: "1.5em",
@@ -105,12 +110,15 @@ const DrawerMenu = (props: DrawerMenuProps) => {
               fontWeight: "bold",
             }}
           >
-            {loginState.permission === Permission.USER &&
-              DrawerNavButton("예약하기", "/reservation")}
+            {/* 예약하기 */}
+            {loginState.permission === Permission.USER && (
+              <DrawerNavButton text="예약하기" to="/reservation" />
+            )}
 
             {/* 관리자용 메뉴 */}
             {loginState.permission !== Permission.USER && (
               <>
+                {/* 관리 메뉴 */}
                 <ListItemButton
                   onClick={handleManageMenuButtonClick}
                   sx={{
@@ -128,6 +136,8 @@ const DrawerMenu = (props: DrawerMenuProps) => {
                     <ExpandMoreRoundedIcon />
                   )}
                 </ListItemButton>
+
+                {/* 접이식 메뉴 */}
                 <Collapse in={manageMenuOpen}>
                   <List
                     disablePadding
@@ -137,16 +147,34 @@ const DrawerMenu = (props: DrawerMenuProps) => {
                       },
                     }}
                   >
-                    {DrawerNavButton("기본 설정", "/settings")}
-                    {DrawerNavButton("예약 제한 관리", "/book-restrictions")}
-                    {DrawerNavButton("사용자 관리", "/uers")}
-                    {DrawerNavButton("로그 관리", "/logs")}
+                    <DrawerNavButton text="기본 설정" to="/settings" />
+                    <DrawerNavButton text="예약 조회" to="/reservation" />
+                    <DrawerNavButton
+                      text="예약 제한 관리"
+                      to="/book-restrictions"
+                    />
+                    <DrawerNavButton text="사용자 관리" to="/uers" />
+                    <DrawerNavButton text="로그 관리" to="/logs" />
                   </List>
                 </Collapse>
               </>
             )}
-            {DrawerNavButton("팹랩소개", "/about")}
-            {DrawerNavButton("공지사항", "/notice")}
+
+            {/* 공통 표시 메뉴 */}
+            <DrawerNavButton
+              text="팹랩소개"
+              to="/about"
+              onClick={() => {
+                setManageMenuOpen(false);
+              }}
+            />
+            <DrawerNavButton
+              text="공지사항"
+              to="/notice"
+              onClick={() => {
+                setManageMenuOpen(false);
+              }}
+            />
           </List>
         </Stack>
       </Drawer>
