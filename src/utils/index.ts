@@ -28,6 +28,10 @@ export const theme = createTheme({
             },
             // sm
             "@media (min-width: 601px)": {
+              width: "85%",
+            },
+            // md
+            "@media (min-width: 901px)": {
               width: "75%",
             },
           },
