@@ -1,4 +1,9 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router";
 import Header from "./components/Header";
 import {
   Home,
@@ -9,6 +14,7 @@ import {
   About,
   Notice,
   NoticeDetail,
+  Users,
 } from "./pages";
 
 function App() {
@@ -24,6 +30,11 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/notice" element={<Notice />} />
         <Route path="/notice/:noticeid" element={<NoticeDetail />} />
+
+        {/* 관리자 페이지 */}
+        <Route path="/users" element={<Users />} />
+
+        {/* 404 Not Found */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </BrowserRouter>
