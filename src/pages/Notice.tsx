@@ -7,7 +7,6 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableContainer,
   TableHead,
   TableRow,
   Tabs,
@@ -42,6 +41,66 @@ const Notice = () => {
 
   // 공지사항 목록
   const notices = [
+    {
+      id: 20,
+      title: "공지사항20",
+      date: "2021-10-20",
+      views: 200,
+    },
+    {
+      id: 19,
+      title: "공지사항19",
+      date: "2021-10-19",
+      views: 190,
+    },
+    {
+      id: 18,
+      title: "공지사항18",
+      date: "2021-10-18",
+      views: 180,
+    },
+    {
+      id: 17,
+      title: "공지사항17",
+      date: "2021-10-17",
+      views: 170,
+    },
+    {
+      id: 16,
+      title: "공지사항16",
+      date: "2021-10-16",
+      views: 160,
+    },
+    {
+      id: 15,
+      title: "공지사항15",
+      date: "2021-10-15",
+      views: 150,
+    },
+    {
+      id: 14,
+      title: "공지사항14",
+      date: "2021-10-14",
+      views: 140,
+    },
+    {
+      id: 13,
+      title: "공지사항13",
+      date: "2021-10-13",
+      views: 130,
+    },
+    {
+      id: 12,
+      title: "공지사항12",
+      date: "2021-10-12",
+      views: 120,
+    },
+    {
+      id: 11,
+      title: "공지사항11",
+      date: "2021-10-11",
+      views: 110,
+    },
     {
       id: 10,
       title:
@@ -179,75 +238,94 @@ const Notice = () => {
           />
 
           {/* 공지사항 테이블 */}
-          <TableContainer
-            component={Box}
-            sx={{
-              overflowX: "auto",
-            }}
-          >
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell sx={{ fontWeight: "bold" }}>번호</TableCell>
-                  <TableCell sx={{ fontWeight: "bold" }}>제목</TableCell>
-                  <TableCell sx={{ fontWeight: "bold" }}>작성일자</TableCell>
-                  <TableCell sx={{ fontWeight: "bold" }}>조회수</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {notices
-                  .slice((page - 1) * 9, (page - 1) * 9 + 9)
-                  .map((notice) => (
-                    <TableRow
-                      key={`notice${notice.id}`}
-                      onClick={() => {
-                        handleNoticeClick(notice.id);
-                      }}
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell
+                  width="5%"
+                  sx={{ fontWeight: "bold", overflow: "hidden" }}
+                >
+                  번호
+                </TableCell>
+                <TableCell
+                  width="65%"
+                  sx={{ fontWeight: "bold", overflow: "hidden" }}
+                >
+                  제목
+                </TableCell>
+                <TableCell
+                  width="20%"
+                  sx={{ fontWeight: "bold", overflow: "hidden" }}
+                >
+                  작성일자
+                </TableCell>
+                <TableCell
+                  width="10%"
+                  sx={{ fontWeight: "bold", overflow: "hidden" }}
+                >
+                  조회수
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {notices
+                .slice((page - 1) * 10, (page - 1) * 10 + 10)
+                .map((notice) => (
+                  <TableRow
+                    key={`notice${notice.id}`}
+                    onClick={() => {
+                      handleNoticeClick(notice.id);
+                    }}
+                    sx={{
+                      cursor: "pointer",
+                      "& td": {
+                        padding: {
+                          xs: "10px 15px",
+                          sm: "15px",
+                        },
+                        backgroundColor:
+                          notice.id === notices[0].id
+                            ? theme.palette.primary.main
+                            : "none",
+                        color: notice.id === notices[0].id ? "white" : "black",
+                      },
+                      "&:hover td": {
+                        backgroundColor: theme.palette.primary.main,
+                        color: "white",
+                      },
+                    }}
+                  >
+                    <TableCell>{notice.id}</TableCell>
+                    <TableCell
+                      width="60%"
                       sx={{
-                        cursor: "pointer",
-                        "& td": {
-                          padding: {
-                            xs: "10px 15px",
-                            sm: "15px",
-                          },
-                          backgroundColor:
-                            notice.id === notices[0].id
-                              ? theme.palette.primary.main
-                              : "none",
-                          color:
-                            notice.id === notices[0].id ? "white" : "black",
-                        },
-                        "&:hover td": {
-                          backgroundColor: theme.palette.primary.main,
-                          color: "white",
-                        },
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      maxWidth: {
+                        xs: "100px",
+                        sm: "300px",
+                        md: "400px",
+                      }, // Adjust the maxWidth as needed
+                      }}
+                      title={notice.title} // Tooltip to show full title on hover
+                    >
+                      {notice.title}
+                    </TableCell>
+                    <TableCell
+                      sx={{
+                        whiteSpace: "nowrap",
                       }}
                     >
-                      <TableCell>{notice.id}</TableCell>
-                      <TableCell
-                        sx={{
-                          flex: 1,
-                          maxWidth: "300px",
-                          whiteSpace: "nowrap",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                        }}
-                      >
-                        {notice.title}
-                      </TableCell>
-                      <TableCell
-                        sx={{
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        {notice.date}
-                      </TableCell>
-                      <TableCell>{notice.views}</TableCell>
-                    </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                      {notice.date}
+                    </TableCell>
+                    <TableCell>{notice.views}</TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+          </Table>
+
+          {/* 모바일용 공지사항 리스트 */}
         </Stack>
       </Stack>
     </ThemeProvider>
