@@ -15,6 +15,7 @@ import {
   Notice,
   NoticeDetail,
   Users,
+  Settings,
 } from "./pages";
 
 function App() {
@@ -32,6 +33,7 @@ function App() {
         <Route path="/notice/:noticeid" element={<NoticeDetail />} />
 
         {/* 관리자 페이지 */}
+        <Route path="/settings" element={<Settings />} />
         <Route path="/users" element={<Users />} />
 
         {/* 404 Not Found */}
