@@ -22,6 +22,7 @@ export const theme = createTheme({
           },
           "&.base-layout": {
             padding: "50px 0",
+            paddingBottom: "100px",
             // xs
             "@media (max-width: 600px)": {
               width: "90%",
