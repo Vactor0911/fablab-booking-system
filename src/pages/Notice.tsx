@@ -19,6 +19,7 @@ import { useCallback, useState } from "react";
 
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import { useNavigate } from "react-router";
+import FixedTableCell from "../components/FixedTableCell";
 
 const Notice = () => {
   // 탭 메뉴
@@ -238,33 +239,13 @@ const Notice = () => {
           />
 
           {/* 공지사항 테이블 */}
-          <Table>
+          <Table sx={{ tableLayout: "fixed" }}>
             <TableHead>
               <TableRow>
-                <TableCell
-                  width="5%"
-                  sx={{ fontWeight: "bold", overflow: "hidden" }}
-                >
-                  번호
-                </TableCell>
-                <TableCell
-                  width="65%"
-                  sx={{ fontWeight: "bold", overflow: "hidden" }}
-                >
-                  제목
-                </TableCell>
-                <TableCell
-                  width="20%"
-                  sx={{ fontWeight: "bold", overflow: "hidden" }}
-                >
-                  작성일자
-                </TableCell>
-                <TableCell
-                  width="10%"
-                  sx={{ fontWeight: "bold", overflow: "hidden" }}
-                >
-                  조회수
-                </TableCell>
+                <TableCell width="10%">번호</TableCell>
+                <TableCell width="55%">제목</TableCell>
+                <TableCell width="23%">작성일자</TableCell>
+                <TableCell width="12%">조회수</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -295,31 +276,10 @@ const Notice = () => {
                       },
                     }}
                   >
-                    <TableCell>{notice.id}</TableCell>
-                    <TableCell
-                      width="60%"
-                      sx={{
-                      whiteSpace: "nowrap",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      maxWidth: {
-                        xs: "100px",
-                        sm: "300px",
-                        md: "400px",
-                      }, // Adjust the maxWidth as needed
-                      }}
-                      title={notice.title} // Tooltip to show full title on hover
-                    >
-                      {notice.title}
-                    </TableCell>
-                    <TableCell
-                      sx={{
-                        whiteSpace: "nowrap",
-                      }}
-                    >
-                      {notice.date}
-                    </TableCell>
-                    <TableCell>{notice.views}</TableCell>
+                    <FixedTableCell keepline>{notice.id}</FixedTableCell>
+                    <FixedTableCell>{notice.title}</FixedTableCell>
+                    <FixedTableCell>{notice.date}</FixedTableCell>
+                    <FixedTableCell keepline>{notice.views}</FixedTableCell>
                   </TableRow>
                 ))}
             </TableBody>

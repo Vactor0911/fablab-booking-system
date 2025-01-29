@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   IconButton,
   InputAdornment,
@@ -20,6 +21,7 @@ import { useCallback, useState } from "react";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import SettingsRoundedIcon from "@mui/icons-material/SettingsRounded";
 import UserDialog from "../components/UserDialog";
+import FixedTableCell from "../components/FixedTableCell";
 
 const Users = () => {
   // 검색 필터
@@ -27,12 +29,12 @@ const Users = () => {
 
   // 페이지
   const [page, setPage] = useState(1);
-  const handlePageChange = (
-    event: React.ChangeEvent<unknown>,
-    newPage: number
-  ) => {
-    setPage(newPage);
-  };
+  const handlePageChange = useCallback(
+    (event: React.ChangeEvent<unknown>, newPage: number) => {
+      setPage(newPage);
+    },
+    []
+  );
 
   // 유저 관리 대화상자 열림 상태
   const [isUserManageDialogOpen, setIsUserManageDialogOpen] = useState(false);
@@ -207,32 +209,20 @@ const Users = () => {
               />
 
               {/* 사용자 목록 */}
-              <Table>
+              <Table
+                sx={{
+                  tableLayout: "fixed",
+                }}
+              >
                 <TableHead>
                   <TableRow>
                     <TableCell width="5%">번호</TableCell>
                     <TableCell width="20%">학번</TableCell>
-                    <TableCell width="20%">이름</TableCell>
-                    <TableCell width="10%">권한</TableCell>
-                    <TableCell width="10%">상태</TableCell>
-                    <TableCell
-                      sx={{
-                        width: {
-                          xs: "34%",
-                          md: "30%",
-                        },
-                      }}
-                    >
-                      최근 예약 일자
-                    </TableCell>
-                    <TableCell
-                      sx={{
-                        width: {
-                          xs: "1%",
-                          md: "5%",
-                        },
-                      }}
-                    ></TableCell>
+                    <TableCell width="15%">이름</TableCell>
+                    <TableCell width="15%">권한</TableCell>
+                    <TableCell width="15%">상태</TableCell>
+                    <TableCell width="22%">최근 예약 일자</TableCell>
+                    <TableCell width="8%"></TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -253,42 +243,46 @@ const Users = () => {
                           },
                         }}
                       >
-                        <TableCell>{(page - 1) * 10 + index + 1}</TableCell>
-                        <TableCell>{row.student_id}</TableCell>
-                        <TableCell>{row.name}</TableCell>
-                        <TableCell>{row.permission}</TableCell>
-                        <TableCell>{row.state}</TableCell>
-                        <TableCell>{row.recentReservation}</TableCell>
+                        <FixedTableCell keepline>
+                          {(page - 1) * 10 + index + 1}
+                        </FixedTableCell>
+                        <FixedTableCell>{row.student_id}</FixedTableCell>
+                        <FixedTableCell>{row.name}</FixedTableCell>
+                        <FixedTableCell>{row.permission}</FixedTableCell>
+                        <FixedTableCell>{row.state}</FixedTableCell>
+                        <FixedTableCell>{row.recentReservation}</FixedTableCell>
                         <TableCell>
-                          {/* PC용 버튼 */}
-                          <Button
-                            variant="contained"
-                            startIcon={<SettingsRoundedIcon />}
-                            onClick={handleManageButtonClick}
-                            sx={{
-                              display: {
-                                xs: "none",
-                                md: "inline-flex",
-                              },
-                            }}
-                          >
-                            관리
-                          </Button>
+                          <Box justifyContent="flex-end" display="flex">
+                            {/* PC용 버튼 */}
+                            <Button
+                              variant="contained"
+                              startIcon={<SettingsRoundedIcon />}
+                              onClick={handleManageButtonClick}
+                              sx={{
+                                display: {
+                                  xs: "none",
+                                  md: "inline-flex",
+                                },
+                              }}
+                            >
+                              관리
+                            </Button>
 
-                          {/* 태블릿용 버튼 */}
-                          <IconButton
-                            onClick={handleManageButtonClick}
-                            sx={{
-                              padding: 0,
-                              display: {
-                                xs: "none",
-                                sm: "inline-flex",
-                                md: "none",
-                              },
-                            }}
-                          >
-                            <SettingsRoundedIcon />
-                          </IconButton>
+                            {/* 태블릿용 버튼 */}
+                            <IconButton
+                              onClick={handleManageButtonClick}
+                              sx={{
+                                padding: 0,
+                                display: {
+                                  xs: "none",
+                                  sm: "inline-flex",
+                                  md: "none",
+                                },
+                              }}
+                            >
+                              <SettingsRoundedIcon />
+                            </IconButton>
+                          </Box>
                         </TableCell>
                       </TableRow>
                     ))}
