@@ -44,105 +44,105 @@ const Users = () => {
 
   const data = [
     {
-      id: 2051001,
+      student_id: 2051001,
       name: "홍길동",
       permission: "사용자",
       state: "활성화",
       recentReservation: "2021-10-10",
     },
     {
-      id: 2051002,
+      student_id: 2051002,
       name: "김철수",
       permission: "관리자",
       state: "비활성화",
       recentReservation: "2021-09-15",
     },
     {
-      id: 2051003,
+      student_id: 2051003,
       name: "이영희",
       permission: "사용자",
       state: "활성화",
       recentReservation: "2021-08-20",
     },
     {
-      id: 2051004,
+      student_id: 2051004,
       name: "박민수",
       permission: "사용자",
       state: "활성화",
       recentReservation: "2021-07-25",
     },
     {
-      id: 2051005,
+      student_id: 2051005,
       name: "최지우",
       permission: "관리자",
       state: "비활성화",
       recentReservation: "2021-06-30",
     },
     {
-      id: 2051006,
+      student_id: 2051006,
       name: "정수현",
       permission: "사용자",
       state: "활성화",
       recentReservation: "2021-05-10",
     },
     {
-      id: 2051007,
+      student_id: 2051007,
       name: "한지민",
       permission: "사용자",
       state: "비활성화",
       recentReservation: "2021-04-15",
     },
     {
-      id: 2051008,
+      student_id: 2051008,
       name: "송중기",
       permission: "관리자",
       state: "활성화",
       recentReservation: "2021-03-20",
     },
     {
-      id: 2051009,
+      student_id: 2051009,
       name: "유재석",
       permission: "사용자",
       state: "활성화",
       recentReservation: "2021-02-25",
     },
     {
-      id: 2051010,
+      student_id: 2051010,
       name: "강호동",
       permission: "사용자",
       state: "비활성화",
       recentReservation: "2021-01-30",
     },
     {
-      id: 2051011,
+      student_id: 2051011,
       name: "이효리",
       permission: "관리자",
       state: "활성화",
       recentReservation: "2020-12-15",
     },
     {
-      id: 2051012,
+      student_id: 2051012,
       name: "김혜수",
       permission: "사용자",
       state: "활성화",
       recentReservation: "2020-11-20",
     },
     {
-      id: 2051013,
+      student_id: 2051013,
       name: "조인성",
       permission: "사용자",
       state: "비활성화",
       recentReservation: "2020-10-25",
     },
     {
-      id: 2051014,
+      student_id: 2051014,
       name: "전지현",
       permission: "관리자",
       state: "활성화",
       recentReservation: "2020-09-30",
     },
     {
-      id: 2051015,
+      student_id: 2051015,
       name: "하정우",
       permission: "사용자",
       state: "활성화",
@@ -206,6 +206,7 @@ const Users = () => {
                 }}
               />
 
+              {/* 사용자 목록 */}
               <Table>
                 <TableHead>
                   <TableRow>
@@ -239,9 +240,9 @@ const Users = () => {
                     .filter(
                       (row) =>
                         row.name.includes(search) ||
-                        row.id.toString().includes(search)
+                        row.student_id.toString().includes(search)
                     )
-                    .slice((page - 1) * 7, (page - 1) * 7 + 7)
+                    .slice((page - 1) * 10, (page - 1) * 10 + 10)
                     .map((row, index) => (
                       <TableRow
                         key={index}
@@ -252,8 +253,8 @@ const Users = () => {
                           },
                         }}
                       >
-                        <TableCell>{(page - 1) * 7 + index + 1}</TableCell>
-                        <TableCell>{row.id}</TableCell>
+                        <TableCell>{(page - 1) * 10 + index + 1}</TableCell>
+                        <TableCell>{row.student_id}</TableCell>
                         <TableCell>{row.name}</TableCell>
                         <TableCell>{row.permission}</TableCell>
                         <TableCell>{row.state}</TableCell>
