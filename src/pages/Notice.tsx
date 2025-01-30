@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   InputAdornment,
   Pagination,
   Stack,
@@ -175,6 +176,11 @@ const Notice = () => {
     [navigate]
   );
 
+    // 글쓰기 버튼 클릭
+    const handleNewNoticeClick = useCallback(() => {
+      navigate("/notice/new");
+    }, [navigate]);
+
   return (
     <ThemeProvider theme={theme}>
       <Stack className="page-root">
@@ -285,7 +291,12 @@ const Notice = () => {
             </TableBody>
           </Table>
 
-          {/* 모바일용 공지사항 리스트 */}
+          {/* 글쓰기 버튼 */}
+          <Box alignSelf="flex-end">
+            <Button variant="outlined" onClick={handleNewNoticeClick}>
+              <Typography variant="h2">글쓰기</Typography>
+            </Button>
+          </Box>
         </Stack>
       </Stack>
     </ThemeProvider>
