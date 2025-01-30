@@ -1,9 +1,4 @@
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router";
 import Header from "./components/Header";
 import {
   Home,
@@ -16,6 +11,9 @@ import {
   NoticeDetail,
   Users,
   Settings,
+  Logs,
+  BookRestrictions,
+  BookRestrictionDetail,
 } from "./pages";
 
 function App() {
@@ -35,6 +33,12 @@ function App() {
         {/* 관리자 페이지 */}
         <Route path="/settings" element={<Settings />} />
         <Route path="/users" element={<Users />} />
+        <Route path="/logs" element={<Logs />} />
+        <Route path="/book-restrictions" element={<BookRestrictions />} />
+        <Route
+          path="/book-restrictions/:restrictionid"
+          element={<BookRestrictionDetail />}
+        />
 
         {/* 404 Not Found */}
         <Route path="*" element={<Navigate to="/" />} />
