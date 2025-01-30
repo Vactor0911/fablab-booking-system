@@ -41,6 +41,11 @@ const BookRestrictions = () => {
     [navigate]
   );
 
+  // 예약 제한 등록 버튼 클릭
+  const handleNewBookRestrictionClick = useCallback(() => {
+    navigate("/book-restrictions/new");
+  }, [navigate])
+
   const data = [
     {
       id: 1,
@@ -190,7 +195,7 @@ const BookRestrictions = () => {
         <Stack className="page-root">
           <Stack className="base-layout" gap={2}>
             {/* 페이지명 */}
-            <Typography variant="h2">로그 관리</Typography>
+            <Typography variant="h2">예약 제한 관리</Typography>
 
             {/* 구분선 */}
             <Divider
@@ -274,7 +279,7 @@ const BookRestrictions = () => {
 
             {/* 예약 제한 추가 */}
             <Box alignSelf="flex-end" marginTop={4}>
-              <Button variant="outlined">
+              <Button variant="outlined" onClick={handleNewBookRestrictionClick}>
                 <Typography variant="h2">예약 제한 등록</Typography>
               </Button>
             </Box>
