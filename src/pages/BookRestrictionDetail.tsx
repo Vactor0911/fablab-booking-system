@@ -132,12 +132,12 @@ const BookRestrictionDetail = () => {
                   </Select>
                 </Stack>
 
-                {location.pathname.split("/")[2] === "new" && (
+                {location.pathname === "/book-restrictions/new" && (
                   <Button variant="contained" fullWidth>
                     <Typography variant="h2">등록하기</Typography>
                   </Button>
                 )}
-                {location.pathname.split("/")[2] !== "new" && (
+                {location.pathname !== "/book-restrictions/new" && (
                   <Stack direction="row" gap={2}>
                     <Button variant="contained" fullWidth>
                       <Typography variant="h2">수정하기</Typography>
