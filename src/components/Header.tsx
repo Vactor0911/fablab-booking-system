@@ -259,7 +259,13 @@ const Header = () => {
         }}
       >
         {/* 내 정보 */}
-        <MenuItem onClick={handleAccountMenuClose} sx={MenuItemCss}>
+        <MenuItem
+          onClick={() => {
+            handleAccountMenuClose();
+            navigate("/my-page");
+          }}
+          sx={MenuItemCss}
+        >
           <ListItemIcon>
             <PersonRoundedIcon />
           </ListItemIcon>
@@ -268,7 +274,13 @@ const Header = () => {
 
         {/* 내 예약정보 */}
         {loginState.permission === Permission.USER && (
-          <MenuItem onClick={handleAccountMenuClose} sx={MenuItemCss}>
+          <MenuItem
+            onClick={() => {
+              handleAccountMenuClose();
+              navigate("/my-reservation");
+            }}
+            sx={MenuItemCss}
+          >
             <ListItemIcon>
               <CalendarMonthRoundedIcon />
             </ListItemIcon>
@@ -359,45 +371,54 @@ const Header = () => {
         }}
       >
         {/* 기본 설정 */}
-        <MenuItem onClick={() => {
-          handleManageMenuClose();
-          navigate("/settings");
-        }} sx={MenuItemCss}>
+        <MenuItem
+          onClick={() => {
+            handleManageMenuClose();
+            navigate("/settings");
+          }}
+          sx={MenuItemCss}
+        >
           <ListItemText sx={{ textAlign: "center" }}>기본 설정</ListItemText>
         </MenuItem>
 
         {/* 예약 제한 관리 */}
-        <MenuItem onClick={() => {
-          handleManageMenuClose();
-          navigate("/book-restrictions");
-        }} sx={MenuItemCss}>
+        <MenuItem
+          onClick={() => {
+            handleManageMenuClose();
+            navigate("/book-restrictions");
+          }}
+          sx={MenuItemCss}
+        >
           <ListItemText sx={{ textAlign: "center" }}>
             예약 제한 관리
           </ListItemText>
         </MenuItem>
 
         {/* 사용자 관리 */}
-        <MenuItem onClick={() => {
-          handleManageMenuClose();
-          navigate("/users");
-        }} sx={MenuItemCss}>
+        <MenuItem
+          onClick={() => {
+            handleManageMenuClose();
+            navigate("/users");
+          }}
+          sx={MenuItemCss}
+        >
           <ListItemText sx={{ textAlign: "center" }}>사용자 관리</ListItemText>
         </MenuItem>
 
         {/* 로그 관리 */}
-        <MenuItem onClick={() => {
-          handleManageMenuClose();
-          navigate("/logs");
-        }} sx={MenuItemCss}>
+        <MenuItem
+          onClick={() => {
+            handleManageMenuClose();
+            navigate("/logs");
+          }}
+          sx={MenuItemCss}
+        >
           <ListItemText sx={{ textAlign: "center" }}>로그 관리</ListItemText>
         </MenuItem>
       </Menu>
 
       {/* 드로어 메뉴 */}
-      <DrawerMenu
-        drawerOpen={drawerOpen}
-        drawerClose={handleDrawerClose}
-      />
+      <DrawerMenu drawerOpen={drawerOpen} drawerClose={handleDrawerClose} />
     </ThemeProvider>
   );
 };
