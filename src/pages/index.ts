@@ -11,6 +11,8 @@ import Settings from "./Settings";
 import Logs from "./Logs";
 import BookRestrictions from "./BookRestrictions";
 import BookRestrictionDetail from "./BookRestrictionDetail";
+import MyPage from "./MyPage";
+import MyReservation from "./MyReservation";
 
 export {
   Home,
@@ -26,4 +28,6 @@ export {
   Logs,
   BookRestrictions,
   BookRestrictionDetail,
+  MyPage,
+  MyReservation,
 };
