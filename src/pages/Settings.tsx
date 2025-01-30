@@ -2,6 +2,9 @@ import {
   Box,
   Button,
   createTheme,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
   Stack,
   Tab,
   Tabs,
@@ -17,6 +20,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider/LocalizationProvider";
 import { MobileTimePicker } from "@mui/x-date-pickers";
+import SmapleImage from "../assets/SampleImage.png";
 
 interface TabPanelProps {
   value: string;
@@ -48,8 +52,40 @@ const Settings = () => {
   const [openingHour, setOpeningHour] = useState<Dayjs | null>(dayjs()); // 시작 시간
   const [closingHour, setClosingHour] = useState<Dayjs | null>(dayjs()); // 종료 시간
 
-  // 수정하기 버튼 클릭
-  const handleEditButtonClick = useCallback(() => {}, []);
+  // 공통 메뉴 수정하기 버튼 클릭
+  const handleCommonEditButtonClick = useCallback(() => {}, []);
+
+  // 좌석 정보 메뉴 수정하기 버튼 클릭
+  const handleSeatInfoEditButtonClick = useCallback(() => {}, []);
+
+  // 좌석 사진 변경
+  const handleSeatImageChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      if (file) {
+        console.log(file);
+      }
+    },
+    []
+  );
+
+  // PC 지원
+  const [pcSupport, setPcSupport] = useState("none");
+  const handlePcSupportChange = useCallback(
+    (event: SelectChangeEvent<string>) => {
+      setPcSupport(event.target.value as string);
+    },
+    []
+  );
+
+  // 주의 사항
+  const [caution, setCaution] = useState("");
+  const handleCautionChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setCaution(event.target.value);
+    },
+    []
+  );
 
   return (
     <AdminPage>
@@ -82,7 +118,7 @@ const Settings = () => {
               </Tabs>
             </Box>
 
-            {/* 탭 패널 */}
+            {/* 탭 패널 (공통) */}
             <TabPanel value={tabIndex} index="common">
               <Stack gap={5}>
                 {/* 공통 설정 */}
@@ -140,14 +176,124 @@ const Settings = () => {
                 </Stack>
 
                 {/* 수정 버튼 */}
-                <Box alignSelf="flex-end" width={{
+                <Box
+                  alignSelf="flex-end"
+                  width={{
                     xs: "100%",
                     sm: "auto",
-                }}>
-                  <Button variant="contained" onClick={handleEditButtonClick} fullWidth>
+                  }}
+                >
+                  <Button
+                    variant="contained"
+                    onClick={handleCommonEditButtonClick}
+                    fullWidth
+                  >
                     <Typography variant="h2">수정하기</Typography>
                   </Button>
                 </Box>
+              </Stack>
+            </TabPanel>
+
+            {/* 탭 패널 (좌석 정보) */}
+            <TabPanel value={tabIndex} index="seat-info">
+              <Stack direction="row" gap={5}>
+                {/* 좌측 컨테이너 */}
+                <Stack gap={2} flex={1}>
+                  {/* 좌석명 */}
+                  <Stack gap={1}>
+                    <SectionHeader title="좌석명" underline />
+                    <Typography variant="h2">A1</Typography>
+                  </Stack>
+
+                  {/* 좌석 사진 */}
+                  <Stack gap={2}>
+                    <SectionHeader title="좌석 사진" underline />
+
+                    <Box
+                      component="img"
+                      alt="좌석 사진"
+                      src={SmapleImage}
+                      alignSelf="center"
+                      sx={{
+                        width: "150px",
+                        borderRadius: "10px",
+                        boxShadow: 3,
+                      }}
+                    />
+
+                    {/* 업로드 버튼 */}
+                    <Box alignSelf="center">
+                      <Button
+                        variant="outlined"
+                        color="secondary"
+                        role={undefined}
+                        tabIndex={-1}
+                        sx={{
+                          borderRadius: "30px",
+                          padding: "5px 30px",
+                          position: "relative",
+                        }}
+                      >
+                        업로드
+                        <input
+                          type="file"
+                          accept=".png, .jpg, .jpeg"
+                          onChange={handleSeatImageChange}
+                          css={{
+                            position: "absolute",
+                            width: "100%",
+                            height: "100%",
+                            bottom: 0,
+                            left: 0,
+                            opacity: 0,
+                            overflow: "hidden",
+                            whiteSpace: "nowrap",
+                          }}
+                        />
+                      </Button>
+                    </Box>
+                  </Stack>
+
+                  {/* PC 지원 정보 */}
+                  <Stack gap={1}>
+                    <SectionHeader title="PC 지원" underline />
+                    <Select value={pcSupport} onChange={handlePcSupportChange}>
+                      <MenuItem value="none">없음</MenuItem>
+                      <MenuItem value="windows">Windows</MenuItem>
+                      <MenuItem value="mac">MAC</MenuItem>
+                    </Select>
+                  </Stack>
+
+                  {/* 주의사항 */}
+                  <Stack gap={1}>
+                    <SectionHeader title="주의사항" underline />
+                    <TextField
+                      variant="filled"
+                      value={caution}
+                      onChange={handleCautionChange}
+                      sx={{
+                        "& .MuiFilledInput-root input": {
+                          padding: "12px",
+                        },
+                      }}
+                    />
+                  </Stack>
+
+                  {/* 수정 버튼 */}
+                  <Button
+                    variant="contained"
+                    onClick={handleSeatInfoEditButtonClick}
+                    fullWidth
+                    sx={{
+                      marginTop: "30px",
+                    }}
+                  >
+                    <Typography variant="h2">수정하기</Typography>
+                  </Button>
+                </Stack>
+
+                {/* 우측 컨테이너 */}
+                <Stack flex={2}></Stack>
               </Stack>
             </TabPanel>
           </Stack>
