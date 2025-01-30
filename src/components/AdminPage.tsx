@@ -14,7 +14,7 @@ const AdminPage = ({ children }: { children: ReactNode }) => {
       alert("잘못된 접근입니다.");
       navigate("/");
     }
-  });
+  }, [loginState.isLoggedIn, loginState.permission, navigate]);
 
   return <>{children}</>;
 };
