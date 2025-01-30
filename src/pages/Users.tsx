@@ -169,7 +169,14 @@ const Users = () => {
               />
             </Stack>
 
-            <Stack direction="row" justifyContent="space-between">
+            <Stack
+              direction={{
+                xs: "column",
+                sm: "row",
+              }}
+              gap={3}
+              justifyContent="space-between"
+            >
               {/* 사용자 수 */}
               <Stack direction="row" gap={3}>
                 {/* 총 사용자 */}

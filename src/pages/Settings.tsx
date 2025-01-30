@@ -59,11 +59,16 @@ const Settings = () => {
   const handleSeatInfoEditButtonClick = useCallback(() => {}, []);
 
   // 좌석 사진 변경
+  const [image, setImage] = useState<string | null>(null);
+  const [imageRaw, setImageRaw] = useState<File | null>(null);
   const handleSeatImageChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
-      const file = event.target.files?.[0];
-      if (file) {
-        console.log(file);
+      const files = event.target.files;
+      if (files && files[0]) {
+        const newImage = files[0];
+        setImage(URL.createObjectURL(newImage)); // URL로 이미지 저장
+        setImageRaw(newImage); // 파일 객체를 그대로 저장
+        console.log(newImage);
       }
     },
     []
@@ -91,7 +96,7 @@ const Settings = () => {
     <AdminPage>
       <ThemeProvider theme={theme}>
         <Stack className="page-root">
-          <Stack className="base-layout" gap={7}>
+          <Stack className="base-layout" gap={3}>
             {/* 페이지명 */}
             <Typography variant="h2">기본 설정</Typography>
 
@@ -196,9 +201,12 @@ const Settings = () => {
 
             {/* 탭 패널 (좌석 정보) */}
             <TabPanel value={tabIndex} index="seat-info">
-              <Stack direction="row" gap={5}>
+              <Stack direction={{
+                xs: "column",
+                md: "row",
+              }} gap={5}>
                 {/* 좌측 컨테이너 */}
-                <Stack gap={2} flex={1}>
+                <Stack gap={5} flex={1}>
                   {/* 좌석명 */}
                   <Stack gap={1}>
                     <SectionHeader title="좌석명" underline />
@@ -212,7 +220,7 @@ const Settings = () => {
                     <Box
                       component="img"
                       alt="좌석 사진"
-                      src={SmapleImage}
+                      src={image ?? SmapleImage}
                       alignSelf="center"
                       sx={{
                         width: "150px",
@@ -284,9 +292,6 @@ const Settings = () => {
                     variant="contained"
                     onClick={handleSeatInfoEditButtonClick}
                     fullWidth
-                    sx={{
-                      marginTop: "30px",
-                    }}
                   >
                     <Typography variant="h2">수정하기</Typography>
                   </Button>
