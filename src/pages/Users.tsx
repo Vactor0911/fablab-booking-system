@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Divider,
   IconButton,
   InputAdornment,
   Pagination,
@@ -157,8 +158,16 @@ const Users = () => {
       <ThemeProvider theme={theme}>
         <Stack className="page-root">
           <Stack className="base-layout" gap={7}>
-            {/* 페이지명 */}
-            <Typography variant="h2">사용자 관리</Typography>
+            <Stack gap={2}>
+              {/* 페이지명 */}
+              <Typography variant="h2">사용자 관리</Typography>
+
+              <Divider
+                sx={{
+                  borderWidth: "1px",
+                }}
+              />
+            </Stack>
 
             <Stack direction="row" justifyContent="space-between">
               {/* 사용자 수 */}
