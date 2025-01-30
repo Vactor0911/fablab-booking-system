@@ -6,12 +6,14 @@ import {
   Typography,
 } from "@mui/material";
 import { dateFormatter, theme } from "../utils";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import SectionHeader from "../components/SectionHeader";
 
 import ChevronLeftRoundedIcon from "@mui/icons-material/ChevronLeftRounded";
 
 const NoticeDetail = () => {
+  const location = useLocation();
+
   return (
     <ThemeProvider theme={theme}>
       <Stack className="page-root">
@@ -130,31 +132,46 @@ const NoticeDetail = () => {
                 </Stack>
 
                 {/* 버튼 */}
-                <Stack direction="row" gap={3}>
-                  {/* 수정 */}
+                {location.pathname === "/notice/new" && (
+                  // 등록
                   <Button
                     variant="outlined"
                     color="secondary"
+                    fullWidth
                     sx={{
-                      flex: "1",
                       borderRadius: "30px",
                     }}
                   >
-                    <Typography variant="h2">수정</Typography>
+                    <Typography variant="h2">등록</Typography>
                   </Button>
+                )}
+                {location.pathname !== "/notice/new" && (
+                  <Stack direction="row" gap={3}>
+                    {/* 수정 */}
+                    <Button
+                      variant="outlined"
+                      color="secondary"
+                      fullWidth
+                      sx={{
+                        borderRadius: "30px",
+                      }}
+                    >
+                      <Typography variant="h2">수정</Typography>
+                    </Button>
 
-                  {/* 삭제 */}
-                  <Button
-                    variant="outlined"
-                    color="error"
-                    sx={{
-                      flex: "1",
-                      borderRadius: "30px",
-                    }}
-                  >
-                    <Typography variant="h2">삭제</Typography>
-                  </Button>
-                </Stack>
+                    {/* 삭제 */}
+                    <Button
+                      variant="outlined"
+                      color="error"
+                      fullWidth
+                      sx={{
+                        borderRadius: "30px",
+                      }}
+                    >
+                      <Typography variant="h2">삭제</Typography>
+                    </Button>
+                  </Stack>
+                )}
               </Stack>
             </Stack>
           </Stack>
