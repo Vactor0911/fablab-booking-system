@@ -21,7 +21,8 @@ import {
   MobileDateTimePicker,
 } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import SeatSelecter from "../components/SeatSelecter";
 
 const BookRestrictionDetail = () => {
   // 예약 제한 기간
@@ -47,6 +48,82 @@ const BookRestrictionDetail = () => {
 
   const location = useLocation();
 
+  const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
+
+  // 열별 좌석 수
+  const seatsPerRow = useMemo(
+    () => ({
+      A: 12,
+      B: 32,
+      C: 5,
+      D: 4,
+    }),
+    []
+  );
+
+  // 좌석 전체 선택 버튼 클릭
+  const handleSeatSelectAllButtonClick = useCallback(() => {
+    const newSelectedSeats: string[] = [];
+
+    Array.from({ length: seatsPerRow["A"] }, (_, i) => `A${i + 1}`).map(
+      (seatName) => {
+        newSelectedSeats.push(seatName);
+      }
+    );
+    Array.from({ length: seatsPerRow["B"] }, (_, i) => `B${i + 1}`).map(
+      (seatName) => {
+        newSelectedSeats.push(seatName);
+      }
+    );
+    Array.from({ length: seatsPerRow["C"] }, (_, i) => `C${i + 1}`).map(
+      (seatName) => {
+        newSelectedSeats.push(seatName);
+      }
+    );
+    Array.from({ length: seatsPerRow["D"] }, (_, i) => `D${i + 1}`).map(
+      (seatName) => {
+        newSelectedSeats.push(seatName);
+      }
+    );
+
+    setSelectedSeats(newSelectedSeats);
+  }, [seatsPerRow]);
+
+  // 좌석 전체 취소 버튼 클릭
+  const handleSeatCancelAllButtonClick = useCallback(() => {
+    setSelectedSeats([]);
+  }, []);
+
+  // 열 선택 버튼 클릭
+  const handleSeatRowButtonClick = useCallback(
+    (row: keyof typeof seatsPerRow) => {
+      let newSelectedSeats: string[] = [...selectedSeats];
+      if (
+        newSelectedSeats.filter((name) => name.startsWith(row)).length <
+        seatsPerRow[row]
+      ) {
+        Array.from(
+          { length: seatsPerRow[row] },
+          (_, i) => `${row}${i + 1}`
+        ).map((seatName) => {
+          if (!newSelectedSeats.includes(seatName)) {
+            newSelectedSeats.push(seatName);
+          }
+        });
+      } else {
+        newSelectedSeats = newSelectedSeats.filter(
+          (seatName) => !seatName.startsWith(row)
+        );
+      }
+      setSelectedSeats(newSelectedSeats);
+    },
+    [seatsPerRow, selectedSeats]
+  );
+
+  useEffect(() => {
+    console.log(selectedSeats);
+  }, [selectedSeats]);
+
   return (
     <AdminPage>
       <ThemeProvider theme={theme}>
@@ -70,7 +147,17 @@ const BookRestrictionDetail = () => {
               </Link>
             </Stack>
 
-            <Stack direction="row">
+            <Stack
+              direction={{
+                xs: "column-reverse",
+                md: "row",
+              }}
+              gap={5}
+              flexWrap={{
+                xs: "nowrap",
+                md: "wrap-reverse",
+              }}
+            >
               {/* 좌측 컨테이너 */}
               <Stack gap={5} flex={1}>
                 <Stack gap={2}>
@@ -151,7 +238,84 @@ const BookRestrictionDetail = () => {
               </Stack>
 
               {/* 우측 컨테이너 */}
-              <Stack gap={2} flex={2}></Stack>
+              <Stack flex={2} gap={2}>
+                {/* 전체 선택기 */}
+                <Stack direction="row" justifyContent="flex-end" gap={2}>
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    onClick={handleSeatSelectAllButtonClick}
+                  >
+                    전체 선택
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    onClick={handleSeatCancelAllButtonClick}
+                  >
+                    전체 취소
+                  </Button>
+                </Stack>
+
+                {/* 좌석 선택기 */}
+                <Box overflow="auto">
+                  <SeatSelecter
+                    minWidth="600px"
+                    minHeight="400px"
+                    multiple
+                    selectedSeats={selectedSeats}
+                    setSelectedSeats={setSelectedSeats}
+                  />
+                </Box>
+
+                {/* 좌석 열 선택기 */}
+                <Stack direction="row" justifyContent="space-evenly">
+                  <Button
+                    color={
+                      selectedSeats.filter((name) => name.startsWith("A"))
+                        .length >= seatsPerRow["A"]
+                        ? "primary"
+                        : "secondary"
+                    }
+                    onClick={() => handleSeatRowButtonClick("A")}
+                  >
+                    <Typography variant="h1">A 좌석</Typography>
+                  </Button>
+                  <Button
+                    color={
+                      selectedSeats.filter((name) => name.startsWith("B"))
+                        .length >= seatsPerRow["B"]
+                        ? "primary"
+                        : "secondary"
+                    }
+                    onClick={() => handleSeatRowButtonClick("B")}
+                  >
+                    <Typography variant="h1">B 좌석</Typography>
+                  </Button>
+                  <Button
+                    color={
+                      selectedSeats.filter((name) => name.startsWith("C"))
+                        .length >= seatsPerRow["C"]
+                        ? "primary"
+                        : "secondary"
+                    }
+                    onClick={() => handleSeatRowButtonClick("C")}
+                  >
+                    <Typography variant="h1">C 좌석</Typography>
+                  </Button>
+                  <Button
+                    color={
+                      selectedSeats.filter((name) => name.startsWith("D"))
+                        .length >= seatsPerRow["D"]
+                        ? "primary"
+                        : "secondary"
+                    }
+                    onClick={() => handleSeatRowButtonClick("D")}
+                  >
+                    <Typography variant="h1">D 좌석</Typography>
+                  </Button>
+                </Stack>
+              </Stack>
             </Stack>
           </Stack>
         </Stack>
