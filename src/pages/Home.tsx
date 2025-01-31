@@ -229,7 +229,7 @@ const Home = () => {
 
                 {/* 예약 정보 */}
                 <Stack direction="column" flex={1}>
-                  <Typography variant="h6" fontWeight="bold">
+                  <Typography variant="h3" fontWeight="bold">
                     예약 좌석
                   </Typography>
                   <Stack direction="row" spacing={1} flexWrap={"wrap"}>
