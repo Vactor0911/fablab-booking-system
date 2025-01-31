@@ -11,10 +11,23 @@ import {
 } from "@mui/material";
 import { theme } from "../utils";
 import SectionHeader from "../components/SectionHeader";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import FixedTableCell from "../components/FixedTableCell";
+import { useNavigate } from "react-router";
+import { useAtomValue } from "jotai";
+import { loginStateAtom, Permission } from "../states";
 
 const MyReservation = () => {
+  const navigate = useNavigate();
+  const loginState = useAtomValue(loginStateAtom);
+
+  useEffect(() => {
+    if (!loginState.isLoggedIn || loginState.permission !== Permission.USER) {
+      alert("잘못된 접근입니다.");
+      navigate("/");
+    }
+  }, [loginState.isLoggedIn, loginState.permission, navigate]);
+
   // 페이지
   const [page, setPage] = useState(1);
   const handlePageChange = useCallback(
