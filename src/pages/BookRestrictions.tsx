@@ -44,7 +44,7 @@ const BookRestrictions = () => {
   // 예약 제한 등록 버튼 클릭
   const handleNewBookRestrictionClick = useCallback(() => {
     navigate("/book-restrictions/new");
-  }, [navigate])
+  }, [navigate]);
 
   const data = [
     {
@@ -236,50 +236,56 @@ const BookRestrictions = () => {
             />
 
             {/* 로그 목록 */}
-            <Table
-              sx={{
-                tableLayout: "fixed",
-              }}
-            >
-              <TableHead>
-                <TableRow>
-                  <TableCell width="10%">번호</TableCell>
-                  <TableCell width="30%">공지사항 배너</TableCell>
-                  <TableCell width="10%">제한 좌석수</TableCell>
-                  <TableCell width="35%">제한 기간</TableCell>
-                  <TableCell width="15%">관리자</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {data
-                  .slice((page - 1) * 10, (page - 1) * 10 + 10)
-                  .map((row, index) => (
-                    <TableRow
-                      key={index}
-                      onClick={() => handleBookRestrictionClick(row.id)}
-                      sx={{
-                        cursor: "pointer",
-                        "&:hover td": {
-                          backgroundColor: theme.palette.primary.main,
-                          color: "white",
-                        },
-                      }}
-                    >
-                      <FixedTableCell keepline>
-                        {(page - 1) * 10 + index + 1}
-                      </FixedTableCell>
-                      <FixedTableCell keepline>{row.notice}</FixedTableCell>
-                      <FixedTableCell>{row.seatCount}</FixedTableCell>
-                      <FixedTableCell>{row.period}</FixedTableCell>
-                      <FixedTableCell>{row.admin}</FixedTableCell>
-                    </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
+            <Box sx={{ overflowX: "auto" }}>
+              <Table
+                sx={{
+                  tableLayout: "fixed",
+                  minWidth: "600px",
+                }}
+              >
+                <TableHead>
+                  <TableRow>
+                    <TableCell width="10%">번호</TableCell>
+                    <TableCell width="30%">공지사항 배너</TableCell>
+                    <TableCell width="10%">제한 좌석수</TableCell>
+                    <TableCell width="35%">제한 기간</TableCell>
+                    <TableCell width="15%">관리자</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {data
+                    .slice((page - 1) * 10, (page - 1) * 10 + 10)
+                    .map((row, index) => (
+                      <TableRow
+                        key={index}
+                        onClick={() => handleBookRestrictionClick(row.id)}
+                        sx={{
+                          cursor: "pointer",
+                          "&:hover td": {
+                            backgroundColor: theme.palette.primary.main,
+                            color: "white",
+                          },
+                        }}
+                      >
+                        <FixedTableCell keepline>
+                          {(page - 1) * 10 + index + 1}
+                        </FixedTableCell>
+                        <FixedTableCell keepline>{row.notice}</FixedTableCell>
+                        <FixedTableCell>{row.seatCount}</FixedTableCell>
+                        <FixedTableCell>{row.period}</FixedTableCell>
+                        <FixedTableCell>{row.admin}</FixedTableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            </Box>
 
             {/* 예약 제한 추가 */}
             <Box alignSelf="flex-end" marginTop={4}>
-              <Button variant="outlined" onClick={handleNewBookRestrictionClick}>
+              <Button
+                variant="outlined"
+                onClick={handleNewBookRestrictionClick}
+              >
                 <Typography variant="h2">예약 제한 등록</Typography>
               </Button>
             </Box>

@@ -205,7 +205,7 @@ const Logs = () => {
     {
       id: 19,
       type: "공지사항",
-      user: "2051019/유성룡",
+      user: "2051019 유성룡",
       admin: "2051000/김철수",
       seat: "A19",
       date: "2021-11-07",
@@ -283,38 +283,47 @@ const Logs = () => {
             />
 
             {/* 로그 목록 */}
-            <Table
+            <Box
               sx={{
-                tableLayout: "fixed",
+                overflowX: "auto",
               }}
             >
-              <TableHead>
-                <TableRow>
-                  <TableCell width="5%">번호</TableCell>
-                  <TableCell width="10%">로그 종류</TableCell>
-                  <TableCell width="15%">예약자 정보</TableCell>
-                  <TableCell width="15%">관리자 정보</TableCell>
-                  <TableCell width="10%">좌석 정보</TableCell>
-                  <TableCell width="15%">기록 일자</TableCell>
-                  <TableCell width="30%">비고</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {data
-                  .slice((page - 1) * 10, (page - 1) * 10 + 10)
-                  .map((row, index) => (
-                    <TableRow key={index}>
-                      <FixedTableCell keepline>{(page - 1) * 10 + index + 1}</FixedTableCell>
-                      <FixedTableCell>{row.type}</FixedTableCell>
-                      <FixedTableCell>{row.user}</FixedTableCell>
-                      <FixedTableCell>{row.admin}</FixedTableCell>
-                      <FixedTableCell>{row.seat}</FixedTableCell>
-                      <FixedTableCell>{row.date}</FixedTableCell>
-                      <FixedTableCell>{row.note}</FixedTableCell>
-                    </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
+              <Table
+                sx={{
+                  tableLayout: "fixed",
+                  minWidth: "600px",
+                }}
+              >
+                <TableHead>
+                  <TableRow>
+                    <TableCell width="10%">번호</TableCell>
+                    <TableCell width="10%">로그 종류</TableCell>
+                    <TableCell width="15%">예약자 정보</TableCell>
+                    <TableCell width="15%">관리자 정보</TableCell>
+                    <TableCell width="10%">좌석 정보</TableCell>
+                    <TableCell width="15%">기록 일자</TableCell>
+                    <TableCell width="25%">비고</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {data
+                    .slice((page - 1) * 10, (page - 1) * 10 + 10)
+                    .map((row, index) => (
+                      <TableRow key={index}>
+                        <FixedTableCell keepline>
+                          {(page - 1) * 10 + index + 1}
+                        </FixedTableCell>
+                        <FixedTableCell>{row.type}</FixedTableCell>
+                        <FixedTableCell>{row.user}</FixedTableCell>
+                        <FixedTableCell>{row.admin}</FixedTableCell>
+                        <FixedTableCell>{row.seat}</FixedTableCell>
+                        <FixedTableCell>{row.date}</FixedTableCell>
+                        <FixedTableCell>{row.note}</FixedTableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            </Box>
           </Stack>
         </Stack>
       </ThemeProvider>

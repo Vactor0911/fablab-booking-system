@@ -225,85 +225,89 @@ const Users = () => {
               />
 
               {/* 사용자 목록 */}
-              <Table
-                sx={{
-                  tableLayout: "fixed",
-                }}
-              >
-                <TableHead>
-                  <TableRow>
-                    <TableCell width="5%">번호</TableCell>
-                    <TableCell width="20%">학번</TableCell>
-                    <TableCell width="15%">이름</TableCell>
-                    <TableCell width="15%">권한</TableCell>
-                    <TableCell width="15%">상태</TableCell>
-                    <TableCell width="22%">최근 예약 일자</TableCell>
-                    <TableCell width="8%"></TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {data
-                    .filter(
-                      (row) =>
-                        row.name.includes(search) ||
-                        row.student_id.toString().includes(search)
-                    )
-                    .slice((page - 1) * 10, (page - 1) * 10 + 10)
-                    .map((row, index) => (
-                      <TableRow
-                        key={index}
-                        sx={{
-                          position: "relative",
-                          "& .MuiTableCell-root": {
-                            padding: "8px 16px",
-                          },
-                        }}
-                      >
-                        <FixedTableCell keepline>
-                          {(page - 1) * 10 + index + 1}
-                        </FixedTableCell>
-                        <FixedTableCell>{row.student_id}</FixedTableCell>
-                        <FixedTableCell>{row.name}</FixedTableCell>
-                        <FixedTableCell>{row.permission}</FixedTableCell>
-                        <FixedTableCell>{row.state}</FixedTableCell>
-                        <FixedTableCell>{row.recentReservation}</FixedTableCell>
-                        <TableCell>
-                          <Box justifyContent="flex-end" display="flex">
-                            {/* PC용 버튼 */}
-                            <Button
-                              variant="contained"
-                              startIcon={<SettingsRoundedIcon />}
-                              onClick={handleManageButtonClick}
-                              sx={{
-                                display: {
-                                  xs: "none",
-                                  md: "inline-flex",
-                                },
-                              }}
-                            >
-                              관리
-                            </Button>
+              <Box sx={{ overflowX: "auto" }}>
+                <Table
+                  sx={{
+                    tableLayout: "fixed",
+                    minWidth: "600px",
+                  }}
+                >
+                  <TableHead>
+                    <TableRow>
+                      <TableCell width="10%">번호</TableCell>
+                      <TableCell width="20%">학번</TableCell>
+                      <TableCell width="15%">이름</TableCell>
+                      <TableCell width="12%">권한</TableCell>
+                      <TableCell width="15%">상태</TableCell>
+                      <TableCell width="20%">최근 예약 일자</TableCell>
+                      <TableCell width="8%"></TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {data
+                      .filter(
+                        (row) =>
+                          row.name.includes(search) ||
+                          row.student_id.toString().includes(search)
+                      )
+                      .slice((page - 1) * 10, (page - 1) * 10 + 10)
+                      .map((row, index) => (
+                        <TableRow
+                          key={index}
+                          sx={{
+                            position: "relative",
+                            "& .MuiTableCell-root": {
+                              padding: "8px 16px",
+                            },
+                          }}
+                        >
+                          <FixedTableCell keepline>
+                            {(page - 1) * 10 + index + 1}
+                          </FixedTableCell>
+                          <FixedTableCell>{row.student_id}</FixedTableCell>
+                          <FixedTableCell>{row.name}</FixedTableCell>
+                          <FixedTableCell>{row.permission}</FixedTableCell>
+                          <FixedTableCell>{row.state}</FixedTableCell>
+                          <FixedTableCell>
+                            {row.recentReservation}
+                          </FixedTableCell>
+                          <TableCell>
+                            <Box justifyContent="flex-end" display="flex">
+                              {/* PC용 버튼 */}
+                              <Button
+                                variant="contained"
+                                startIcon={<SettingsRoundedIcon />}
+                                onClick={handleManageButtonClick}
+                                sx={{
+                                  display: {
+                                    xs: "none",
+                                    md: "inline-flex",
+                                  },
+                                }}
+                              >
+                                관리
+                              </Button>
 
-                            {/* 태블릿용 버튼 */}
-                            <IconButton
-                              onClick={handleManageButtonClick}
-                              sx={{
-                                padding: 0,
-                                display: {
-                                  xs: "none",
-                                  sm: "inline-flex",
-                                  md: "none",
-                                },
-                              }}
-                            >
-                              <SettingsRoundedIcon />
-                            </IconButton>
-                          </Box>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                </TableBody>
-              </Table>
+                              {/* 태블릿용 버튼 */}
+                              <IconButton
+                                onClick={handleManageButtonClick}
+                                sx={{
+                                  padding: 0,
+                                  display: {
+                                    xs: "inline-flex",
+                                    md: "none",
+                                  },
+                                }}
+                              >
+                                <SettingsRoundedIcon />
+                              </IconButton>
+                            </Box>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                  </TableBody>
+                </Table>
+              </Box>
             </Stack>
           </Stack>
         </Stack>
