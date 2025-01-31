@@ -21,6 +21,8 @@ import { useCallback, useState } from "react";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import { useNavigate } from "react-router";
 import FixedTableCell from "../components/FixedTableCell";
+import { useAtomValue } from "jotai";
+import { loginStateAtom, Permission } from "../states";
 
 const Notice = () => {
   // 탭 메뉴
@@ -176,10 +178,12 @@ const Notice = () => {
     [navigate]
   );
 
-    // 글쓰기 버튼 클릭
-    const handleNewNoticeClick = useCallback(() => {
-      navigate("/notice/new");
-    }, [navigate]);
+  // 글쓰기 버튼 클릭
+  const handleNewNoticeClick = useCallback(() => {
+    navigate("/notice/new");
+  }, [navigate]);
+
+  const loginState = useAtomValue(loginStateAtom);
 
   return (
     <ThemeProvider theme={theme}>
@@ -291,8 +295,20 @@ const Notice = () => {
             </TableBody>
           </Table>
 
+          {/* 모바일용 공지사항 목록 */}
+          <Stack>
+            
+          </Stack>
+
           {/* 글쓰기 버튼 */}
-          <Box alignSelf="flex-end">
+          <Box
+            alignSelf="flex-end"
+            display={
+              loginState.isLoggedIn && loginState.permission !== Permission.USER
+                ? "block"
+                : "none"
+            }
+          >
             <Button variant="outlined" onClick={handleNewNoticeClick}>
               <Typography variant="h2">글쓰기</Typography>
             </Button>
