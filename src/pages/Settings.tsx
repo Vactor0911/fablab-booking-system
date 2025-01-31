@@ -21,6 +21,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider/LocalizationProvider";
 import { MobileTimePicker } from "@mui/x-date-pickers";
 import SmapleImage from "../assets/SampleImage.png";
+import SeatSelecter from "../components/SeatSelecter";
 
 interface TabPanelProps {
   value: string;
@@ -91,6 +92,9 @@ const Settings = () => {
     },
     []
   );
+
+  // 좌석 선택기
+  const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
 
   return (
     <AdminPage>
@@ -201,16 +205,20 @@ const Settings = () => {
 
             {/* 탭 패널 (좌석 정보) */}
             <TabPanel value={tabIndex} index="seat-info">
-              <Stack direction={{
-                xs: "column",
-                md: "row",
-              }} gap={5}>
+              <Stack
+                direction={{
+                  xs: "column-reverse",
+                  md: "row",
+                }}
+                gap={5}
+                flex={1}
+              >
                 {/* 좌측 컨테이너 */}
                 <Stack gap={5} flex={1}>
                   {/* 좌석명 */}
                   <Stack gap={1}>
                     <SectionHeader title="좌석명" underline />
-                    <Typography variant="h2">A1</Typography>
+                    <Typography variant="h2">{selectedSeats[0] ? selectedSeats[0] : "선택 안함"}</Typography>
                   </Stack>
 
                   {/* 좌석 사진 */}
@@ -297,8 +305,15 @@ const Settings = () => {
                   </Button>
                 </Stack>
 
-                {/* 우측 컨테이너 */}
-                <Stack flex={2}></Stack>
+                {/* 좌석 선택기 */}
+                <Box overflow="auto" flex={2}>
+                  <SeatSelecter
+                    minWidth="600px"
+                    minHeight="400px"
+                    selectedSeats={selectedSeats}
+                    setSelectedSeats={setSelectedSeats}
+                  />
+                </Box>
               </Stack>
             </TabPanel>
           </Stack>
