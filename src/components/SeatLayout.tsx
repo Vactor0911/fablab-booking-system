@@ -8,16 +8,20 @@ import {
 } from "@mui/material";
 import { theme } from "../utils";
 import SeatButton from "./SeatButton";
+import { useAtomValue } from "jotai";
+import { loginStateAtom } from "../states";
 
-// 양쪽 A석 스택
-const SideSeatStack = (props: StackProps) => {
-  return <Stack {...props}>{props.children}</Stack>;
-};
+interface SeatLayoutProps extends StackProps {
+  onSeatButtonClick: (seatName: string) => void;
+}
 
-const SeatLayout = () => {
+const SeatLayout = (props: SeatLayoutProps) => {
+  const { onSeatButtonClick } = props;
+  const loginState = useAtomValue(loginStateAtom);
+
   return (
     <ThemeProvider theme={theme}>
-      <Stack flex={1} gap={5}>
+      <Stack flex={1} gap={5} {...props}>
         {/* 상단 라벨 */}
         <Stack direction="row" gap={2}>
           {["출입구", "사물함", "고정문"].map((text, index) => (
@@ -40,11 +44,23 @@ const SeatLayout = () => {
         {/* 중앙 좌석 배치도 */}
         <Stack direction="row" flex={1}>
           {/* 좌측 A석 */}
-          <SideSeatStack flex={1}>
+          <Stack flex={1}>
             {Array.from({ length: 12 }, (_, i) => i).map((i) =>
-              i % 2 === 0 ? <SeatButton /> : <Box flex={i === 11 ? 0.7 : 0.2} />
+              i % 2 === 0 ? (
+                <SeatButton
+                  title={`A${i / 2 + 1}`}
+                  key={`A${i / 2 + 1}`}
+                  content="홍길동"
+                  onClick={() => {
+                    const seatName = `A${i / 2 + 1}`;
+                    onSeatButtonClick(seatName);
+                  }}
+                />
+              ) : (
+                <Box flex={i === 11 ? 0.7 : 0.2} key={`a${i}`} />
+              )
             )}
-          </SideSeatStack>
+          </Stack>
 
           <Box flex={0.5} />
 
@@ -55,18 +71,41 @@ const SeatLayout = () => {
             <Grid2 container columns={11} flex={5}>
               {Array.from({ length: 5 }, (_, i) => i).map((i) =>
                 i === 2 ? (
-                  <Grid2 size={11} display="flex">
+                  <Grid2 size={11} display="flex" key={`b${i}`}>
                     <Box />
                   </Grid2>
                 ) : (
                   Array.from({ length: 11 }, (_, j) => j + 1).map((j) =>
                     j % 3 === 0 ? (
-                      <Grid2 size={1} display="flex">
+                      <Grid2 size={1} display="flex" key={`b${i}${j}`}>
                         <Box />
                       </Grid2>
                     ) : (
-                      <Grid2 size={1} display="flex">
-                        <SeatButton />
+                      <Grid2 size={1} display="flex" key={`b${i}${j}`}>
+                        <SeatButton
+                          title={`B${
+                            j +
+                            Math.floor(j / 3) +
+                            (i % 3) * 2 +
+                            Math.floor(i / 3) * 16
+                          }`}
+                          key={`B${
+                            j +
+                            Math.floor(j / 3) +
+                            (i % 3) * 2 +
+                            Math.floor(i / 3) * 16
+                          }`}
+                          content="홍길동"
+                          onClick={() => {
+                            const seatName = `B${
+                              j +
+                              Math.floor(j / 3) +
+                              (i % 3) * 2 +
+                              Math.floor(i / 3) * 16
+                            }`;
+                            onSeatButtonClick(seatName);
+                          }}
+                        />
                       </Grid2>
                     )
                   )
@@ -79,19 +118,46 @@ const SeatLayout = () => {
             {/* 하단 C, D석 */}
             <Stack direction="row" flex={1}>
               {Array.from({ length: 17 }, (_, i) => i).map((i) =>
-                i % 2 === 0 ? (<SeatButton />) : <Box flex={0.2} />
-            )}
+                i % 2 === 0 ? (
+                  <SeatButton
+                    title={
+                      i % 4 === 0 ? `C${i / 4 + 1}` : `D${Math.ceil(i / 4)}`
+                    }
+                    key={i % 4 === 0 ? `C${i / 4 + 1}` : `D${Math.ceil(i / 4)}`}
+                    content="홍길동"
+                    onClick={() => {
+                      const seatName =
+                        i % 4 === 0 ? `C${i / 4 + 1}` : `D${Math.ceil(i / 4)}`;
+                      onSeatButtonClick(seatName);
+                    }}
+                  />
+                ) : (
+                  <Box flex={0.2} key={`cd${i}`} />
+                )
+              )}
             </Stack>
           </Stack>
 
           <Box flex={0.5} />
 
           {/* 우측 A석 */}
-          <SideSeatStack flex={1}>
+          <Stack flex={1}>
             {Array.from({ length: 12 }, (_, i) => i).map((i) =>
-              i % 2 === 0 ? <SeatButton /> : <Box flex={i === 11 ? 0.7 : 0.2} />
+              i % 2 === 0 ? (
+                <SeatButton
+                  title={`A${i / 2 + 7}`}
+                  key={`A${i / 2 + 7}`}
+                  content="홍길동"
+                  onClick={() => {
+                    const seatName = `A${i / 2 + 7}`;
+                    onSeatButtonClick(seatName);
+                  }}
+                />
+              ) : (
+                <Box flex={i === 11 ? 0.7 : 0.2} key={`a${i}`} />
+              )
             )}
-          </SideSeatStack>
+          </Stack>
         </Stack>
       </Stack>
     </ThemeProvider>
