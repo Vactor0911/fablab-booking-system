@@ -15,6 +15,7 @@ import SampleImage from "../assets/SampleImage.png";
 
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import { dateFormatter, theme } from "../utils";
+import { useEffect } from "react";
 
 interface ReservationDialogProps {
   seatName: string;
@@ -26,6 +27,10 @@ const ReservationDialog = (props: ReservationDialogProps) => {
   const { seatName, open, onClose } = props;
   const ettiqutte = `1. 좌석 사용시 자리 정돈 기본매너\n2. 다른 사람에게 피해 주지 않기\n3. 사용자끼리 존중 해주기\n4. 음식 취식 불가`;
   const caution = `칸막이가 따로 없는 좌석입니다.`;
+
+  useEffect(() => {
+    console.log(`${seatName} 좌석 예약 대화상자 열림`);
+  }, [seatName]);
 
   return (
     <ThemeProvider theme={theme}>
