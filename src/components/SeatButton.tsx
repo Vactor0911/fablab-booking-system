@@ -11,10 +11,11 @@ import {
 interface SeatButtonProps extends ButtonProps {
   title: string;
   content?: string;
+  selected?: boolean;
 }
 
 const SeatButton = (props: SeatButtonProps) => {
-  const { title, content } = props;
+  const { title, content, selected } = props;
 
   // 버튼 테마 색상
   const buttonTheme = createTheme({
@@ -40,7 +41,8 @@ const SeatButton = (props: SeatButtonProps) => {
           minWidth: 0,
           minHeight: 0,
           boxShadow: "none",
-          backgroundColor: "#fffcf2",
+          backgroundColor: selected ? "#a72b43" : "#fffcf2",
+          color: selected ? "white" : "black",
           border: "1px solid #666666",
           padding: "0 5px",
           position: "relative",
@@ -56,18 +58,22 @@ const SeatButton = (props: SeatButtonProps) => {
             {title}
           </Typography>
 
-          <Typography variant="subtitle1" fontSize={{
-            xs: "1em",
-            md: "1.25em",
-          }} sx={{
-            position: "absolute",
-            width: "100%",
-            top: "37%",
-            left: 0,
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-          }}>
+          <Typography
+            variant="subtitle1"
+            fontSize={{
+              xs: "1em",
+              md: "1.25em",
+            }}
+            sx={{
+              position: "absolute",
+              width: "100%",
+              top: "37%",
+              left: 0,
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
             {content}
           </Typography>
         </Stack>
