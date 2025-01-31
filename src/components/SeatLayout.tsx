@@ -8,8 +8,6 @@ import {
 } from "@mui/material";
 import { theme } from "../utils";
 import SeatButton from "./SeatButton";
-import { useAtomValue } from "jotai";
-import { loginStateAtom } from "../states";
 
 interface SeatLayoutProps extends StackProps {
   onSeatButtonClick: (seatName: string) => void;
@@ -17,7 +15,6 @@ interface SeatLayoutProps extends StackProps {
 
 const SeatLayout = (props: SeatLayoutProps) => {
   const { onSeatButtonClick } = props;
-  const loginState = useAtomValue(loginStateAtom);
 
   return (
     <ThemeProvider theme={theme}>
