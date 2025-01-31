@@ -36,7 +36,7 @@ const NoticeDetail = () => {
   ]);
 
   // 수정 모드
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(location.pathname === "/notice/new");
 
   // 제목
   const [title, setTitle] = useState("");
@@ -59,7 +59,9 @@ const NoticeDetail = () => {
   // 등록 버튼 클릭
   const handlePostButtonClick = useCallback(() => {
     // TODO: 등록 처리
-  }, []);
+    setIsEditing(false);
+    navigate(`/notice/${0}`) // 등록된 공지사항으로 이동
+  }, [navigate]);
 
   // 수정 버튼 클릭
   const handleEditButtonClick = useCallback(() => {
