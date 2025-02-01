@@ -370,51 +370,38 @@ const Header = () => {
           marginTop: "5px",
         }}
       >
-        {/* 기본 설정 */}
-        <MenuItem
-          onClick={() => {
-            handleManageMenuClose();
-            navigate("/settings");
-          }}
-          sx={MenuItemCss}
-        >
-          <ListItemText sx={{ textAlign: "center" }}>기본 설정</ListItemText>
-        </MenuItem>
-
-        {/* 예약 제한 관리 */}
-        <MenuItem
-          onClick={() => {
-            handleManageMenuClose();
-            navigate("/book-restrictions");
-          }}
-          sx={MenuItemCss}
-        >
-          <ListItemText sx={{ textAlign: "center" }}>
-            예약 제한 관리
-          </ListItemText>
-        </MenuItem>
-
-        {/* 사용자 관리 */}
-        <MenuItem
-          onClick={() => {
-            handleManageMenuClose();
-            navigate("/users");
-          }}
-          sx={MenuItemCss}
-        >
-          <ListItemText sx={{ textAlign: "center" }}>사용자 관리</ListItemText>
-        </MenuItem>
-
-        {/* 로그 관리 */}
-        <MenuItem
-          onClick={() => {
-            handleManageMenuClose();
-            navigate("/logs");
-          }}
-          sx={MenuItemCss}
-        >
-          <ListItemText sx={{ textAlign: "center" }}>로그 관리</ListItemText>
-        </MenuItem>
+        {[
+          {
+            text: "기본 설정",
+            link: "/settings",
+          },
+          {
+            text: "예약 조회",
+            link: "/reservation",
+          },
+          {
+            text: "예약 제한 관리",
+            link: "/book-restrictions",
+          },
+          {
+            text: "사용자 관리",
+            link: "/users",
+          },
+          {
+            text: "로그 관리",
+            link: "/logs",
+          },
+        ].map(({ text, link }) => (
+          <MenuItem
+            onClick={() => {
+              handleManageMenuClose();
+              navigate(link);
+            }}
+            sx={MenuItemCss}
+          >
+            <ListItemText sx={{ textAlign: "center" }}>{text}</ListItemText>
+          </MenuItem>
+        ))}
       </Menu>
 
       {/* 드로어 메뉴 */}
