@@ -11,12 +11,13 @@ import { theme } from "../utils";
 import { Link, useNavigate } from "react-router";
 import SmapleImage from "../assets/SampleImage.png";
 import { useAtomValue } from "jotai";
-import { loginStateAtom } from "../states";
+import { loginStateAtom, Permission } from "../states";
 
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 import CircleRoundedIcon from "@mui/icons-material/CircleRounded";
 import ExitToAppRoundedIcon from "@mui/icons-material/ExitToAppRounded";
 import VpnKeyRoundedIcon from "@mui/icons-material/VpnKeyRounded";
+import EventSeatRoundedIcon from "@mui/icons-material/EventSeatRounded";
 
 const LinkCss = {
   textDecoration: "none",
@@ -184,133 +185,178 @@ const Home = () => {
             }}
           />
 
-          {/* 내 예약현황 */}
           <Stack
             direction="column"
-            spacing={loginState ? { xs: 3, md: 5 } : 0}
+            spacing={loginState.isLoggedIn ? { xs: 3, md: 5 } : 0}
             width={{
               xs: "100%",
               md: "35vw",
             }}
           >
-            {/* 내 예약현황 링크 */}
-            <Stack direction="row">
-              <Link
-                to="/my-reservation"
-                css={{ ...LinkCss, display: "flex", alignItems: "center" }}
-              >
-                <Typography variant="h2">내 예약현황</Typography>
-                <ChevronRightRoundedIcon fontSize="large" color="secondary" />
-              </Link>
-            </Stack>
-
-            {/* 예약 좌석 */}
-            <Link
-              to="/my-reservation"
-              css={{
-                ...LinkCss,
-                display: loginState ? "flex" : "none",
-              }}
-            >
-              <Stack
-                direction="row"
-                spacing={2}
-                alignItems="center"
-                borderRadius={"10px"}
-              >
-                {/* 좌석 사진 */}
-                <Box
-                  component="img"
-                  alt="좌석 사진"
-                  src={SmapleImage}
-                  width={{ xs: "80px", sm: "150px", md: "130px" }}
-                  borderRadius="10px"
-                />
-
-                {/* 예약 정보 */}
-                <Stack direction="column" flex={1}>
-                  <Typography variant="h3" fontWeight="bold">
-                    예약 좌석
-                  </Typography>
-                  <Stack direction="row" spacing={1} flexWrap={"wrap"}>
-                    <Typography
-                      variant="subtitle1"
+            {!loginState.isLoggedIn || loginState.permission === Permission.USER ? (
+              // 내 예약현황 링크
+              <>
+                <Stack direction="row">
+                  <Link
+                    to="/my-reservation"
+                    css={{ ...LinkCss, display: "flex", alignItems: "center" }}
+                  >
+                    <Typography variant="h2">내 예약현황</Typography>
+                    <ChevronRightRoundedIcon
+                      fontSize="large"
                       color="secondary"
-                      width={"60px"}
-                      fontWeight="bold"
-                    >
-                      예약 날짜
-                    </Typography>
-                    <Typography variant="subtitle1">
-                      1월 15일 (수) 13:00 ~ 22:00
-                    </Typography>
-                  </Stack>
-                  <Stack direction="row" spacing={1}>
-                    <Typography
-                      variant="subtitle1"
-                      color="secondary"
-                      width={"60px"}
-                      fontWeight="bold"
-                    >
-                      선택 좌석
-                    </Typography>
-                    <Typography variant="subtitle1">A11</Typography>
-                  </Stack>
-                  <Stack direction="row" spacing={1}>
-                    <Typography
-                      variant="subtitle1"
-                      color="secondary"
-                      width={"60px"}
-                      fontWeight="bold"
-                    >
-                      PC 지원
-                    </Typography>
-                    <Typography variant="subtitle1">Windows 11</Typography>
-                  </Stack>
+                    />
+                  </Link>
                 </Stack>
-              </Stack>
-            </Link>
 
-            {/* 퇴실하기 버튼 */}
-            <Button
-              fullWidth
-              variant="outlined"
-              color="error"
-              startIcon={<ExitToAppRoundedIcon />}
-              size="large"
-              sx={{
-                display: loginState ? "inline-flex" : "none",
-                ".MuiSvgIcon-root": {
-                  fontSize: "2em",
-                },
-              }}
-            >
-              <h2>퇴실하기</h2>
-            </Button>
+                {/* 예약 좌석 */}
+                <Link
+                  to="/my-reservation"
+                  css={{
+                    ...LinkCss,
+                    display: loginState.isLoggedIn ? "flex" : "none",
+                  }}
+                >
+                  <Stack
+                    direction="row"
+                    spacing={2}
+                    alignItems="center"
+                    borderRadius={"10px"}
+                  >
+                    {/* 좌석 사진 */}
+                    <Box
+                      component="img"
+                      alt="좌석 사진"
+                      src={SmapleImage}
+                      width={{ xs: "80px", sm: "150px", md: "130px" }}
+                      borderRadius="10px"
+                    />
 
-            {/* 로그인 버튼 */}
-            <Stack justifyContent="center" flex={1}>
-              <Button
-                variant="outlined"
-                color="secondary"
-                startIcon={<VpnKeyRoundedIcon />}
-                size="large"
-                sx={{
-                  display: loginState ? "none" : "inline-flex",
-                  ".MuiSvgIcon-root": {
-                    fontSize: "2em",
-                  },
-                  [theme.breakpoints.down("md")]: {
-                    marginTop: "30px",
-                  },
-                }}
-                onClick={() => {
-                  navigate("/login");
-                }}
-              >
-                <h2>로그인</h2>
-              </Button>
-            </Stack>
+                    {/* 예약 정보 */}
+                    <Stack direction="column" flex={1}>
+                      <Typography variant="h3" fontWeight="bold">
+                        예약 좌석
+                      </Typography>
+                      <Stack direction="row" spacing={1} flexWrap={"wrap"}>
+                        <Typography
+                          variant="subtitle1"
+                          color="secondary"
+                          width={"60px"}
+                          fontWeight="bold"
+                        >
+                          예약 날짜
+                        </Typography>
+                        <Typography variant="subtitle1">
+                          1월 15일 (수) 13:00 ~ 22:00
+                        </Typography>
+                      </Stack>
+                      <Stack direction="row" spacing={1}>
+                        <Typography
+                          variant="subtitle1"
+                          color="secondary"
+                          width={"60px"}
+                          fontWeight="bold"
+                        >
+                          선택 좌석
+                        </Typography>
+                        <Typography variant="subtitle1">A11</Typography>
+                      </Stack>
+                      <Stack direction="row" spacing={1}>
+                        <Typography
+                          variant="subtitle1"
+                          color="secondary"
+                          width={"60px"}
+                          fontWeight="bold"
+                        >
+                          PC 지원
+                        </Typography>
+                        <Typography variant="subtitle1">Windows 11</Typography>
+                      </Stack>
+                    </Stack>
+                  </Stack>
+                </Link>
+
+                {/* 퇴실하기 버튼 */}
+                <Button
+                  fullWidth
+                  variant="outlined"
+                  color="error"
+                  startIcon={<ExitToAppRoundedIcon />}
+                  size="large"
+                  sx={{
+                    display: loginState.isLoggedIn ? "inline-flex" : "none",
+                    ".MuiSvgIcon-root": {
+                      fontSize: "2em",
+                    },
+                  }}
+                >
+                  <Typography variant="h2">퇴실하기</Typography>
+                </Button>
+
+                {/* 로그인 버튼 */}
+                <Stack justifyContent="center" flex={1}>
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    startIcon={<VpnKeyRoundedIcon />}
+                    size="large"
+                    sx={{
+                      display: loginState.isLoggedIn ? "none" : "inline-flex",
+                      ".MuiSvgIcon-root": {
+                        fontSize: "2em",
+                      },
+                      [theme.breakpoints.down("md")]: {
+                        marginTop: "30px",
+                      },
+                    }}
+                    onClick={() => {
+                      navigate("/login");
+                    }}
+                  >
+                    <Typography variant="h2">로그인</Typography>
+                  </Button>
+                </Stack>
+              </>
+            ) : (
+              <>
+                {/* 예약 조회 링크 */}
+                <Stack direction="row">
+                  <Link
+                    to="/reservation"
+                    css={{ ...LinkCss, display: "flex", alignItems: "center" }}
+                  >
+                    <Typography variant="h2">예약 조회</Typography>
+                    <ChevronRightRoundedIcon
+                      fontSize="large"
+                      color="secondary"
+                    />
+                  </Link>
+                </Stack>
+
+                {/* 예약 조회 버튼 */}
+                <Stack justifyContent="center" flex={1}>
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    startIcon={<EventSeatRoundedIcon />}
+                    size="large"
+                    sx={{
+                      ".MuiSvgIcon-root": {
+                        fontSize: "2em",
+                      },
+                      [theme.breakpoints.down("md")]: {
+                        marginTop: "30px",
+                      },
+                    }}
+                    onClick={() => {
+                      navigate("/reservation");
+                    }}
+                  >
+                    <Typography variant="h2">예약 조회</Typography>
+                  </Button>
+                </Stack>
+              </>
+            )}
           </Stack>
         </Stack>
       </Stack>
