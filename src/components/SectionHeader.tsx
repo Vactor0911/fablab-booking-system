@@ -3,11 +3,12 @@ import { theme } from "../utils";
 
 interface SectionHeaderProps {
   title: string;
+  underline?: boolean;
 }
 
-const SectionHeader: React.FC<SectionHeaderProps> = ({ title }) => {
+const SectionHeader: React.FC<SectionHeaderProps> = ({ title, underline=false }) => {
   return (
-    <Box sx={{ borderBottom: `2px solid ${theme.palette.divider}` }}>
+    <Box sx={{ borderBottom: underline ? `2px solid ${theme.palette.divider}` : "none" }}>
       <Typography
         variant="h3"
         padding="5px"

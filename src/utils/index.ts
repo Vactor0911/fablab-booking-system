@@ -22,15 +22,27 @@ export const theme = createTheme({
           },
           "&.base-layout": {
             padding: "50px 0",
+            paddingBottom: "100px",
             // xs
             "@media (max-width: 600px)": {
               width: "90%",
             },
             // sm
             "@media (min-width: 601px)": {
+              width: "85%",
+            },
+            // md
+            "@media (min-width: 901px)": {
               width: "75%",
             },
           },
+        },
+      },
+    },
+    MuiTooltip: {
+      styleOverrides: {
+        tooltip: {
+          fontSize: "1em",
         },
       },
     },

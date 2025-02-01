@@ -9,6 +9,13 @@ import {
   About,
   Notice,
   NoticeDetail,
+  Users,
+  Settings,
+  Logs,
+  BookRestrictions,
+  BookRestrictionDetail,
+  MyPage,
+  MyReservation,
 } from "./pages";
 
 function App() {
@@ -24,6 +31,20 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/notice" element={<Notice />} />
         <Route path="/notice/:noticeid" element={<NoticeDetail />} />
+        <Route path="/my-page" element={<MyPage />} />
+        <Route path="/my-reservation" element={<MyReservation />} />
+
+        {/* 관리자 페이지 */}
+        <Route path="/settings" element={<Settings />} />
+        <Route path="/users" element={<Users />} />
+        <Route path="/logs" element={<Logs />} />
+        <Route path="/book-restrictions" element={<BookRestrictions />} />
+        <Route
+          path="/book-restrictions/:restrictionid"
+          element={<BookRestrictionDetail />}
+        />
+
+        {/* 404 Not Found */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </BrowserRouter>
