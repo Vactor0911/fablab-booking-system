@@ -37,6 +37,7 @@ const BookRestrictions = () => {
   const handleBookRestrictionClick = useCallback(
     (id: number) => {
       navigate(`/book-restrictions/${id}`);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     },
     [navigate]
   );
