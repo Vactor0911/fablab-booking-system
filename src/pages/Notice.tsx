@@ -1,7 +1,9 @@
 import {
   Box,
   Button,
+  Divider,
   InputAdornment,
+  List,
   Pagination,
   Stack,
   Tab,
@@ -174,6 +176,7 @@ const Notice = () => {
   const handleNoticeClick = useCallback(
     (id: number) => {
       navigate(`/notice/${id}`);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     },
     [navigate]
   );
@@ -181,6 +184,7 @@ const Notice = () => {
   // 글쓰기 버튼 클릭
   const handleNewNoticeClick = useCallback(() => {
     navigate("/notice/new");
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, [navigate]);
 
   const loginState = useAtomValue(loginStateAtom);
@@ -249,7 +253,15 @@ const Notice = () => {
           />
 
           {/* 공지사항 테이블 */}
-          <Table sx={{ tableLayout: "fixed" }}>
+          <Table
+            sx={{
+              tableLayout: "fixed",
+              display: {
+                xs: "none",
+                sm: "table",
+              },
+            }}
+          >
             <TableHead>
               <TableRow>
                 <TableCell width="10%">번호</TableCell>
@@ -296,9 +308,67 @@ const Notice = () => {
           </Table>
 
           {/* 모바일용 공지사항 목록 */}
-          <Stack>
-            
-          </Stack>
+          <List>
+            {notices
+              .slice((page - 1) * 10, (page - 1) * 10 + 10)
+              .map((notice) => (
+                <Stack
+                  direction="row"
+                  width="100%"
+                  justifyContent="space-between"
+                  key={`notice${notice.id}`}
+                  sx={{
+                    cursor: "pointer",
+                    padding: "10px",
+                    backgroundColor:
+                      notice.id === notices[0].id
+                        ? theme.palette.primary.main
+                        : "none",
+                    color: notice.id === notices[0].id ? "white" : "black",
+                    borderBottom: "1px solid #aaa",
+                    "&:hover": {
+                      backgroundColor: theme.palette.primary.main,
+                      color: "white",
+                    },
+                    "&:nth-child(even)": {
+                      backgroundColor: "#f4f4f6",
+                      color: "black",
+                    },
+                    "&:nth-child(1)": {
+                      borderTop: "1px solid #aaa",
+                    },
+                  }}
+                >
+                  <Typography variant="body2" alignSelf="center">
+                    {notice.id}
+                  </Typography>
+                  <Stack
+                    key={`notice${notice.id}`}
+                    onClick={() => {
+                      handleNoticeClick(notice.id);
+                    }}
+                    width="90%"
+                    gap={1}
+                  >
+                    <Typography
+                      variant="h3"
+                      sx={{
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
+                      {notice.title}
+                    </Typography>
+                    <Stack direction="row" gap={2}>
+                      <Typography variant="body2">{notice.date}</Typography>
+                      <Divider orientation="vertical" flexItem />
+                      <Typography variant="body2">{notice.views}</Typography>
+                    </Stack>
+                  </Stack>
+                </Stack>
+              ))}
+          </List>
 
           {/* 글쓰기 버튼 */}
           <Box
