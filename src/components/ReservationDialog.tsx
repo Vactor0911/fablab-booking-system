@@ -15,6 +15,9 @@ import SampleImage from "../assets/SampleImage.png";
 
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import { dateFormatter, theme } from "../utils";
+import { useCallback, useEffect, useState } from "react";
+import { useAtomValue } from "jotai";
+import { loginStateAtom, Permission } from "../states";
 
 interface ReservationDialogProps {
   seatName: string;
@@ -26,6 +29,22 @@ const ReservationDialog = (props: ReservationDialogProps) => {
   const { seatName, open, onClose } = props;
   const ettiqutte = `1. 좌석 사용시 자리 정돈 기본매너\n2. 다른 사람에게 피해 주지 않기\n3. 사용자끼리 존중 해주기\n4. 음식 취식 불가`;
   const caution = `칸막이가 따로 없는 좌석입니다.`;
+
+  useEffect(() => {
+    console.log(`${seatName} 좌석 예약 대화상자 열림`);
+  }, [seatName]);
+
+  // 관리자용
+  const loginState = useAtomValue(loginStateAtom);
+
+  // 강제 퇴실 사유
+  const [reason, setReason] = useState("");
+  const handleReasonChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setReason(e.target.value);
+    },
+    []
+  );
 
   return (
     <ThemeProvider theme={theme}>
@@ -114,7 +133,9 @@ const ReservationDialog = (props: ReservationDialogProps) => {
               {/* 값 */}
               <Stack spacing={0.5}>
                 <Typography variant="subtitle1">{seatName}</Typography>
-                <Typography variant="subtitle1">{dateFormatter.format(new Date())}</Typography>
+                <Typography variant="subtitle1">
+                  {dateFormatter.format(new Date())}
+                </Typography>
                 <Typography variant="subtitle1">08:00 ~ 22:00</Typography>
                 <Typography variant="subtitle1">Windows 11</Typography>
               </Stack>
@@ -179,10 +200,44 @@ const ReservationDialog = (props: ReservationDialogProps) => {
           {/* 예약 버튼 */}
           <Button
             variant="contained"
-            sx={{ fontSize: "1.5em", fontWeight: "bold" }}
+            sx={{
+              fontSize: "1.5em",
+              fontWeight: "bold",
+              display:
+                loginState.permission === Permission.USER ? "block" : "none",
+            }}
           >
             동의 후 예약
           </Button>
+
+          {/* 관리자용 강제 퇴실 버튼 */}
+          <Stack
+            gap={4}
+            display={
+              loginState.permission === Permission.USER ? "none" : "flex"
+            }
+          >
+            <Stack>
+              <Typography variant="subtitle1" color="primary" fontWeight="bold">
+                강제 퇴실
+              </Typography>
+              <TextField
+                placeholder="강제 퇴실 사유"
+                value={reason}
+                onChange={handleReasonChange}
+              />
+            </Stack>
+            <Button
+              variant="outlined"
+              color="error"
+              sx={{
+                fontSize: "1.5em",
+                fontWeight: "bold",
+              }}
+            >
+              강제 퇴실
+            </Button>
+          </Stack>
         </DialogContent>
       </Dialog>
     </ThemeProvider>

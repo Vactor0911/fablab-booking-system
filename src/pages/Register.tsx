@@ -46,9 +46,9 @@ const Register = () => {
   const [isConfirmCodeChecked, setIsConfirmCodeChecked] = useState(false); // 인증번호 확인 여부
   const [password, setPassword] = useState(""); // 비밀번호
   const [isPasswordVisible, setIsPasswordVisible] = useState(false); // 비밀번호 표시 여부
-  const [passwordConfirm, setPasswordConfirm] = useState(""); // 비밀번호
+  const [passwordConfirm, setPasswordConfirm] = useState(""); // 비밀번호 확인
   const [isPasswordConfirmVisible, setIsPasswordConfirmVisible] =
-    useState(false); // 비밀번호 표시 여부
+    useState(false); // 비밀번호 확인 표시 여부
   const [isPersonalInfoAgreed, setIsPersonalInfoAgreed] = useState(false); // 개인정보 동의 여부
   const [isGuidelineAgreed, setIsGuidelineAgreed] = useState(false); // 주의사항 확인 여부
 

@@ -38,7 +38,7 @@ const Reservation = () => {
             overflowX: "auto",
           }}
         >
-          <SeatLayout flex={1} margin="20px 20px" onSeatButtonClick={handleReservationDialogOpen} />
+          <SeatLayout minWidth="600px" minHeight="450px" margin="20px 20px" onSeatButtonClick={handleReservationDialogOpen} />
         </Stack>
       </Stack>
 

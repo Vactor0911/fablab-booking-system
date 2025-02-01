@@ -8,14 +8,15 @@ import {
 } from "@mui/material";
 import { theme } from "../utils";
 import SeatButton from "./SeatButton";
-import { FireExtinguisher, MedicalDevices } from "./pictograms";
 
-interface SeatLayoutProps extends StackProps {
-  onSeatButtonClick: (seatName: string) => void;
+interface SeatSelecterProps extends StackProps {
+  multiple?: boolean;
+  selectedseats: string[];
+  setselectedseats: (seats: string[]) => void;
 }
 
-const SeatLayout = (props: SeatLayoutProps) => {
-  const { onSeatButtonClick } = props;
+const SeatSelecter = (props: SeatSelecterProps) => {
+  const { multiple, selectedseats, setselectedseats } = props;
 
   return (
     <ThemeProvider theme={theme}>
@@ -40,7 +41,7 @@ const SeatLayout = (props: SeatLayoutProps) => {
         </Stack>
 
         {/* 중앙 좌석 배치도 */}
-        <Stack direction="row" flex={1} position="relative">
+        <Stack direction="row" flex={1}>
           {/* 좌측 A석 */}
           <Stack flex={1}>
             {Array.from({ length: 12 }, (_, i) => i).map((i) =>
@@ -48,11 +49,19 @@ const SeatLayout = (props: SeatLayoutProps) => {
                 <SeatButton
                   title={`A${i / 2 + 1}`}
                   key={`A${i / 2 + 1}`}
-                  content="홍길동"
                   onClick={() => {
                     const seatName = `A${i / 2 + 1}`;
-                    onSeatButtonClick(seatName);
+                    let newSelectedSeats = multiple ? [...selectedseats] : [];
+                    if (newSelectedSeats.includes(seatName)) {
+                      newSelectedSeats = newSelectedSeats.filter(
+                        (s) => s !== seatName
+                      );
+                    } else {
+                      newSelectedSeats.push(seatName);
+                    }
+                    setselectedseats(newSelectedSeats);
                   }}
+                  selected={selectedseats.includes(`A${i / 2 + 1}`)}
                 />
               ) : (
                 <Box flex={i === 11 ? 0.7 : 0.2} key={`a${i}`} />
@@ -93,7 +102,6 @@ const SeatLayout = (props: SeatLayoutProps) => {
                             (i % 3) * 2 +
                             Math.floor(i / 3) * 16
                           }`}
-                          content="홍길동"
                           onClick={() => {
                             const seatName = `B${
                               j +
@@ -101,8 +109,26 @@ const SeatLayout = (props: SeatLayoutProps) => {
                               (i % 3) * 2 +
                               Math.floor(i / 3) * 16
                             }`;
-                            onSeatButtonClick(seatName);
+                            let newSelectedSeats = multiple
+                              ? [...selectedseats]
+                              : [];
+                            if (newSelectedSeats.includes(seatName)) {
+                              newSelectedSeats = newSelectedSeats.filter(
+                                (s) => s !== seatName
+                              );
+                            } else {
+                              newSelectedSeats.push(seatName);
+                            }
+                            setselectedseats(newSelectedSeats);
                           }}
+                          selected={selectedseats.includes(
+                            `B${
+                              j +
+                              Math.floor(j / 3) +
+                              (i % 3) * 2 +
+                              Math.floor(i / 3) * 16
+                            }`
+                          )}
                         />
                       </Grid2>
                     )
@@ -122,22 +148,23 @@ const SeatLayout = (props: SeatLayoutProps) => {
                       i % 4 === 0 ? `C${i / 4 + 1}` : `D${Math.ceil(i / 4)}`
                     }
                     key={i % 4 === 0 ? `C${i / 4 + 1}` : `D${Math.ceil(i / 4)}`}
-                    content="홍길동"
                     onClick={() => {
                       const seatName =
                         i % 4 === 0 ? `C${i / 4 + 1}` : `D${Math.ceil(i / 4)}`;
-                      onSeatButtonClick(seatName);
+                      let newSelectedSeats = multiple ? [...selectedseats] : [];
+                      if (newSelectedSeats.includes(seatName)) {
+                        newSelectedSeats = newSelectedSeats.filter(
+                          (s) => s !== seatName
+                        );
+                      } else {
+                        newSelectedSeats.push(seatName);
+                      }
+                      setselectedseats(newSelectedSeats);
                     }}
+                    selected={selectedseats.includes(
+                      i % 4 === 0 ? `C${i / 4 + 1}` : `D${Math.ceil(i / 4)}`
+                    )}
                   />
-                ) : i === 5 ? (
-                  <Box
-                    flex={0.2}
-                    key={`cd${i}`}
-                    display="flex"
-                    alignItems="flex-end"
-                  >
-                    <FireExtinguisher />
-                  </Box>
                 ) : (
                   <Box flex={0.2} key={`cd${i}`} />
                 )
@@ -154,27 +181,24 @@ const SeatLayout = (props: SeatLayoutProps) => {
                 <SeatButton
                   title={`A${i / 2 + 7}`}
                   key={`A${i / 2 + 7}`}
-                  content="홍길동"
                   onClick={() => {
                     const seatName = `A${i / 2 + 7}`;
-                    onSeatButtonClick(seatName);
+                    let newSelectedSeats = multiple ? [...selectedseats] : [];
+                    if (newSelectedSeats.includes(seatName)) {
+                      newSelectedSeats = newSelectedSeats.filter(
+                        (s) => s !== seatName
+                      );
+                    } else {
+                      newSelectedSeats.push(seatName);
+                    }
+                    setselectedseats(newSelectedSeats);
                   }}
+                  selected={selectedseats.includes(`A${i / 2 + 7}`)}
                 />
               ) : (
                 <Box flex={i === 11 ? 0.7 : 0.2} key={`a${i}`} />
               )
             )}
-          </Stack>
-
-          {/* 좌측 장비 배치도 */}
-          <Stack direction="row" position="absolute" top={-30} left={0}>
-            <MedicalDevices />
-            <FireExtinguisher />
-          </Stack>
-
-          {/* 우측 장비 배치도 */}
-          <Stack direction="row" position="absolute" top={-30} right={0}>
-            <FireExtinguisher />
           </Stack>
         </Stack>
       </Stack>
@@ -182,4 +206,4 @@ const SeatLayout = (props: SeatLayoutProps) => {
   );
 };
 
-export default SeatLayout;
+export default SeatSelecter;
