@@ -310,8 +310,8 @@ const Settings = () => {
                   <SeatSelecter
                     minWidth="600px"
                     minHeight="400px"
-                    selectedSeats={selectedSeats}
-                    setSelectedSeats={setSelectedSeats}
+                    selectedseats={selectedSeats}
+                    setselectedseats={setSelectedSeats}
                   />
                 </Box>
               </Stack>

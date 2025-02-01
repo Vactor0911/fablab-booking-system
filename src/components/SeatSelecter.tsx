@@ -11,12 +11,12 @@ import SeatButton from "./SeatButton";
 
 interface SeatSelecterProps extends StackProps {
   multiple?: boolean;
-  selectedSeats: string[];
-  setSelectedSeats: (seats: string[]) => void;
+  selectedseats: string[];
+  setselectedseats: (seats: string[]) => void;
 }
 
 const SeatSelecter = (props: SeatSelecterProps) => {
-  const { multiple, selectedSeats, setSelectedSeats } = props;
+  const { multiple, selectedseats, setselectedseats } = props;
 
   return (
     <ThemeProvider theme={theme}>
@@ -51,7 +51,7 @@ const SeatSelecter = (props: SeatSelecterProps) => {
                   key={`A${i / 2 + 1}`}
                   onClick={() => {
                     const seatName = `A${i / 2 + 1}`;
-                    let newSelectedSeats = multiple ? [...selectedSeats] : [];
+                    let newSelectedSeats = multiple ? [...selectedseats] : [];
                     if (newSelectedSeats.includes(seatName)) {
                       newSelectedSeats = newSelectedSeats.filter(
                         (s) => s !== seatName
@@ -59,9 +59,9 @@ const SeatSelecter = (props: SeatSelecterProps) => {
                     } else {
                       newSelectedSeats.push(seatName);
                     }
-                    setSelectedSeats(newSelectedSeats);
+                    setselectedseats(newSelectedSeats);
                   }}
-                  selected={selectedSeats.includes(`A${i / 2 + 1}`)}
+                  selected={selectedseats.includes(`A${i / 2 + 1}`)}
                 />
               ) : (
                 <Box flex={i === 11 ? 0.7 : 0.2} key={`a${i}`} />
@@ -110,7 +110,7 @@ const SeatSelecter = (props: SeatSelecterProps) => {
                               Math.floor(i / 3) * 16
                             }`;
                             let newSelectedSeats = multiple
-                              ? [...selectedSeats]
+                              ? [...selectedseats]
                               : [];
                             if (newSelectedSeats.includes(seatName)) {
                               newSelectedSeats = newSelectedSeats.filter(
@@ -119,9 +119,9 @@ const SeatSelecter = (props: SeatSelecterProps) => {
                             } else {
                               newSelectedSeats.push(seatName);
                             }
-                            setSelectedSeats(newSelectedSeats);
+                            setselectedseats(newSelectedSeats);
                           }}
-                          selected={selectedSeats.includes(
+                          selected={selectedseats.includes(
                             `B${
                               j +
                               Math.floor(j / 3) +
@@ -151,7 +151,7 @@ const SeatSelecter = (props: SeatSelecterProps) => {
                     onClick={() => {
                       const seatName =
                         i % 4 === 0 ? `C${i / 4 + 1}` : `D${Math.ceil(i / 4)}`;
-                      let newSelectedSeats = multiple ? [...selectedSeats] : [];
+                      let newSelectedSeats = multiple ? [...selectedseats] : [];
                       if (newSelectedSeats.includes(seatName)) {
                         newSelectedSeats = newSelectedSeats.filter(
                           (s) => s !== seatName
@@ -159,9 +159,9 @@ const SeatSelecter = (props: SeatSelecterProps) => {
                       } else {
                         newSelectedSeats.push(seatName);
                       }
-                      setSelectedSeats(newSelectedSeats);
+                      setselectedseats(newSelectedSeats);
                     }}
-                    selected={selectedSeats.includes(
+                    selected={selectedseats.includes(
                       i % 4 === 0 ? `C${i / 4 + 1}` : `D${Math.ceil(i / 4)}`
                     )}
                   />
@@ -183,7 +183,7 @@ const SeatSelecter = (props: SeatSelecterProps) => {
                   key={`A${i / 2 + 7}`}
                   onClick={() => {
                     const seatName = `A${i / 2 + 7}`;
-                    let newSelectedSeats = multiple ? [...selectedSeats] : [];
+                    let newSelectedSeats = multiple ? [...selectedseats] : [];
                     if (newSelectedSeats.includes(seatName)) {
                       newSelectedSeats = newSelectedSeats.filter(
                         (s) => s !== seatName
@@ -191,9 +191,9 @@ const SeatSelecter = (props: SeatSelecterProps) => {
                     } else {
                       newSelectedSeats.push(seatName);
                     }
-                    setSelectedSeats(newSelectedSeats);
+                    setselectedseats(newSelectedSeats);
                   }}
-                  selected={selectedSeats.includes(`A${i / 2 + 7}`)}
+                  selected={selectedseats.includes(`A${i / 2 + 7}`)}
                 />
               ) : (
                 <Box flex={i === 11 ? 0.7 : 0.2} key={`a${i}`} />

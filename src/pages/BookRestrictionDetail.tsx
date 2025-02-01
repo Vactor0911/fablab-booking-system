@@ -263,8 +263,8 @@ const BookRestrictionDetail = () => {
                     minWidth="600px"
                     minHeight="400px"
                     multiple
-                    selectedSeats={selectedSeats}
-                    setSelectedSeats={setSelectedSeats}
+                    selectedseats={selectedSeats}
+                    setselectedseats={setSelectedSeats}
                   />
                 </Box>
 
