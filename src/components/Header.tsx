@@ -15,8 +15,13 @@ import {
 import { theme } from "../utils";
 import { Link, useLocation, useNavigate } from "react-router";
 import { useCallback, useRef, useState } from "react";
-import { useAtom, useAtomValue } from "jotai";
-import { isDarkModeAtom, loginStateAtom, Permission } from "../states";
+import { useAtom } from "jotai";
+import {
+  isDarkModeAtom,
+  LoginState,
+  loginStateAtom,
+  Permission,
+} from "../states";
 
 import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
@@ -28,6 +33,7 @@ import HelpOutlineRoundedIcon from "@mui/icons-material/HelpOutlineRounded";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
 import DrawerMenu from "./DrawerMenu";
+import axiosInstance, { getCsrfToken } from "../utils/axiosInstance";
 
 // Link 요소 CSS
 const LinkCss = {
@@ -74,7 +80,7 @@ const Header = () => {
   // 내 계정 드롭다운 메뉴
   const anchorAccountMenuElem = useRef<HTMLButtonElement>(null); // 내 계정 메뉴 버튼 엘리먼트
   const [accountMenuOpen, setAccountMenuOpen] = useState(false); // 내 계정 메뉴 열림 상태
-  const loginState = useAtomValue(loginStateAtom); // 로그인 상태
+  const [loginState, setLoginState] = useAtom(loginStateAtom); // 로그인 상태
 
   // 내 계정 버튼 클릭
   const handleAccountButtonClick = useCallback(() => {
@@ -100,7 +106,7 @@ const Header = () => {
       return;
     }
     setManageMenuOpen(true);
-  }, []);
+  }, [loginState.permission]);
 
   // 관리 메뉴 닫기
   const handleManageMenuClose = useCallback(() => {
@@ -133,6 +139,43 @@ const Header = () => {
   const handleThemeChangeClick = useCallback(() => {
     setIsDarkMode((prev) => !prev);
   }, [setIsDarkMode]);
+
+  // 로그아웃 버튼 클릭
+  const handleLogoutButtonClick = useCallback(async () => {
+    if (!loginState.isLoggedIn) {
+      alert("로그인이 필요합니다."); // 로그인 상태가 아닌 경우 알림
+      return;
+    }
+
+    // CSRF 토큰 가져오기
+    const csrfToken = await getCsrfToken();
+
+    const response = await axiosInstance.post(
+      "/users/logout",
+      {},
+      {
+        headers: {
+          "X-CSRF-Token": csrfToken, // CSRF 토큰 헤더 추가
+        },
+      }
+    );
+
+    try {
+      if (response.data.success) {
+        // Jotai 상태
+        setLoginState({} as LoginState);
+
+        alert("로그아웃이 성공적으로 완료되었습니다."); // 성공 메시지
+
+        navigate("/"); // 메인 페이지로 이동
+      } else {
+        alert("로그아웃 처리에 실패했습니다."); // 실패 메시지
+      }
+    } catch (error) {
+      console.error("로그아웃 중 오류 발생:", error);
+      alert("로그아웃 중 오류가 발생했습니다. 다시 시도해 주세요."); // 에러 메시지
+    }
+  }, [loginState.isLoggedIn, navigate, setLoginState]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -345,7 +388,13 @@ const Header = () => {
         </MenuItem>
 
         {/* 로그아웃 */}
-        <MenuItem onClick={handleAccountMenuClose} sx={MenuItemCss}>
+        <MenuItem
+          onClick={() => {
+            handleAccountMenuClose();
+            handleLogoutButtonClick();
+          }}
+          sx={MenuItemCss}
+        >
           <ListItemIcon>
             <MeetingRoomIcon />
           </ListItemIcon>
@@ -391,8 +440,9 @@ const Header = () => {
             text: "로그 관리",
             link: "/logs",
           },
-        ].map(({ text, link }) => (
+        ].map(({ text, link }, index) => (
           <MenuItem
+            key={index}
             onClick={() => {
               handleManageMenuClose();
               navigate(link);
