@@ -30,7 +30,7 @@ const BookRestrictionDetail = () => {
   const [endDate, setEndDate] = useState<Dayjs | null>(dayjs());
 
   // 공지사항 배너 목록
-  const [banners, setBanners] = useState<string[]>([
+  const [banners] = useState<string[]>([
     "관리자에 의해 좌석 예약이 제한되고 있습니다.",
     "제한 사유 1",
     "제한 사유 2",

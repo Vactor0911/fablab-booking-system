@@ -30,7 +30,7 @@ const Notice = () => {
   // 탭 메뉴
   const [tabIndex, setTabIndex] = useState("all"); // 탭 메뉴 인덱스
   const handleTabIndexChange = (
-    event: React.SyntheticEvent,
+    _event: React.SyntheticEvent,
     newValue: string
   ) => {
     setTabIndex(newValue);
@@ -39,7 +39,7 @@ const Notice = () => {
   // 페이지 선택
   const [page, setPage] = useState(1); // 페이지
   const handlePageChange = (
-    event: React.ChangeEvent<unknown>,
+    _event: React.ChangeEvent<unknown>,
     newPage: number
   ) => {
     setPage(newPage);

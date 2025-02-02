@@ -43,7 +43,7 @@ const Settings = () => {
   // 탭 메뉴
   const [tabIndex, setTabIndex] = useState("common"); // 탭 메뉴 인덱스
   const handleTabIndexChange = useCallback(
-    (event: React.SyntheticEvent, newValue: string) => {
+    (_event: React.SyntheticEvent, newValue: string) => {
       setTabIndex(newValue);
     },
     []
@@ -61,7 +61,8 @@ const Settings = () => {
 
   // 좌석 사진 변경
   const [image, setImage] = useState<string | null>(null);
-  const [imageRaw, setImageRaw] = useState<File | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [, setImageRaw] = useState<File | null>(null);
   const handleSeatImageChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const files = event.target.files;

@@ -26,7 +26,7 @@ const BookRestrictions = () => {
   // 페이지
   const [page, setPage] = useState(1);
   const handlePageChange = useCallback(
-    (event: React.ChangeEvent<unknown>, newPage: number) => {
+    (_event: React.ChangeEvent<unknown>, newPage: number) => {
       setPage(newPage);
     },
     []
