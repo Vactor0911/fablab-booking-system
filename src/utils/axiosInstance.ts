@@ -3,7 +3,7 @@ import { SetStateAction } from "jotai";
 import { NavigateFunction } from "react-router-dom";
 import { getAccessToken, setAccessToken } from "./accessToken"; // Access Token 관리 함수 import
 
-export const SERVER_HOST = process.env.REACT_APP_SERVER_HOST
+export const SERVER_HOST = import.meta.env.VITE_SERVER_HOST
 
 const axiosInstance = axios.create({
   baseURL: SERVER_HOST,
