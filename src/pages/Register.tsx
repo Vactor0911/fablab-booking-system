@@ -13,12 +13,14 @@ import {
 } from "@mui/material";
 import { theme } from "../utils";
 import { useCallback, useEffect, useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 
 import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
 import VisibilityOffRoundedIcon from "@mui/icons-material/VisibilityOffRounded";
 import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
 import CircleRoundedIcon from "@mui/icons-material/CircleRounded";
+import axios from "axios";
+import axiosInstance, { getCsrfToken } from "../utils/axiosInstance";
 
 // 스크롤 있는 Stack 요소
 const ScrollBox: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -63,14 +65,51 @@ const Register = () => {
   }, []);
 
   // 인증번호 요청 버튼 클릭
-  const handleConfirmCodeSendButtonClick = useCallback(() => {
+  const handleConfirmCodeSendButtonClick = useCallback(async () => {
     if (isConfirmCodeChecked) {
       return;
     }
 
     setIsConfirmCodeSent(true);
     setConfirmTimeLeft(300);
-  }, [isConfirmCodeChecked]);
+
+    // 인증번호 요청 API 호출
+    try {
+      // Step 1: CSRF 토큰 가져오기
+      const csrfToken = await getCsrfToken();
+      console.log("CSRF 토큰:", csrfToken);
+
+      // Step 2: 인증번호 요청
+      await axiosInstance.post(
+        "/users/verify-email",
+        {
+          email,
+          purpose: "verifyAccount", // 계정 복구용 인증번호 요청
+          id: studentId,
+          name,
+        },
+        {
+          headers: {
+            "X-CSRF-Token": csrfToken, // CSRF 토큰 추가
+          },
+        }
+      );
+
+      // 요청 성공 시 알림
+      alert("인증번호가 이메일로 발송되었습니다!");
+    } catch (error) {
+      // 요청 실패 시 알림
+      if (axios.isAxiosError(error) && error.response) {
+        alert(
+          "이메일 전송 실패\n" +
+            (error.response.data?.message || "알 수 없는 오류")
+        );
+      } else {
+        console.error("요청 오류:", (error as Error).message);
+        alert("예기치 않은 오류가 발생했습니다. 나중에 다시 시도해 주세요.");
+      }
+    }
+  }, [email, isConfirmCodeChecked, name, studentId]);
 
   // 인증번호 입력 타이머
   useEffect(() => {
@@ -93,9 +132,40 @@ const Register = () => {
   }, []);
 
   // 인증번호 확인 버튼 클릭
-  const handleConfirmCodeCheckButtonClick = useCallback(() => {
-    setIsConfirmCodeChecked(true);
-  }, []);
+  const handleConfirmCodeCheckButtonClick = useCallback(async () => {
+    try {
+      // Step 1: CSRF 토큰 가져오기
+      const csrfToken = await getCsrfToken();
+
+      // Step 2: 인증번호 확인 요청
+      await axiosInstance.post(
+        "/users/verify-code",
+        {
+          email,
+          code: confirmCode,
+        },
+        {
+          headers: {
+            "X-CSRF-Token": csrfToken, // CSRF 토큰 추가
+          },
+        }
+      );
+
+      // 요청 성공 처리
+      alert("인증번호 확인 완료!");
+      setIsConfirmCodeChecked(true); // 인증 성공
+    } catch (error) {
+      // 요청 실패 처리
+      if (axios.isAxiosError(error) && error.response) {
+        alert(
+          "인증 실패\n" + (error.response.data?.message || "알 수 없는 오류")
+        );
+      } else {
+        console.error("요청 오류:", (error as Error).message);
+        alert("예기치 않은 오류가 발생했습니다. 나중에 다시 시도해 주세요.");
+      }
+    }
+  }, [confirmCode, email]);
 
   // 개인정보 동의 버튼 클릭
   const handlePersonalInfoAgreeButtonClick = useCallback(() => {
@@ -108,7 +178,57 @@ const Register = () => {
   }, []);
 
   // 회원가입 버튼 클릭
-  const handleRegisterButtonClick = useCallback(() => {}, []);
+  const navigate = useNavigate();
+  const handleRegisterButtonClick = useCallback(async () => {
+    // 사용자가 인증번호를 확인했는지 확인
+    if (!isConfirmCodeChecked) {
+      alert("이메일 인증을 완료해주세요!");
+      return;
+    }
+
+    try {
+      // Step 1: CSRF 토큰 가져오기
+      const csrfToken = await getCsrfToken();
+
+      // Step 2: 서버로 회원가입 요청 전송
+      await axiosInstance.post(
+        "/users/register",
+        {
+          name: name,
+          id: studentId,
+          password: password,
+          email: email,
+        },
+        {
+          headers: {
+            "X-CSRF-Token": csrfToken, // CSRF 토큰 추가
+          },
+        }
+      );
+
+      // 사용자에게 성공 메시지 보여주기 (UI 반영)
+      alert("회원가입이 성공적으로 완료되었습니다!");
+      navigate("/login"); // 회원가입 성공 시 로그인 페이지로 이동
+    } catch (error) {
+      // 서버로부터 반환된 에러 메시지 확인
+      if (axios.isAxiosError(error) && error.response) {
+        console.error(
+          "서버가 오류를 반환했습니다:",
+          error.response.data.message
+        );
+        alert(
+          `회원가입 중 오류가 발생했습니다.\n${error.response.data.message}`
+        );
+      } else {
+        if (error instanceof Error) {
+          console.error("요청을 보내는 중 오류가 발생했습니다:", error.message);
+        } else {
+          console.error("요청을 보내는 중 알 수 없는 오류가 발생했습니다.");
+        }
+        alert("예기치 않은 오류가 발생했습니다. 나중에 다시 시도해 주세요.");
+      }
+    }
+  }, [email, isConfirmCodeChecked, name, navigate, password, studentId]);
 
   return (
     <ThemeProvider theme={theme}>
