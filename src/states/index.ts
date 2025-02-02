@@ -18,3 +18,14 @@ export interface LoginState {
 }
 
 export const loginStateAtom = atomWithStorage("FabLabLoginState", {} as LoginState);
+
+// 내 예약 정보 상태
+export interface MyReservation {
+  state: string;
+  book_date: string;
+  seat_name: string;
+  cancel_reason?: string;
+}
+
+// 내 예약 정보
+export const reservationSeatAtom = atom("");

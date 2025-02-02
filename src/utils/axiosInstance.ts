@@ -2,8 +2,9 @@ import axios from "axios";
 import { SetStateAction } from "jotai";
 import { NavigateFunction } from "react-router-dom";
 import { getAccessToken, setAccessToken } from "./accessToken"; // Access Token 관리 함수 import
+import { LoginState } from "../states";
 
-export const SERVER_HOST = import.meta.env.VITE_SERVER_HOST
+export const SERVER_HOST = import.meta.env.VITE_SERVER_HOST;
 
 const axiosInstance = axios.create({
   baseURL: SERVER_HOST,
@@ -28,14 +29,7 @@ let isInterceptorInitialized = false; // 인터셉터 초기화 상태를 저장
 
 // Axios Interceptor 설정
 export const setupAxiosInterceptors = (
-  setTestFablabloginState: (
-    value: SetStateAction<{
-      isLoggedIn: boolean;
-      userId: string | null;
-      // id: string;
-      permissions: string;
-    }>
-  ) => void,
+  setLoginState: (value: SetStateAction<LoginState>) => void,
   navigate: NavigateFunction
 ) => {
   if (isInterceptorInitialized) return; // 이미 초기화된 경우 실행하지 않음
@@ -91,16 +85,8 @@ export const setupAxiosInterceptors = (
             refreshError.response?.status === 403
           ) {
             // 상태 초기화
-            setTestFablabloginState({
-              isLoggedIn: false,
-              userId: null,
-              // id: "",
-              permissions: "",
-            });
-            localStorage.removeItem("testFablabloginState");
-
+            setLoginState({} as LoginState);
             alert("세션이 만료되었습니다. 다시 로그인해주세요.");
-
             navigate("/login"); // 로그인 페이지로 이동
           }
         }

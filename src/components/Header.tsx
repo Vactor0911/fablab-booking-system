@@ -222,11 +222,11 @@ const Header = () => {
                 sm: "flex",
               }}
             >
-              {loginState.permission === Permission.USER &&
+              {(!loginState.isLoggedIn || loginState.permission === Permission.USER) &&
                 NavLinkButton("예약하기", {
                   onClick: () => navigate("/reservation"),
                 })}
-              {loginState.permission !== Permission.USER &&
+              {loginState.isLoggedIn && loginState.permission !== Permission.USER &&
                 NavLinkButton("관리메뉴", {
                   onClick: handleManageMenuButtonClick,
                   ref: anchorManageMenuElem,

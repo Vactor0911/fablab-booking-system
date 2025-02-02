@@ -308,7 +308,12 @@ const Notice = () => {
           </Table>
 
           {/* 모바일용 공지사항 목록 */}
-          <List>
+          <List sx={{
+            display: {
+              xs: "block",
+              sm: "none",
+            }
+          }}>
             {notices
               .slice((page - 1) * 10, (page - 1) * 10 + 10)
               .map((notice) => (
@@ -326,10 +331,6 @@ const Notice = () => {
                         : "none",
                     color: notice.id === notices[0].id ? "white" : "black",
                     borderBottom: "1px solid #aaa",
-                    "&:hover": {
-                      backgroundColor: theme.palette.primary.main,
-                      color: "white",
-                    },
                     "&:nth-child(even)": {
                       backgroundColor: "#f4f4f6",
                       color: "black",

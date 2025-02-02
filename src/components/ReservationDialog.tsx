@@ -16,8 +16,11 @@ import SampleImage from "../assets/SampleImage.png";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import { dateFormatter, theme } from "../utils";
 import { useCallback, useEffect, useState } from "react";
-import { useAtomValue } from "jotai";
-import { loginStateAtom, Permission } from "../states";
+import { useAtom, useAtomValue } from "jotai";
+import { loginStateAtom, Permission, reservationSeatAtom } from "../states";
+import axiosInstance, { getCsrfToken } from "../utils/axiosInstance";
+import TokenRefresher from "./TokenRefresher";
+import { useNavigate } from "react-router";
 
 interface ReservationDialogProps {
   seatName: string;
@@ -27,15 +30,121 @@ interface ReservationDialogProps {
 
 const ReservationDialog = (props: ReservationDialogProps) => {
   const { seatName, open, onClose } = props;
-  const ettiqutte = `1. 좌석 사용시 자리 정돈 기본매너\n2. 다른 사람에게 피해 주지 않기\n3. 사용자끼리 존중 해주기\n4. 음식 취식 불가`;
-  const caution = `칸막이가 따로 없는 좌석입니다.`;
+
+  const [ettiqutte, setEttiqutte] = useState("");
+  const [caution, setCaution] = useState("");
+  const [pcSupport, setPcSupport] = useState("");
+  const [seatImage, setSeatImage] = useState("");
+  const [reservationTime, setReservationTime] = useState("");
+  const [isBooked, setIsBooked] = useState(false);
+  const [person, setPerson] = useState(""); // TODO: 명칭 변경 필요
+
+  const loginState = useAtomValue(loginStateAtom);
+
+  // 정보 불러오기
+  const getSeatInfo = useCallback(async () => {
+    // 권한 확인 API 호출
+    const response = await axiosInstance.get("/users/info", {
+      headers: {
+        "X-CSRF-Token": await getCsrfToken(), // CSRF 토큰 헤더 추가
+      },
+    });
+
+    // 사용자 권한
+    const userPermission = response.data.user.permission;
+
+    // 권한에 따른 좌석 정보 불러오기
+    const seatsResponse = await axiosInstance.get(
+      userPermission === "admin" || userPermission === "superadmin"
+        ? `/admin/seats/${seatName}`
+        : `/seats/${seatName}`
+    );
+
+    console.log(seatsResponse);
+    setEttiqutte(seatsResponse.data.seat.basicManners);
+    setCaution(seatsResponse.data.seat.warning);
+    setPcSupport(seatsResponse.data.seat.pc_support);
+    setSeatImage(seatsResponse.data.seat.image);
+
+    const newIsBooked =
+      !!seatsResponse.data.seat.userName &&
+      seatsResponse.data.seat.userName !== "없음";
+    setIsBooked(newIsBooked);
+
+    const reservationStartTime = seatsResponse.data.seat.reservationTime;
+    const availableEndTime = seatsResponse.data.seat.availableEndTime.substring(
+      0,
+      5
+    );
+
+    if (!newIsBooked && loginState.permission !== Permission.USER) {
+      setReservationTime("예약 없음");
+    } else if (reservationStartTime) {
+      setReservationTime(`${reservationStartTime} ~ ${availableEndTime}`);
+    } else {
+      setReservationTime(
+        `${new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false,
+        })} ~ ${availableEndTime}`
+      );
+    }
+
+    const newPerson = `${seatsResponse.data.seat.userStudentId} ${seatsResponse.data.seat.userName}`;
+    console.log(newPerson);
+    setPerson(newIsBooked ? newPerson : "예약 없음");
+  }, [loginState.permission, seatName]);
 
   useEffect(() => {
-    console.log(`${seatName} 좌석 예약 대화상자 열림`);
-  }, [seatName]);
+    getSeatInfo();
+  }, [getSeatInfo, seatName]);
 
-  // 관리자용
-  const loginState = useAtomValue(loginStateAtom);
+  // 예약 버튼 클릭
+  const navigate = useNavigate();
+  const handleReservationButtonClick = useCallback(async () => {
+    if (!loginState.isLoggedIn) {
+      alert("로그인 후 이용 가능합니다.");
+      onClose();
+      navigate("/login");
+      return;
+    }
+
+    try {
+      axiosInstance
+        .post(
+          "/reservations",
+          {
+            userId: loginState.userId,
+            seat_name: seatName,
+          },
+          {
+            headers: {
+              "X-CSRF-Token": await getCsrfToken(), // CSRF 토큰 추가
+            },
+          }
+        )
+        .then(() => {
+          alert("성공적으로 예약되었습니다.");
+          onClose();
+        })
+        .catch((error) => {
+          console.error("예약 요청 실패:", error);
+          if (error.response?.status === 403) {
+            alert("CSRF 토큰 오류: 요청을 다시 시도해 주세요.");
+          } else {
+            alert(
+              `예약에 실패했습니다.\n원인: ${
+                error.response?.data?.message || "알 수 없는 오류"
+              }`
+            );
+          }
+        });
+    } catch (error) {
+      console.error("예약 중 오류 발생:", error);
+      alert("예약 중 오류가 발생했습니다.");
+    }
+  }, [loginState.isLoggedIn, loginState.userId, navigate, onClose, seatName]);
 
   // 강제 퇴실 사유
   const [reason, setReason] = useState("");
@@ -46,143 +155,197 @@ const ReservationDialog = (props: ReservationDialogProps) => {
     []
   );
 
-  return (
-    <ThemeProvider theme={theme}>
-      <Dialog
-        open={open}
-        onClose={onClose}
-        sx={{
-          padding: "20px",
-          "& .MuiDialog-paper": {
-            margin: "0",
-            width: "100%",
+  // 강제 퇴실 버튼 클릭
+  const handleForceCancelButtonClick = useCallback(() => {
+    getCsrfToken()
+      .then((csrfToken) => {
+        return axiosInstance.post(
+          `/admin/force-exit`,
+          {
+            seatName: seatName,
+            reason: reason,
+            userId: loginState.userId,
           },
-        }}
-        fullWidth
-      >
-        <DialogTitle
-          variant="h2"
+          {
+            headers: {
+              "X-CSRF-Token": csrfToken,
+            },
+          }
+        );
+      })
+      .then((response) => {
+        alert(response.data.message); // 이메일 전송 결과도 포함된 메시지 표시
+      })
+      .catch((error) => {
+        console.error("강제퇴실 처리 중 오류 발생:", error);
+        alert("강제 퇴실 처리 중 오류가 발생했습니다.");
+      })
+      .finally(() => {
+        onClose();
+      });
+  }, [loginState.userId, onClose, reason, seatName]);
+
+  // 내 예약 정보 불러오기
+  const [reservationSeat, setReservationSeat] = useAtom(reservationSeatAtom);
+
+  // 퇴실 버튼 클릭
+  const handleExitButtonClick = useCallback(async () => {
+    // CSRF 토큰 가져오기
+    getCsrfToken()
+      .then((csrfToken) => {
+        // 좌석 퇴실 API 호출
+        return axiosInstance.delete("/reservations", {
+          headers: {
+            "X-CSRF-Token": csrfToken, // CSRF 토큰 헤더 추가
+          },
+        });
+      })
+      .then((response) => {
+        alert(
+          response.data.message || "좌석 퇴실이 성공적으로 완료되었습니다."
+        );
+        onClose();
+        setReservationSeat("");
+      })
+      .catch((error) => {
+        console.error("퇴실 처리 중 오류 발생:", error);
+        if (error.response?.status === 403) {
+          alert("CSRF 토큰 오류: 요청을 다시 시도해 주세요.");
+        } else {
+          alert(
+            error.response?.data?.message || "퇴실 처리 중 오류가 발생했습니다."
+          );
+        }
+      });
+  }, [onClose, setReservationSeat]);
+
+  return (
+    <TokenRefresher>
+      <ThemeProvider theme={theme}>
+        <Dialog
+          open={open}
+          onClose={onClose}
           sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
+            padding: "20px",
+            "& .MuiDialog-paper": {
+              margin: "0",
+              width: "100%",
+            },
           }}
+          fullWidth
         >
-          {/* 대화상자 제목 */}
-          FabLab
-          {/* 닫기 버튼 */}
-          <IconButton aria-label="close" onClick={onClose}>
-            <CloseRoundedIcon />
-          </IconButton>
-        </DialogTitle>
-
-        {/* 구분선 */}
-        <Divider variant="middle" />
-
-        <DialogContent
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "20px",
-          }}
-        >
-          {/* 좌석명 */}
-          <Typography variant="h2">{seatName} 좌석</Typography>
-
-          {/* 좌석 정보 */}
-          <Stack
-            direction="row"
-            justifyContent="space-between"
-            alignItems="center"
-            flexWrap="wrap-reverse"
-            gap={2}
+          <DialogTitle
+            variant="h2"
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
           >
-            <Stack direction="row" spacing={2}>
-              {/* 컬럼명 */}
-              <Stack gap={0.5}>
-                <Typography
-                  variant="subtitle1"
-                  color="primary"
-                  fontWeight="bold"
-                >
-                  예약좌석
-                </Typography>
-                <Typography
-                  variant="subtitle1"
-                  color="primary"
-                  fontWeight="bold"
-                >
-                  예약날짜
-                </Typography>
-                <Typography
-                  variant="subtitle1"
-                  color="primary"
-                  fontWeight="bold"
-                >
-                  예약시간
-                </Typography>
-                <Typography
-                  variant="subtitle1"
-                  color="primary"
-                  fontWeight="bold"
-                >
-                  PC 지원
-                </Typography>
+            {/* 대화상자 제목 */}
+            FabLab
+            {/* 닫기 버튼 */}
+            <IconButton aria-label="close" onClick={onClose}>
+              <CloseRoundedIcon />
+            </IconButton>
+          </DialogTitle>
+
+          {/* 구분선 */}
+          <Divider variant="middle" />
+
+          <DialogContent
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "20px",
+            }}
+          >
+            {/* 좌석명 */}
+            <Typography variant="h2">{seatName} 좌석</Typography>
+
+            {/* 좌석 정보 */}
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              alignItems="center"
+              flexWrap="wrap-reverse"
+              gap={2}
+            >
+              <Stack direction="row" spacing={2}>
+                {/* 컬럼명 */}
+                <Stack gap={0.5}>
+                  <Typography
+                    variant="subtitle1"
+                    color="primary"
+                    fontWeight="bold"
+                  >
+                    예약좌석
+                  </Typography>
+                  {loginState.permission !== Permission.USER && (
+                    <Typography
+                      variant="subtitle1"
+                      color="primary"
+                      fontWeight="bold"
+                    >
+                      예약자
+                    </Typography>
+                  )}
+                  <Typography
+                    variant="subtitle1"
+                    color="primary"
+                    fontWeight="bold"
+                  >
+                    예약날짜
+                  </Typography>
+                  <Typography
+                    variant="subtitle1"
+                    color="primary"
+                    fontWeight="bold"
+                  >
+                    예약시간
+                  </Typography>
+                  <Typography
+                    variant="subtitle1"
+                    color="primary"
+                    fontWeight="bold"
+                  >
+                    PC 지원
+                  </Typography>
+                </Stack>
+
+                {/* 값 */}
+                <Stack spacing={0.5}>
+                  <Typography variant="subtitle1">{seatName}</Typography>
+                  {loginState.permission !== Permission.USER && (
+                    <Typography variant="subtitle1">{person}</Typography>
+                  )}
+                  <Typography variant="subtitle1">
+                    {isBooked || loginState.permission === Permission.USER
+                      ? dateFormatter.format(new Date())
+                      : "예약 없음"}
+                  </Typography>
+                  <Typography variant="subtitle1">{reservationTime}</Typography>
+                  <Typography variant="subtitle1">{pcSupport}</Typography>
+                </Stack>
               </Stack>
 
-              {/* 값 */}
-              <Stack spacing={0.5}>
-                <Typography variant="subtitle1">{seatName}</Typography>
-                <Typography variant="subtitle1">
-                  {dateFormatter.format(new Date())}
-                </Typography>
-                <Typography variant="subtitle1">08:00 ~ 22:00</Typography>
-                <Typography variant="subtitle1">Windows 11</Typography>
-              </Stack>
+              {/* 좌석 사진 */}
+              <Box
+                component="img"
+                alt="좌석 사진"
+                src={seatImage ? seatImage : SampleImage}
+                width="130px"
+                border="1px solid #727272"
+                borderRadius="10px"
+                boxShadow="3px 3px 3px rgba(0,0,0,0.4)"
+              />
             </Stack>
 
-            {/* 좌석 사진 */}
-            <Box
-              component="img"
-              alt="좌석 사진"
-              src={SampleImage}
-              width="130px"
-              border="1px solid #727272"
-              borderRadius="10px"
-              boxShadow="3px 3px 3px rgba(0,0,0,0.4)"
-            />
-          </Stack>
-
-          {/* 기본 예절 */}
-          <Stack padding="5px 15px" sx={{ backgroundColor: "#f4f4f6" }}>
-            <TextField
-              multiline
-              defaultValue={ettiqutte}
-              variant="standard"
-              disabled
-              sx={{
-                "& .MuiInput-input": {
-                  WebkitTextFillColor: "black !important",
-                },
-                "& .MuiInputBase-root:before": {
-                  content: "none",
-                },
-              }}
-            />
-          </Stack>
-
-          {/* 주의사항 */}
-          <Stack>
-            {/* 주의사항 제목 */}
-            <Typography variant="subtitle1" color="primary" fontWeight="bold">
-              * 주의사항 *
-            </Typography>
-
-            {/* 내용 */}
+            {/* 기본 예절 */}
             <Stack padding="5px 15px" sx={{ backgroundColor: "#f4f4f6" }}>
               <TextField
                 multiline
-                defaultValue={caution}
+                defaultValue={ettiqutte}
                 variant="standard"
                 disabled
                 sx={{
@@ -195,52 +358,111 @@ const ReservationDialog = (props: ReservationDialogProps) => {
                 }}
               />
             </Stack>
-          </Stack>
 
-          {/* 예약 버튼 */}
-          <Button
-            variant="contained"
-            sx={{
-              fontSize: "1.5em",
-              fontWeight: "bold",
-              display:
-                loginState.permission === Permission.USER ? "block" : "none",
-            }}
-          >
-            동의 후 예약
-          </Button>
-
-          {/* 관리자용 강제 퇴실 버튼 */}
-          <Stack
-            gap={4}
-            display={
-              loginState.permission === Permission.USER ? "none" : "flex"
-            }
-          >
+            {/* 주의사항 */}
             <Stack>
+              {/* 주의사항 제목 */}
               <Typography variant="subtitle1" color="primary" fontWeight="bold">
-                강제 퇴실
+                * 주의사항 *
               </Typography>
-              <TextField
-                placeholder="강제 퇴실 사유"
-                value={reason}
-                onChange={handleReasonChange}
-              />
+
+              {/* 내용 */}
+              <Stack padding="5px 15px" sx={{ backgroundColor: "#f4f4f6" }}>
+                <TextField
+                  multiline
+                  defaultValue={caution}
+                  variant="standard"
+                  disabled
+                  sx={{
+                    "& .MuiInput-input": {
+                      WebkitTextFillColor: "black !important",
+                    },
+                    "& .MuiInputBase-root:before": {
+                      content: "none",
+                    },
+                  }}
+                />
+              </Stack>
             </Stack>
+
+            {/* 예약 버튼 */}
+            <Button
+              variant="contained"
+              sx={{
+                fontSize: "1.5em",
+                fontWeight: "bold",
+                display:
+                  !loginState.isLoggedIn ||
+                  (loginState.permission === Permission.USER &&
+                    reservationSeat === "")
+                    ? "block"
+                    : "none",
+              }}
+              onClick={handleReservationButtonClick}
+            >
+              동의 후 예약
+            </Button>
+
+            {/* 관리자용 강제 퇴실 버튼 */}
+            <Stack
+              gap={4}
+              display={
+                loginState.isLoggedIn &&
+                loginState.permission !== Permission.USER &&
+                isBooked
+                  ? "flex"
+                  : "none"
+              }
+            >
+              <Stack>
+                <Typography
+                  variant="subtitle1"
+                  color="primary"
+                  fontWeight="bold"
+                >
+                  강제 퇴실
+                </Typography>
+                <TextField
+                  placeholder="강제 퇴실 사유"
+                  value={reason}
+                  onChange={handleReasonChange}
+                />
+              </Stack>
+              <Button
+                variant="outlined"
+                color="error"
+                sx={{
+                  fontSize: "1.5em",
+                  fontWeight: "bold",
+                }}
+                onClick={handleForceCancelButtonClick}
+              >
+                강제 퇴실
+              </Button>
+            </Stack>
+
+            {/* 퇴실 버튼 */}
             <Button
               variant="outlined"
               color="error"
               sx={{
                 fontSize: "1.5em",
                 fontWeight: "bold",
+                display:
+                  loginState.isLoggedIn &&
+                  loginState.permission === Permission.USER &&
+                  reservationSeat === seatName
+                    ? "block"
+                    : "none",
               }}
+              onClick={handleExitButtonClick}
             >
-              강제 퇴실
+              퇴실하기
             </Button>
-          </Stack>
-        </DialogContent>
-      </Dialog>
-    </ThemeProvider>
+          </DialogContent>
+        </Dialog>
+      </ThemeProvider>
+    </TokenRefresher>
   );
 };
 
