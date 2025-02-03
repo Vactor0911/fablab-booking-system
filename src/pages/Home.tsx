@@ -10,8 +10,13 @@ import FabLabImage from "../assets/FabLabImage.jpg";
 import { theme } from "../utils";
 import { Link, useNavigate } from "react-router";
 import SmapleImage from "../assets/SampleImage.png";
-import { useAtomValue } from "jotai";
-import { loginStateAtom, MyReservation, Permission } from "../states";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import {
+  loginStateAtom,
+  myCurrentReservationAtom,
+  Permission,
+  reservationSeatAtom,
+} from "../states";
 
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 import CircleRoundedIcon from "@mui/icons-material/CircleRounded";
@@ -27,22 +32,23 @@ const LinkCss = {
   color: "black",
 };
 
+// 내 예약 정보 인터페이스
+
 const Home = () => {
   const loginState = useAtomValue(loginStateAtom); // 로그인 상태
   const navigate = useNavigate(); // 페이지 이동
 
   // 내 예약 정보 불러오기
-  const [reservationDate, setReservationDate] = useState("");
-  const [reservationSeat, setReservationSeat] = useState("");
-  const [reservationPcSupport, setReservationPcSupport] = useState("");
-  const [reservationSeatImage, setReservationSeatImage] = useState("");
+  const [myCurrentReservation, setMyCurrentReservation] = useAtom(
+    myCurrentReservationAtom
+  );
 
   const handleRefreshMyReservation = useCallback(async () => {
     // 로그인 상태일 경우에만 예약 정보 불러오기
     if (!loginState.isLoggedIn || loginState.permission !== Permission.USER) {
       return;
     }
-    
+
     try {
       const csrfToken = await getCsrfToken();
       const response = await axiosInstance.get(`/users/reservations/current`, {
@@ -51,16 +57,24 @@ const Home = () => {
         },
       });
 
-      console.log(response.data.reservations[0]);
-      setReservationDate(response.data.reservations[0].bookDate);
-      setReservationSeat(response.data.reservations[0].seatName);
-      setReservationPcSupport(response.data.reservations[0].pcSupport);
-      setReservationSeatImage(response.data.reservations[0].image);
+      // 예약 정보가 없다면 종료
+      if (response.data.reservations.length === 0) {
+        setMyCurrentReservation(null);
+        return;
+      }
+
+      const newMyCurrentReservation = {
+        bookDate: response.data.reservations[0].bookDate,
+        seatName: response.data.reservations[0].seatName,
+        pcSupport: response.data.reservations[0].pcSupport,
+        image: response.data.reservations[0].image,
+      };
+      setMyCurrentReservation(newMyCurrentReservation);
     } catch (err) {
       console.error("예약 정보를 가져오는 중 오류 발생:", err);
       return [];
     }
-  }, [loginState.isLoggedIn, loginState.permission]);
+  }, [loginState.isLoggedIn, loginState.permission, setMyCurrentReservation]);
 
   useEffect(() => {
     handleRefreshMyReservation();
@@ -69,6 +83,63 @@ const Home = () => {
     loginState.isLoggedIn,
     loginState.permission,
   ]);
+
+  // 퇴실하기 버튼 클릭
+  const setReservationSeat = useSetAtom(reservationSeatAtom);
+  const handleExitButtonClick = useCallback(() => {
+    // CSRF 토큰 가져오기
+    getCsrfToken()
+      .then((csrfToken) => {
+        // 좌석 퇴실 API 호출
+        return axiosInstance.delete("/reservations", {
+          headers: {
+            "X-CSRF-Token": csrfToken, // CSRF 토큰 헤더 추가
+          },
+        });
+      })
+      .then((response) => {
+        alert(
+          response.data.message || "좌석 퇴실이 성공적으로 완료되었습니다."
+        );
+        setReservationSeat("");
+        setMyCurrentReservation(null);
+      })
+      .catch((error) => {
+        console.error("퇴실 처리 중 오류 발생:", error);
+        if (error.response?.status === 403) {
+          alert("CSRF 토큰 오류: 요청을 다시 시도해 주세요.");
+        } else {
+          alert(
+            error.response?.data?.message || "퇴실 처리 중 오류가 발생했습니다."
+          );
+        }
+      });
+  }, [setMyCurrentReservation, setReservationSeat]);
+
+  // 공지사항 불러오기
+  interface Notice {
+    notice_uuid: string;
+    title: string;
+  }
+  
+  const [notices, setNotices] = useState<Notice[]>([]);
+  const fetchNotices = useCallback(async () => {
+    try {
+      const response = await axiosInstance.get(`/notice/search`, {
+        params: {
+          query: "",
+          page: 1,
+        },
+      }); // API 호출
+      setNotices(response.data.notices || []);
+    } catch (err) {
+      console.error("공지사항 데이터를 가져오는 중 오류 발생:", err);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchNotices();
+  }, [fetchNotices]);
 
   return (
     <TokenRefresher>
@@ -171,17 +242,10 @@ const Home = () => {
 
               {/* 공지사항 목록 */}
               <Stack direction="column" spacing={2} borderRadius="10px">
-                {[
-                  "공지사항1",
-                  "공지사항2공지사항2공지사항2공지사항2공지사항2공지사항2공지사항2공지사항2공지사항2공지사항2공지사항2공지사항2",
-                  "공지사항3",
-                  "공지사항4공지사항4공지사항4공지사항4공지사항4공지사항4공지사항4공지사항4공지사항4공지사항4공지사항4공지사항4공지사항4공지사항4공지사항4",
-                  "공지사항5",
-                  "공지사항6",
-                ].map((notice, index) => (
+                {notices.slice(0, 6).map((notice, index) => (
                   <Stack key={`notice${index}`} direction="row">
                     <Link
-                      to="/notice"
+                      to={`/notice/${notice.notice_uuid}`}
                       css={{
                         ...LinkCss,
                         display: "flex",
@@ -197,7 +261,7 @@ const Home = () => {
                         overflow="hidden"
                         textOverflow="ellipsis"
                       >
-                        {notice}
+                        {notice.title}
                       </Typography>
                     </Link>
                   </Stack>
@@ -262,7 +326,10 @@ const Home = () => {
                     to="/my-reservation"
                     css={{
                       ...LinkCss,
-                      display: loginState.isLoggedIn ? "flex" : "none",
+                      display:
+                        loginState.isLoggedIn && myCurrentReservation
+                          ? "flex"
+                          : "none",
                     }}
                   >
                     <Stack
@@ -275,7 +342,7 @@ const Home = () => {
                       <Box
                         component="img"
                         alt="좌석 사진"
-                        src={reservationSeatImage || SmapleImage}
+                        src={myCurrentReservation?.image || SmapleImage}
                         width={{ xs: "80px", sm: "150px", md: "130px" }}
                         borderRadius="10px"
                       />
@@ -295,7 +362,7 @@ const Home = () => {
                             예약 날짜
                           </Typography>
                           <Typography variant="subtitle1">
-                            {reservationDate}
+                            {myCurrentReservation?.bookDate}
                           </Typography>
                         </Stack>
                         <Stack direction="row" spacing={1}>
@@ -308,7 +375,7 @@ const Home = () => {
                             선택 좌석
                           </Typography>
                           <Typography variant="subtitle1">
-                            {reservationSeat}
+                            {myCurrentReservation?.seatName}
                           </Typography>
                         </Stack>
                         <Stack direction="row" spacing={1}>
@@ -321,7 +388,7 @@ const Home = () => {
                             PC 지원
                           </Typography>
                           <Typography variant="subtitle1">
-                            {reservationPcSupport}
+                            {myCurrentReservation?.pcSupport}
                           </Typography>
                         </Stack>
                       </Stack>
@@ -336,24 +403,46 @@ const Home = () => {
                     startIcon={<ExitToAppRoundedIcon />}
                     size="large"
                     sx={{
-                      display: loginState.isLoggedIn ? "inline-flex" : "none",
+                      display:
+                        loginState.isLoggedIn && myCurrentReservation
+                          ? "inline-flex"
+                          : "none",
                       ".MuiSvgIcon-root": {
                         fontSize: "2em",
                       },
                     }}
+                    onClick={handleExitButtonClick}
                   >
                     <Typography variant="h2">퇴실하기</Typography>
                   </Button>
 
+                  {/* 예약 정보 없음 텍스트 */}
+                  <Stack
+                    flex={1}
+                    display={
+                      loginState.isLoggedIn && !myCurrentReservation
+                        ? "flex"
+                        : "none"
+                    }
+                    justifyContent="center"
+                  >
+                    <Typography variant="h1" textAlign="center">
+                      예약된 좌석이 없습니다
+                    </Typography>
+                  </Stack>
+
                   {/* 로그인 버튼 */}
-                  <Stack justifyContent="center" flex={1}>
+                  <Stack
+                    justifyContent="center"
+                    flex={1}
+                    display={loginState.isLoggedIn ? "none" : "flex"}
+                  >
                     <Button
                       variant="outlined"
                       color="secondary"
                       startIcon={<VpnKeyRoundedIcon />}
                       size="large"
                       sx={{
-                        display: loginState.isLoggedIn ? "none" : "inline-flex",
                         ".MuiSvgIcon-root": {
                           fontSize: "2em",
                         },

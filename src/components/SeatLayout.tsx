@@ -9,23 +9,13 @@ import {
 import { theme } from "../utils";
 import SeatButton from "./SeatButton";
 import { FireExtinguisher, MedicalDevices } from "./pictograms";
-import { useAtomValue } from "jotai";
-import { loginStateAtom } from "../states";
-
-export interface SeatInfoProps {
-  seatName: string;
-  state: string;
-  userName: string;
-}
 
 interface SeatLayoutProps extends StackProps {
   onSeatButtonClick: (seatName: string) => void;
-  seatInfo: { [key: string]: SeatInfoProps };
 }
 
 const SeatLayout = (props: SeatLayoutProps) => {
-  const { onSeatButtonClick, seatInfo } = props;
-  const loginState = useAtomValue(loginStateAtom);
+  const { onSeatButtonClick } = props;
 
   return (
     <ThemeProvider theme={theme}>
@@ -56,14 +46,11 @@ const SeatLayout = (props: SeatLayoutProps) => {
             {Array.from({ length: 12 }, (_, i) => i).map((i) =>
               i % 2 === 0 ? (
                 <SeatButton
-                  title={`A${i / 2 + 1}`}
-                  key={`A${i / 2 + 1}`}
-                  content={seatInfo[`A${i / 2 + 1}`]?.userName}
+                  seatName={`A${i / 2 + 1}`}
                   onClick={() => {
                     const seatName = `A${i / 2 + 1}`;
                     onSeatButtonClick(seatName);
                   }}
-                  isBooked={seatInfo[`A${i / 2 + 1}`]?.state === "book"}
                 />
               ) : (
                 <Box flex={i === 11 ? 0.7 : 0.2} key={`a${i}`} />
@@ -92,28 +79,12 @@ const SeatLayout = (props: SeatLayoutProps) => {
                     ) : (
                       <Grid2 size={1} display="flex" key={`b${i}${j}`}>
                         <SeatButton
-                          title={`B${
+                          seatName={`B${
                             j +
                             Math.floor(j / 3) +
                             (i % 3) * 2 +
                             Math.floor(i / 3) * 16
                           }`}
-                          key={`B${
-                            j +
-                            Math.floor(j / 3) +
-                            (i % 3) * 2 +
-                            Math.floor(i / 3) * 16
-                          }`}
-                          content={
-                            seatInfo[
-                              `B${
-                                j +
-                                Math.floor(j / 3) +
-                                (i % 3) * 2 +
-                                Math.floor(i / 3) * 16
-                              }`
-                            ]?.userName
-                          }
                           onClick={() => {
                             const seatName = `B${
                               j +
@@ -123,16 +94,6 @@ const SeatLayout = (props: SeatLayoutProps) => {
                             }`;
                             onSeatButtonClick(seatName);
                           }}
-                          isBooked={
-                            seatInfo[
-                              `B${
-                                j +
-                                Math.floor(j / 3) +
-                                (i % 3) * 2 +
-                                Math.floor(i / 3) * 16
-                              }`
-                            ]?.state === "book"
-                          }
                         />
                       </Grid2>
                     )
@@ -148,25 +109,14 @@ const SeatLayout = (props: SeatLayoutProps) => {
               {Array.from({ length: 17 }, (_, i) => i).map((i) =>
                 i % 2 === 0 ? (
                   <SeatButton
-                    title={
+                    seatName={
                       i % 4 === 0 ? `C${i / 4 + 1}` : `D${Math.ceil(i / 4)}`
-                    }
-                    key={i % 4 === 0 ? `C${i / 4 + 1}` : `D${Math.ceil(i / 4)}`}
-                    content={
-                      seatInfo[
-                        i % 4 === 0 ? `C${i / 4 + 1}` : `D${Math.ceil(i / 4)}`
-                      ]?.userName
                     }
                     onClick={() => {
                       const seatName =
                         i % 4 === 0 ? `C${i / 4 + 1}` : `D${Math.ceil(i / 4)}`;
                       onSeatButtonClick(seatName);
                     }}
-                    isBooked={
-                      seatInfo[
-                        i % 4 === 0 ? `C${i / 4 + 1}` : `D${Math.ceil(i / 4)}`
-                      ]?.state === "book"
-                    }
                   />
                 ) : i === 5 ? (
                   <Box
@@ -191,14 +141,11 @@ const SeatLayout = (props: SeatLayoutProps) => {
             {Array.from({ length: 12 }, (_, i) => i).map((i) =>
               i % 2 === 0 ? (
                 <SeatButton
-                  title={`A${i / 2 + 7}`}
-                  key={`A${i / 2 + 7}`}
-                  content={seatInfo[`A${i / 2 + 7}`]?.userName}
+                  seatName={`A${i / 2 + 7}`}
                   onClick={() => {
                     const seatName = `A${i / 2 + 7}`;
                     onSeatButtonClick(seatName);
                   }}
-                  isBooked={seatInfo[`A${i / 2 + 7}`]?.state === "book"}
                 />
               ) : (
                 <Box flex={i === 11 ? 0.7 : 0.2} key={`a${i}`} />

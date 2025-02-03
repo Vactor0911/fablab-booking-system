@@ -61,7 +61,6 @@ const Settings = () => {
 
   // 좌석 사진 변경
   const [image, setImage] = useState<string | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [, setImageRaw] = useState<File | null>(null);
   const handleSeatImageChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,7 +69,6 @@ const Settings = () => {
         const newImage = files[0];
         setImage(URL.createObjectURL(newImage)); // URL로 이미지 저장
         setImageRaw(newImage); // 파일 객체를 그대로 저장
-        console.log(newImage);
       }
     },
     []

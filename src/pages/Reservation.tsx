@@ -1,16 +1,24 @@
 import { Box, Stack, ThemeProvider } from "@mui/material";
 import NoticeBanner from "../components/NoticeBanner";
 import SeatLayout from "../components/SeatLayout";
-import { theme } from "../utils";
+import { dateFormatter, theme } from "../utils";
 import ReservationDialog from "../components/ReservationDialog";
 import { useCallback, useEffect, useState } from "react";
 import axiosInstance, { getCsrfToken } from "../utils/axiosInstance";
 import TokenRefresher from "../components/TokenRefresher";
 import { useAtomValue, useSetAtom } from "jotai";
-import { loginStateAtom, Permission, reservationSeatAtom } from "../states";
+import {
+  loginStateAtom,
+  myCurrentReservationAtom,
+  Permission,
+  reservationSeatAtom,
+  seatInfoAtom,
+  SeatInfoProps,
+} from "../states";
+import Notice from "./Notice";
 
 const Reservation = () => {
-  const [seatInfo, setSeatInfo] = useState({}); // 좌석 정보
+  const setSeatInfo = useSetAtom(seatInfoAtom); // 좌석 정보
 
   // 좌석 정보 불러오기
   const refreshSeatInfo = useCallback(async () => {
@@ -31,7 +39,7 @@ const Reservation = () => {
           ? "/admin/seats"
           : "/seats"
       );
-      const newSeatInfo: { [key: string]: unknown } = {};
+      const newSeatInfo: Record<string, SeatInfoProps> = {};
       // 좌석 정보 저장
       seatsResponse.data.seats.map(
         (seat: { seat_name: string; state: string; user_name: string }) => {
@@ -42,12 +50,11 @@ const Reservation = () => {
           };
         }
       );
-      console.log(newSeatInfo);
       setSeatInfo(newSeatInfo);
     } catch (error) {
       console.error("좌석 데이터를 가져오는 중 오류 발생:", error);
     }
-  }, []);
+  }, [setSeatInfo]);
 
   // 내 예약 정보 불러오기
   const loginState = useAtomValue(loginStateAtom);
@@ -74,11 +81,48 @@ const Reservation = () => {
     }
   }, [loginState.isLoggedIn, loginState.permission, setReservationSeat]);
 
+  // 내 예약 정보 불러오기
+  const setMyCurrentReservation = useSetAtom(myCurrentReservationAtom);
+
+  const handleRefreshMyReservation = useCallback(async () => {
+    // 로그인 상태일 경우에만 예약 정보 불러오기
+    if (!loginState.isLoggedIn || loginState.permission !== Permission.USER) {
+      return;
+    }
+
+    try {
+      const csrfToken = await getCsrfToken();
+      const response = await axiosInstance.get(`/users/reservations/current`, {
+        headers: {
+          "CSRF-Token": csrfToken, // CSRF 보호를 위한 토큰 헤더 추가
+        },
+      });
+
+      // 예약 정보가 없다면 종료
+      if (response.data.reservations.length === 0) {
+        setMyCurrentReservation(null);
+        return;
+      }
+
+      const newMyCurrentReservation = {
+        bookDate: response.data.reservations[0].bookDate,
+        seatName: response.data.reservations[0].seatName,
+        pcSupport: response.data.reservations[0].pcSupport,
+        image: response.data.reservations[0].image,
+      };
+      setMyCurrentReservation(newMyCurrentReservation);
+    } catch (err) {
+      console.error("예약 정보를 가져오는 중 오류 발생:", err);
+      return [];
+    }
+  }, [loginState.isLoggedIn, loginState.permission, setMyCurrentReservation]);
+
   // 페이지 접속시 좌석 정보 불러오기
   useEffect(() => {
     refreshSeatInfo();
     refreshMyReservation();
-  }, [refreshMyReservation, refreshSeatInfo]);
+    handleRefreshMyReservation();
+  }, [handleRefreshMyReservation, refreshMyReservation, refreshSeatInfo]);
 
   const [seatName, setSeatName] = useState(""); // 선택된 좌석 이름
   const [reservationDialogOpen, setReservationDialogOpen] = useState(false); // 예약 대화상자 열림 여부
@@ -94,7 +138,33 @@ const Reservation = () => {
     refreshSeatInfo();
     refreshMyReservation();
     setReservationDialogOpen(false);
-  }, [refreshMyReservation, refreshSeatInfo]);
+    handleRefreshMyReservation();
+  }, [handleRefreshMyReservation, refreshMyReservation, refreshSeatInfo]);
+
+  // 공지사항 불러오기
+  const [notices, setNotices] = useState<Notice[]>([]);
+
+  const fetchNotices = useCallback(async () => {
+    try {
+      const response = await axiosInstance.get(`/notice/search`, {
+        params: {
+          query: "",
+          page: 1,
+        },
+      }); // API 호출
+      setNotices(
+        response.data.notices.filter(
+          (notice: Notice) => notice.date === dateFormatter.format(new Date())
+        )
+      );
+    } catch (err) {
+      console.error("공지사항 데이터를 가져오는 중 오류 발생:", err);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchNotices();
+  }, [fetchNotices]);
 
   return (
     <TokenRefresher>
@@ -102,10 +172,12 @@ const Reservation = () => {
         <Stack className="page-root">
           {/* 공지사항 배너 */}
           <Box width="100%" padding="10px 0">
-            <NoticeBanner
-              message="공지사항 어쩌구 저쩌구... 대충 내일까지 이러 저러한 이유로 팹랩 못쓴단 안내문"
-              moreCount={3}
-            />
+            {notices && (
+              <NoticeBanner
+                message={notices[0]?.title}
+                moreCount={notices.length - 1}
+              />
+            )}
           </Box>
 
           {/* 좌석 배치도 */}
@@ -121,7 +193,6 @@ const Reservation = () => {
               minHeight="450px"
               margin="20px 20px"
               onSeatButtonClick={handleReservationDialogOpen}
-              seatInfo={seatInfo}
             />
           </Stack>
         </Stack>

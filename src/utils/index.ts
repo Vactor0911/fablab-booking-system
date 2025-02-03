@@ -39,6 +39,11 @@ export const theme = createTheme({
         },
       },
     },
+    MuiTextField: {
+      defaultProps: {
+        inputProps: { spellCheck: false },
+      },
+    },
     MuiTooltip: {
       styleOverrides: {
         tooltip: {

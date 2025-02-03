@@ -318,7 +318,7 @@ const UserDialog = (props: UserDialogProps) => {
                         display:
                           /[a-zA-Z]/.test(password) &&
                           /[0-9]/.test(password) &&
-                          /[~!@#$%?]/.test(password)
+                          /[!@#$%^&*?]/.test(password)
                             ? "block"
                             : "none",
                       }}

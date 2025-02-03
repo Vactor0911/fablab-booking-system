@@ -120,10 +120,6 @@ const BookRestrictionDetail = () => {
     [seatsPerRow, selectedSeats]
   );
 
-  useEffect(() => {
-    console.log(selectedSeats);
-  }, [selectedSeats]);
-
   return (
     <AdminPage>
       <ThemeProvider theme={theme}>

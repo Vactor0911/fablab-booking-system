@@ -15,6 +15,7 @@ export interface LoginState {
   isLoggedIn: boolean;
   userId: string;
   permission: Permission;
+  userName: string;
 }
 
 export const loginStateAtom = atomWithStorage("FabLabLoginState", {} as LoginState);
@@ -27,5 +28,24 @@ export interface MyReservation {
   cancel_reason?: string;
 }
 
-// 내 예약 정보
+// 팹랩 좌석 정보
+export interface SeatInfoProps {
+  seatName: string;
+  state: string;
+  userName: string;
+}
+
+export const seatInfoAtom = atom({} as Record<string, SeatInfoProps>);
+
+// 내 예약 좌석 이름
 export const reservationSeatAtom = atom("");
+
+// 내 현재 예약 좌석 정보
+export interface MyReservation {
+  bookDate: string;
+  seatName: string;
+  pcSupport: string;
+  image: string;
+}
+
+export const myCurrentReservationAtom = atom<Partial<MyReservation> | null>(null);

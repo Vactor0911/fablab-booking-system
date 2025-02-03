@@ -16,8 +16,8 @@ import SampleImage from "../assets/SampleImage.png";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import { dateFormatter, theme } from "../utils";
 import { useCallback, useEffect, useState } from "react";
-import { useAtom, useAtomValue } from "jotai";
-import { loginStateAtom, Permission, reservationSeatAtom } from "../states";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { loginStateAtom, myCurrentReservationAtom, Permission, reservationSeatAtom } from "../states";
 import axiosInstance, { getCsrfToken } from "../utils/axiosInstance";
 import TokenRefresher from "./TokenRefresher";
 import { useNavigate } from "react-router";
@@ -60,7 +60,6 @@ const ReservationDialog = (props: ReservationDialogProps) => {
         : `/seats/${seatName}`
     );
 
-    console.log(seatsResponse);
     setEttiqutte(seatsResponse.data.seat.basicManners);
     setCaution(seatsResponse.data.seat.warning);
     setPcSupport(seatsResponse.data.seat.pc_support);
@@ -92,7 +91,6 @@ const ReservationDialog = (props: ReservationDialogProps) => {
     }
 
     const newPerson = `${seatsResponse.data.seat.userStudentId} ${seatsResponse.data.seat.userName}`;
-    console.log(newPerson);
     setPerson(newIsBooked ? newPerson : "예약 없음");
   }, [loginState.permission, seatName]);
 
@@ -187,6 +185,7 @@ const ReservationDialog = (props: ReservationDialogProps) => {
 
   // 내 예약 정보 불러오기
   const [reservationSeat, setReservationSeat] = useAtom(reservationSeatAtom);
+  const setMyCurrentReservation = useSetAtom(myCurrentReservationAtom);
 
   // 퇴실 버튼 클릭
   const handleExitButtonClick = useCallback(async () => {
@@ -206,6 +205,7 @@ const ReservationDialog = (props: ReservationDialogProps) => {
         );
         onClose();
         setReservationSeat("");
+        setMyCurrentReservation(null);
       })
       .catch((error) => {
         console.error("퇴실 처리 중 오류 발생:", error);
@@ -217,7 +217,7 @@ const ReservationDialog = (props: ReservationDialogProps) => {
           );
         }
       });
-  }, [onClose, setReservationSeat]);
+  }, [onClose, setMyCurrentReservation, setReservationSeat]);
 
   return (
     <TokenRefresher>

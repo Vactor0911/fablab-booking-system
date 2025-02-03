@@ -334,7 +334,7 @@ const FindPassword = () => {
                         display:
                           /[a-zA-Z]/.test(password) &&
                           /[0-9]/.test(password) &&
-                          /[~!@#$%?]/.test(password)
+                          /[!@#$%^&*?]/.test(password)
                             ? "block"
                             : "none",
                       }}

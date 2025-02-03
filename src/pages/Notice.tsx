@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  debounce,
   Divider,
   InputAdornment,
   List,
@@ -18,26 +19,31 @@ import {
   Typography,
 } from "@mui/material";
 import { theme } from "../utils";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState, useMemo } from "react";
 
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import { useNavigate } from "react-router";
 import FixedTableCell from "../components/FixedTableCell";
 import { useAtomValue } from "jotai";
 import { loginStateAtom, Permission } from "../states";
+import axiosInstance from "../utils/axiosInstance";
+import TokenRefresher from "../components/TokenRefresher";
+
+interface Notice {
+  notice_uuid: string;
+  notice_id: string;
+  title: string;
+  date: string;
+  views: number;
+}
 
 const Notice = () => {
   // 탭 메뉴
-  const [tabIndex, setTabIndex] = useState("all"); // 탭 메뉴 인덱스
-  const handleTabIndexChange = (
-    _event: React.SyntheticEvent,
-    newValue: string
-  ) => {
-    setTabIndex(newValue);
-  };
+  const [tabIndex] = useState("all"); // 탭 메뉴 인덱스
 
   // 페이지 선택
   const [page, setPage] = useState(1); // 페이지
+  const [noticeCount, setNoticeCount] = useState(0); // 전체 공지사항 수
   const handlePageChange = (
     _event: React.ChangeEvent<unknown>,
     newPage: number
@@ -46,135 +52,52 @@ const Notice = () => {
   };
 
   // 공지사항 목록
-  const notices = [
-    {
-      id: 20,
-      title: "공지사항20",
-      date: "2021-10-20",
-      views: 200,
+  const [notices, setNotices] = useState<Notice[]>([]);
+
+  const fetchNotices = useCallback(
+    async (searchTitle: string = "") => {
+      // 공지사항 목록 불러오기
+      try {
+        const response = await axiosInstance.get(`/notice/search`, {
+          params: {
+            query: searchTitle,
+            page: page,
+          },
+        }); // API 호출
+        setNotices(response.data.notices || []);
+        setNoticeCount(response.data.totalCount);
+      } catch (err) {
+        console.error("공지사항 데이터를 가져오는 중 오류 발생:", err);
+      }
     },
-    {
-      id: 19,
-      title: "공지사항19",
-      date: "2021-10-19",
-      views: 190,
+    [page]
+  );
+
+  // 제목 검색 필터 변경
+  const [searchTitle, setSearchTitle] = useState(""); // 제목 검색 필터
+
+  const debouncedFetchNotices = useMemo(
+    () => debounce(fetchNotices, 500),
+    [fetchNotices]
+  );
+
+  const handleSearchTitleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const newSearchTitle = e.target.value;
+      setSearchTitle(newSearchTitle);
+      debouncedFetchNotices(newSearchTitle);
     },
-    {
-      id: 18,
-      title: "공지사항18",
-      date: "2021-10-18",
-      views: 180,
-    },
-    {
-      id: 17,
-      title: "공지사항17",
-      date: "2021-10-17",
-      views: 170,
-    },
-    {
-      id: 16,
-      title: "공지사항16",
-      date: "2021-10-16",
-      views: 160,
-    },
-    {
-      id: 15,
-      title: "공지사항15",
-      date: "2021-10-15",
-      views: 150,
-    },
-    {
-      id: 14,
-      title: "공지사항14",
-      date: "2021-10-14",
-      views: 140,
-    },
-    {
-      id: 13,
-      title: "공지사항13",
-      date: "2021-10-13",
-      views: 130,
-    },
-    {
-      id: 12,
-      title: "공지사항12",
-      date: "2021-10-12",
-      views: 120,
-    },
-    {
-      id: 11,
-      title: "공지사항11",
-      date: "2021-10-11",
-      views: 110,
-    },
-    {
-      id: 10,
-      title:
-        "공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10공지사항10",
-      date: "2021-10-10",
-      views: 100,
-    },
-    {
-      id: 9,
-      title: "공지사항9",
-      date: "2021-10-09",
-      views: 90,
-    },
-    {
-      id: 8,
-      title: "공지사항8",
-      date: "2021-10-08",
-      views: 80,
-    },
-    {
-      id: 7,
-      title: "공지사항7",
-      date: "2021-10-07",
-      views: 70,
-    },
-    {
-      id: 6,
-      title:
-        "공지사항6공지사항6공지사항6공지사항6공지사항6공지사항6공지사항6공지사항6공지사항6공지사항6",
-      date: "2021-10-06",
-      views: 60,
-    },
-    {
-      id: 5,
-      title: "공지사항5",
-      date: "2021-10-05",
-      views: 50,
-    },
-    {
-      id: 4,
-      title: "공지사항4",
-      date: "2021-10-04",
-      views: 40,
-    },
-    {
-      id: 3,
-      title: "공지사항3",
-      date: "2021-10-03",
-      views: 30,
-    },
-    {
-      id: 2,
-      title: "공지사항2공지사항2공지사항2공지사항2",
-      date: "2021-10-02",
-      views: 20,
-    },
-    {
-      id: 1,
-      title: "공지사항1",
-      date: "2021-10-01",
-      views: 10,
-    },
-  ];
+    [debouncedFetchNotices]
+  );
+
+  useEffect(() => {
+    fetchNotices();
+  }, [fetchNotices]);
 
   // 공지사항 클릭
   const navigate = useNavigate();
   const handleNoticeClick = useCallback(
-    (id: number) => {
+    (id: string) => {
       navigate(`/notice/${id}`);
       window.scrollTo({ top: 0, behavior: "smooth" });
     },
@@ -190,94 +113,95 @@ const Notice = () => {
   const loginState = useAtomValue(loginStateAtom);
 
   return (
-    <ThemeProvider theme={theme}>
-      <Stack className="page-root">
-        <Stack className="base-layout" gap={3}>
-          {/* 페이지명 */}
-          <Typography variant="h2">공지사항</Typography>
+    <TokenRefresher>
+      <ThemeProvider theme={theme}>
+        <Stack className="page-root">
+          <Stack className="base-layout" gap={3}>
+            {/* 페이지명 */}
+            <Typography variant="h2">공지사항</Typography>
 
-          <Box
-            sx={{
-              borderBottom: 1,
-              borderColor: "divider",
-              position: "relative",
-            }}
-          >
-            {/* 탭 메뉴 */}
-            <Tabs value={tabIndex} onChange={handleTabIndexChange}>
-              <Tab
-                label="전체"
-                value="all"
-                sx={{ fontSize: "1.17em", fontWeight: "bold" }}
-              />
-            </Tabs>
-
-            {/* 제목 검색 */}
-            <TextField
-              variant="outlined"
-              placeholder="제목 검색"
-              slotProps={{
-                input: {
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchRoundedIcon />
-                    </InputAdornment>
-                  ),
-                },
-              }}
+            <Box
               sx={{
-                position: "absolute",
-                right: 0,
-                bottom: 10,
-                width: {
-                  xs: "200px",
-                  sm: "300px",
-                  md: "400px",
-                },
+                borderBottom: 1,
+                borderColor: "divider",
+                position: "relative",
+              }}
+            >
+              {/* 탭 메뉴 */}
+              <Tabs value={tabIndex}>
+                <Tab
+                  label="전체"
+                  value="all"
+                  sx={{ fontSize: "1.17em", fontWeight: "bold" }}
+                />
+              </Tabs>
+
+              {/* 제목 검색 */}
+              <TextField
+                variant="outlined"
+                placeholder="제목 검색"
+                value={searchTitle}
+                onChange={handleSearchTitleChange}
+                slotProps={{
+                  input: {
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchRoundedIcon />
+                      </InputAdornment>
+                    ),
+                  },
+                }}
+                sx={{
+                  position: "absolute",
+                  right: 0,
+                  bottom: 10,
+                  width: {
+                    xs: "200px",
+                    sm: "300px",
+                    md: "400px",
+                  },
+                }}
+              />
+            </Box>
+
+            {/* 페이지 선택 */}
+            <Pagination
+              count={Math.ceil(noticeCount / 10)}
+              page={page}
+              onChange={handlePageChange}
+              siblingCount={1}
+              boundaryCount={0}
+              showFirstButton
+              showLastButton
+              sx={{
+                alignSelf: "flex-end",
               }}
             />
-          </Box>
 
-          {/* 페이지 선택 */}
-          <Pagination
-            count={10}
-            page={page}
-            onChange={handlePageChange}
-            siblingCount={1}
-            boundaryCount={0}
-            showFirstButton
-            showLastButton
-            sx={{
-              alignSelf: "flex-end",
-            }}
-          />
-
-          {/* 공지사항 테이블 */}
-          <Table
-            sx={{
-              tableLayout: "fixed",
-              display: {
-                xs: "none",
-                sm: "table",
-              },
-            }}
-          >
-            <TableHead>
-              <TableRow>
-                <TableCell width="10%">번호</TableCell>
-                <TableCell width="55%">제목</TableCell>
-                <TableCell width="23%">작성일자</TableCell>
-                <TableCell width="12%">조회수</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {notices
-                .slice((page - 1) * 10, (page - 1) * 10 + 10)
-                .map((notice) => (
+            {/* 공지사항 테이블 */}
+            <Table
+              sx={{
+                tableLayout: "fixed",
+                display: {
+                  xs: "none",
+                  sm: "table",
+                },
+              }}
+            >
+              <TableHead>
+                <TableRow>
+                  <TableCell width="10%">번호</TableCell>
+                  <TableCell width="55%">제목</TableCell>
+                  <TableCell width="23%">작성일자</TableCell>
+                  <TableCell width="12%">조회수</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {notices.map((notice, index) => (
                   <TableRow
-                    key={`notice${notice.id}`}
+                    key={`notice${notice.notice_id}`}
                     onClick={() => {
-                      handleNoticeClick(notice.id);
+                      handleNoticeClick(notice.notice_uuid);
                     }}
                     sx={{
                       cursor: "pointer",
@@ -287,10 +211,13 @@ const Notice = () => {
                           sm: "15px",
                         },
                         backgroundColor:
-                          notice.id === notices[0].id
+                          notice.notice_id === notices[0].notice_id
                             ? theme.palette.primary.main
                             : "none",
-                        color: notice.id === notices[0].id ? "white" : "black",
+                        color:
+                          notice.notice_id === notices[0].notice_id
+                            ? "white"
+                            : "black",
                       },
                       "&:hover td": {
                         backgroundColor: theme.palette.primary.main,
@@ -298,55 +225,60 @@ const Notice = () => {
                       },
                     }}
                   >
-                    <FixedTableCell keepline>{notice.id}</FixedTableCell>
+                    <FixedTableCell keepline>
+                      {noticeCount - (page - 1) * 10 - index}
+                    </FixedTableCell>
                     <FixedTableCell>{notice.title}</FixedTableCell>
                     <FixedTableCell>{notice.date}</FixedTableCell>
                     <FixedTableCell keepline>{notice.views}</FixedTableCell>
                   </TableRow>
                 ))}
-            </TableBody>
-          </Table>
+              </TableBody>
+            </Table>
 
-          {/* 모바일용 공지사항 목록 */}
-          <List sx={{
-            display: {
-              xs: "block",
-              sm: "none",
-            }
-          }}>
-            {notices
-              .slice((page - 1) * 10, (page - 1) * 10 + 10)
-              .map((notice) => (
+            {/* 모바일용 공지사항 목록 */}
+            <List
+              sx={{
+                display: {
+                  xs: "block",
+                  sm: "none",
+                },
+              }}
+            >
+              {notices.map((notice) => (
                 <Stack
                   direction="row"
                   width="100%"
                   justifyContent="space-between"
-                  key={`notice${notice.id}`}
+                  key={`notice${notice.notice_id}`}
                   sx={{
                     cursor: "pointer",
                     padding: "10px",
                     backgroundColor:
-                      notice.id === notices[0].id
+                      notice.notice_id === notices[0].notice_id
                         ? theme.palette.primary.main
                         : "none",
-                    color: notice.id === notices[0].id ? "white" : "black",
+                    color:
+                      notice.notice_id === notices[0].notice_id
+                        ? "white"
+                        : "black",
                     borderBottom: "1px solid #aaa",
-                    "&:nth-child(even)": {
+                    "&:nth-of-type(even)": {
                       backgroundColor: "#f4f4f6",
                       color: "black",
                     },
-                    "&:nth-child(1)": {
+                    "&:nth-of-type(1)": {
                       borderTop: "1px solid #aaa",
                     },
                   }}
                 >
                   <Typography variant="body2" alignSelf="center">
-                    {notice.id}
+                    {notice.notice_id}
                   </Typography>
                   <Stack
-                    key={`notice${notice.id}`}
+                    key={`notice${notice.notice_id}`}
                     onClick={() => {
-                      handleNoticeClick(notice.id);
+                      handleNoticeClick(notice.notice_uuid);
                     }}
                     width="90%"
                     gap={1}
@@ -369,24 +301,26 @@ const Notice = () => {
                   </Stack>
                 </Stack>
               ))}
-          </List>
+            </List>
 
-          {/* 글쓰기 버튼 */}
-          <Box
-            alignSelf="flex-end"
-            display={
-              loginState.isLoggedIn && loginState.permission !== Permission.USER
-                ? "block"
-                : "none"
-            }
-          >
-            <Button variant="outlined" onClick={handleNewNoticeClick}>
-              <Typography variant="h2">글쓰기</Typography>
-            </Button>
-          </Box>
+            {/* 글쓰기 버튼 */}
+            <Box
+              alignSelf="flex-end"
+              display={
+                loginState.isLoggedIn &&
+                loginState.permission !== Permission.USER
+                  ? "block"
+                  : "none"
+              }
+            >
+              <Button variant="outlined" onClick={handleNewNoticeClick}>
+                <Typography variant="h2">글쓰기</Typography>
+              </Button>
+            </Box>
+          </Stack>
         </Stack>
-      </Stack>
-    </ThemeProvider>
+      </ThemeProvider>
+    </TokenRefresher>
   );
 };
 

@@ -15,21 +15,22 @@ import {
 import { theme } from "../utils";
 import { Link, useLocation, useNavigate } from "react-router";
 import { useCallback, useRef, useState } from "react";
-import { useAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import {
   isDarkModeAtom,
   LoginState,
   loginStateAtom,
+  myCurrentReservationAtom,
   Permission,
+  seatInfoAtom,
+  SeatInfoProps,
 } from "../states";
 
 import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import CalendarMonthRoundedIcon from "@mui/icons-material/CalendarMonthRounded";
 import ExitToAppRoundedIcon from "@mui/icons-material/ExitToAppRounded";
-import DarkModeRoundedIcon from "@mui/icons-material/DarkMode";
 import LightModeRoundedIcon from "@mui/icons-material/LightMode";
-import HelpOutlineRoundedIcon from "@mui/icons-material/HelpOutlineRounded";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
 import DrawerMenu from "./DrawerMenu";
@@ -177,6 +178,79 @@ const Header = () => {
     }
   }, [loginState.isLoggedIn, navigate, setLoginState]);
 
+  // 내 예약 정보 불러오기
+  const [myCurrentReservation, setMyCurrentReservation] = useAtom(
+    myCurrentReservationAtom
+  );
+
+  // 좌석 정보 불러오기
+  const setSeatInfo = useSetAtom(seatInfoAtom);
+  const refreshSeatInfo = useCallback(async () => {
+    try {
+      // 권한 확인 API 호출
+      const response = await axiosInstance.get("/users/info", {
+        headers: {
+          "X-CSRF-Token": await getCsrfToken(), // CSRF 토큰 헤더 추가
+        },
+      });
+
+      // 사용자 권한
+      const userPermission = response.data.user.permission;
+
+      // 권한에 따른 좌석 정보 불러오기
+      const seatsResponse = await axiosInstance.get(
+        userPermission === "admin" || userPermission === "superadmin"
+          ? "/admin/seats"
+          : "/seats"
+      );
+      const newSeatInfo: Record<string, SeatInfoProps> = {};
+      // 좌석 정보 저장
+      seatsResponse.data.seats.map(
+        (seat: { seat_name: string; state: string; user_name: string }) => {
+          newSeatInfo[seat.seat_name] = {
+            seatName: seat.seat_name,
+            state: seat.state,
+            userName: seat.user_name,
+          };
+        }
+      );
+      setSeatInfo(newSeatInfo);
+    } catch (error) {
+      console.error("좌석 데이터를 가져오는 중 오류 발생:", error);
+    }
+  }, [setSeatInfo]);
+
+  // 퇴실하기 버튼 클릭
+  const handleExitButtonClick = useCallback(() => {
+    // CSRF 토큰 가져오기
+    getCsrfToken()
+      .then((csrfToken) => {
+        // 좌석 퇴실 API 호출
+        return axiosInstance.delete("/reservations", {
+          headers: {
+            "X-CSRF-Token": csrfToken, // CSRF 토큰 헤더 추가
+          },
+        });
+      })
+      .then((response) => {
+        alert(
+          response.data.message || "좌석 퇴실이 성공적으로 완료되었습니다."
+        );
+        setMyCurrentReservation(null);
+        refreshSeatInfo();
+      })
+      .catch((error) => {
+        console.error("퇴실 처리 중 오류 발생:", error);
+        if (error.response?.status === 403) {
+          alert("CSRF 토큰 오류: 요청을 다시 시도해 주세요.");
+        } else {
+          alert(
+            error.response?.data?.message || "퇴실 처리 중 오류가 발생했습니다."
+          );
+        }
+      });
+  }, [refreshSeatInfo, setMyCurrentReservation]);
+
   return (
     <ThemeProvider theme={theme}>
       <AppBar
@@ -222,11 +296,13 @@ const Header = () => {
                 sm: "flex",
               }}
             >
-              {(!loginState.isLoggedIn || loginState.permission === Permission.USER) &&
+              {(!loginState.isLoggedIn ||
+                loginState.permission === Permission.USER) &&
                 NavLinkButton("예약하기", {
                   onClick: () => navigate("/reservation"),
                 })}
-              {loginState.isLoggedIn && loginState.permission !== Permission.USER &&
+              {loginState.isLoggedIn &&
+                loginState.permission !== Permission.USER &&
                 NavLinkButton("관리메뉴", {
                   onClick: handleManageMenuButtonClick,
                   ref: anchorManageMenuElem,
@@ -332,9 +408,12 @@ const Header = () => {
         )}
 
         {/* 퇴실하기 */}
-        {loginState.permission === Permission.USER && (
+        {loginState.permission === Permission.USER && myCurrentReservation && (
           <MenuItem
-            onClick={handleAccountMenuClose}
+            onClick={() => {
+              handleAccountMenuClose();
+              handleExitButtonClick();
+            }}
             sx={{
               ...MenuItemCss,
               color: "red",
@@ -362,30 +441,6 @@ const Header = () => {
             <ListItemText>라이트모드</ListItemText>
           </MenuItem>
         )}
-
-        {/* 다크모드 */}
-        {!isDarkMode && (
-          <MenuItem
-            onClick={() => {
-              handleAccountMenuClose();
-              handleThemeChangeClick();
-            }}
-            sx={MenuItemCss}
-          >
-            <ListItemIcon>
-              <DarkModeRoundedIcon />
-            </ListItemIcon>
-            <ListItemText>다크모드</ListItemText>
-          </MenuItem>
-        )}
-
-        {/* 도움말 */}
-        <MenuItem onClick={handleAccountMenuClose} sx={MenuItemCss}>
-          <ListItemIcon>
-            <HelpOutlineRoundedIcon />
-          </ListItemIcon>
-          <ListItemText>도움말</ListItemText>
-        </MenuItem>
 
         {/* 로그아웃 */}
         <MenuItem

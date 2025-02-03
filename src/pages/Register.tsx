@@ -21,6 +21,7 @@ import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
 import CircleRoundedIcon from "@mui/icons-material/CircleRounded";
 import axios from "axios";
 import axiosInstance, { getCsrfToken } from "../utils/axiosInstance";
+import TokenRefresher from "../components/TokenRefresher";
 
 // 스크롤 있는 Stack 요소
 const ScrollBox: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -70,14 +71,10 @@ const Register = () => {
       return;
     }
 
-    setIsConfirmCodeSent(true);
-    setConfirmTimeLeft(300);
-
     // 인증번호 요청 API 호출
     try {
       // Step 1: CSRF 토큰 가져오기
       const csrfToken = await getCsrfToken();
-      console.log("CSRF 토큰:", csrfToken);
 
       // Step 2: 인증번호 요청
       await axiosInstance.post(
@@ -96,6 +93,8 @@ const Register = () => {
       );
 
       // 요청 성공 시 알림
+      setIsConfirmCodeSent(true);
+      setConfirmTimeLeft(300);
       alert("인증번호가 이메일로 발송되었습니다!");
     } catch (error) {
       // 요청 실패 시 알림
@@ -231,109 +230,169 @@ const Register = () => {
   }, [email, isConfirmCodeChecked, name, navigate, password, studentId]);
 
   return (
-    <ThemeProvider theme={theme}>
-      <Stack className="page-root" justifyContent="center">
-        <Stack
-          width={{
-            xs: "90%",
-            sm: "65%",
-          }}
-          maxWidth="600px"
-          padding="80px 0"
-          gap={3}
-        >
-          {/* 페이지명 */}
-          <Typography variant="h2" fontWeight="bold">
-            회원가입
-          </Typography>
-
-          {/* 학번 입력란 */}
-          <TextField
-            placeholder="학번"
-            value={studentId}
-            onChange={(e) => setStudentId(e.target.value)}
-            fullWidth
-          />
-
-          {/* 이름 입력란 */}
-          <TextField
-            placeholder="이름"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            fullWidth
-          />
-
-          {/* 이메일 */}
-          <Stack direction="row" gap={1}>
-            {/* 이메일 입력란 */}
-            <TextField
-              placeholder="이메일"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              sx={{
-                flex: "1",
-              }}
-            />
-
-            {/* 인증 요청 버튼 */}
-            <Button
-              variant="outlined"
-              onClick={handleConfirmCodeSendButtonClick}
-            >
-              인증 요청
-            </Button>
-          </Stack>
-
-          {/* 인증번호 */}
+    <TokenRefresher>
+      <ThemeProvider theme={theme}>
+        <Stack className="page-root" justifyContent="center">
           <Stack
-            direction="row"
-            gap={1}
-            display={isConfirmCodeSent ? "flex" : "none"}
+            width={{
+              xs: "90%",
+              sm: "65%",
+            }}
+            maxWidth="600px"
+            padding="80px 0"
+            gap={3}
           >
-            {/* 인증번호 입력란 */}
+            {/* 페이지명 */}
+            <Typography variant="h2" fontWeight="bold">
+              회원가입
+            </Typography>
+
+            {/* 학번 입력란 */}
             <TextField
-              placeholder="인증번호 입력"
-              value={confirmCode}
-              onChange={(e) => setConfirmCode(e.target.value)}
-              sx={{
-                flex: "1",
-                minWidth: "120px",
-              }}
+              placeholder="학번"
+              value={studentId}
+              onChange={(e) => setStudentId(e.target.value)}
+              fullWidth
             />
 
-            {/* 남은 시간 타이머 */}
-            <Box display="flex" alignItems="center" flex={1}>
-              {!isConfirmCodeChecked && (
-                <Typography variant="subtitle1" color="primary">
-                  {formatTime(confirmTimeLeft)}
-                </Typography>
-              )}
-              {isConfirmCodeChecked && <CheckRoundedIcon color="success" />}
-            </Box>
+            {/* 이름 입력란 */}
+            <TextField
+              placeholder="이름"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              fullWidth
+            />
 
-            {/* 인증 확인 버튼 */}
-            <Button
-              variant="contained"
-              onClick={handleConfirmCodeCheckButtonClick}
+            {/* 이메일 */}
+            <Stack direction="row" gap={1}>
+              {/* 이메일 입력란 */}
+              <TextField
+                placeholder="이메일"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                sx={{
+                  flex: "1",
+                }}
+              />
+
+              {/* 인증 요청 버튼 */}
+              <Button
+                variant="outlined"
+                onClick={handleConfirmCodeSendButtonClick}
+              >
+                인증 요청
+              </Button>
+            </Stack>
+
+            {/* 인증번호 */}
+            <Stack
+              direction="row"
+              gap={1}
+              display={isConfirmCodeSent ? "flex" : "none"}
             >
-              인증 확인
-            </Button>
-          </Stack>
+              {/* 인증번호 입력란 */}
+              <TextField
+                placeholder="인증번호 입력"
+                value={confirmCode}
+                onChange={(e) => setConfirmCode(e.target.value)}
+                sx={{
+                  flex: "1",
+                  minWidth: "120px",
+                }}
+              />
 
-          <Stack gap={1}>
-            {/* 비밀번호 입력란 */}
+              {/* 남은 시간 타이머 */}
+              <Box display="flex" alignItems="center" flex={1}>
+                {!isConfirmCodeChecked && (
+                  <Typography variant="subtitle1" color="primary">
+                    {formatTime(confirmTimeLeft)}
+                  </Typography>
+                )}
+                {isConfirmCodeChecked && <CheckRoundedIcon color="success" />}
+              </Box>
+
+              {/* 인증 확인 버튼 */}
+              <Button
+                variant="contained"
+                onClick={handleConfirmCodeCheckButtonClick}
+              >
+                인증 확인
+              </Button>
+            </Stack>
+
+            <Stack gap={1}>
+              {/* 비밀번호 입력란 */}
+              <OutlinedInput
+                type={isPasswordVisible ? "text" : "password"}
+                placeholder="비밀번호"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                // 비밀번호 보임/안보임
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton onClick={handlePasswordVisibleClick}>
+                      {isPasswordVisible ? (
+                        <VisibilityRoundedIcon />
+                      ) : (
+                        <VisibilityOffRoundedIcon />
+                      )}
+                    </IconButton>
+                  </InputAdornment>
+                }
+              />
+
+              {/* 비밀번호 필요 조건 */}
+              <Stack>
+                <Stack direction="row" alignItems="center" gap={1}>
+                  <CircleRoundedIcon
+                    color="primary"
+                    sx={{ fontSize: "0.8em" }}
+                  />{" "}
+                  <Typography variant="subtitle1">8글자 이상</Typography>
+                  <CheckRoundedIcon
+                    color="success"
+                    sx={{
+                      display: password.length >= 8 ? "block" : "none",
+                    }}
+                  />
+                </Stack>
+                <Stack direction="row" alignItems="center" gap={1}>
+                  <CircleRoundedIcon
+                    color="primary"
+                    sx={{ fontSize: "0.8em" }}
+                  />{" "}
+                  <Typography variant="subtitle1">
+                    영문, 숫자, 특수문자 포함
+                  </Typography>
+                  <CheckRoundedIcon
+                    color="success"
+                    sx={{
+                      display:
+                        /[a-zA-Z]/.test(password) &&
+                        /[0-9]/.test(password) &&
+                        /[!@#$%^&*?]/.test(password)
+                          ? "block"
+                          : "none",
+                    }}
+                  />
+                </Stack>
+              </Stack>
+            </Stack>
+
+            {/* 비밀번호 재입력 입력란 */}
             <OutlinedInput
-              type={isPasswordVisible ? "text" : "password"}
-              placeholder="비밀번호"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              type={isPasswordConfirmVisible ? "text" : "password"}
+              placeholder="비밀번호 재입력"
+              value={passwordConfirm}
+              onChange={(e) => setPasswordConfirm(e.target.value)}
               required
               // 비밀번호 보임/안보임
               endAdornment={
                 <InputAdornment position="end">
-                  <IconButton onClick={handlePasswordVisibleClick}>
-                    {isPasswordVisible ? (
+                  <IconButton onClick={handlePasswordConfirmVisibleClick}>
+                    {isPasswordConfirmVisible ? (
                       <VisibilityRoundedIcon />
                     ) : (
                       <VisibilityOffRoundedIcon />
@@ -343,222 +402,172 @@ const Register = () => {
               }
             />
 
-            {/* 비밀번호 필요 조건 */}
-            <Stack>
-              <Stack direction="row" alignItems="center" gap={1}>
-                <CircleRoundedIcon color="primary" sx={{ fontSize: "0.8em" }} />{" "}
-                <Typography variant="subtitle1">8글자 이상</Typography>
-                <CheckRoundedIcon
-                  color="success"
+            <Stack gap={1}>
+              {/* 개인정보 동의서 */}
+              <Stack>
+                {/* 개인정보 동의서 제목 */}
+                <Typography
+                  variant="h3"
+                  color="primary"
+                  marginBottom={1}
+                  fontWeight="bold"
+                >
+                  개인정보 처리방침
+                </Typography>
+
+                {/* 개인정보 동의서 본문 */}
+                <ScrollBox>
+                  <Typography variant="subtitle1">
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                    Blanditiis illum, dolore repellat, in ab reprehenderit
+                    sapiente, culpa sequi modi laudantium minima exercitationem
+                    magnam ratione consequuntur quos voluptatem dolor alias
+                    deserunt. Numquam voluptatum velit enim voluptas quis quae
+                    accusantium incidunt illo, quia non suscipit sit fugiat?
+                    Quisquam optio aut perferendis! Nulla dolorum aut fuga sint
+                    nesciunt? Laborum ab qui suscipit placeat. Esse accusamus
+                    obcaecati quam ipsa dignissimos sit neque veniam itaque
+                    nulla aspernatur excepturi dolorem cupiditate eligendi, ex
+                    reprehenderit, aliquam quos, ipsum sequi inventore? Saepe,
+                    impedit odit perspiciatis quaerat inventore qui. Quaerat
+                    nesciunt, maiores ut delectus, accusantium dolores neque
+                    corporis accusamus odit, esse nisi. Eius maiores maxime,
+                    unde quisquam minima ut voluptates fugiat quae omnis? Modi
+                    fuga cumque odio facilis sit? Nihil cumque neque enim, aut
+                    commodi dolores iusto a aliquid maiores, soluta distinctio
+                    impedit ipsam officiis numquam quam odit quisquam cum
+                    incidunt architecto sequi repellendus mollitia excepturi.
+                    Atque, laborum dolore. Minus officiis ut et cupiditate unde
+                    expedita facilis eaque, perferendis a, aliquid doloribus id
+                    tempore officia fuga dicta, facere impedit molestias nisi
+                    animi velit fugiat. Perferendis esse quia neque excepturi?
+                    Aut ullam, consequuntur sequi, temporibus assumenda aliquam
+                    alias iure iusto reprehenderit eos sint ad sunt fugit
+                    asperiores provident nesciunt vel? Unde voluptate optio
+                    rerum corrupti, doloribus dolor nihil voluptas? Sequi.
+                    Repudiandae recusandae explicabo odio beatae! Nulla eius id
+                    non ex beatae nemo veritatis delectus in debitis sapiente a
+                    tempora eum, sequi laborum inventore quo corrupti rem
+                    commodi esse, ad nobis.
+                  </Typography>
+                </ScrollBox>
+
+                {/* 약관 동의 체크박스 */}
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={isPersonalInfoAgreed}
+                      onChange={handlePersonalInfoAgreeButtonClick}
+                      color="primary"
+                    />
+                  }
+                  label="동의합니다"
                   sx={{
-                    display: password.length >= 8 ? "block" : "none",
+                    marginTop: "5px",
+                    alignSelf: "flex-end",
                   }}
                 />
               </Stack>
-              <Stack direction="row" alignItems="center" gap={1}>
-                <CircleRoundedIcon color="primary" sx={{ fontSize: "0.8em" }} />{" "}
-                <Typography variant="subtitle1">
-                  영문, 숫자, 특수문자 포함
+
+              {/* 주의사항 확인서 */}
+              <Stack>
+                {/* 주의사항 확인서 제목 */}
+                <Typography
+                  variant="h3"
+                  color="primary"
+                  marginBottom={1}
+                  fontWeight="bold"
+                >
+                  사전 주의 및 기본예절 확인서
                 </Typography>
-                <CheckRoundedIcon
-                  color="success"
+
+                {/* 주의사항 확인서 본문 */}
+                <ScrollBox>
+                  <Typography variant="subtitle1">
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                    Blanditiis illum, dolore repellat, in ab reprehenderit
+                    sapiente, culpa sequi modi laudantium minima exercitationem
+                    magnam ratione consequuntur quos voluptatem dolor alias
+                    deserunt. Numquam voluptatum velit enim voluptas quis quae
+                    accusantium incidunt illo, quia non suscipit sit fugiat?
+                    Quisquam optio aut perferendis! Nulla dolorum aut fuga sint
+                    nesciunt? Laborum ab qui suscipit placeat. Esse accusamus
+                    obcaecati quam ipsa dignissimos sit neque veniam itaque
+                    nulla aspernatur excepturi dolorem cupiditate eligendi, ex
+                    reprehenderit, aliquam quos, ipsum sequi inventore? Saepe,
+                    impedit odit perspiciatis quaerat inventore qui. Quaerat
+                    nesciunt, maiores ut delectus, accusantium dolores neque
+                    corporis accusamus odit, esse nisi. Eius maiores maxime,
+                    unde quisquam minima ut voluptates fugiat quae omnis? Modi
+                    fuga cumque odio facilis sit? Nihil cumque neque enim, aut
+                    commodi dolores iusto a aliquid maiores, soluta distinctio
+                    impedit ipsam officiis numquam quam odit quisquam cum
+                    incidunt architecto sequi repellendus mollitia excepturi.
+                    Atque, laborum dolore. Minus officiis ut et cupiditate unde
+                    expedita facilis eaque, perferendis a, aliquid doloribus id
+                    tempore officia fuga dicta, facere impedit molestias nisi
+                    animi velit fugiat. Perferendis esse quia neque excepturi?
+                    Aut ullam, consequuntur sequi, temporibus assumenda aliquam
+                    alias iure iusto reprehenderit eos sint ad sunt fugit
+                    asperiores provident nesciunt vel? Unde voluptate optio
+                    rerum corrupti, doloribus dolor nihil voluptas? Sequi.
+                    Repudiandae recusandae explicabo odio beatae! Nulla eius id
+                    non ex beatae nemo veritatis delectus in debitis sapiente a
+                    tempora eum, sequi laborum inventore quo corrupti rem
+                    commodi esse, ad nobis.
+                  </Typography>
+                </ScrollBox>
+
+                {/* 약관 동의 체크박스 */}
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={isGuidelineAgreed}
+                      onChange={handleGuidelineAgreeButtonClick}
+                      color="primary"
+                    />
+                  }
+                  label="동의합니다"
                   sx={{
-                    display:
-                      /[a-zA-Z]/.test(password) &&
-                      /[0-9]/.test(password) &&
-                      /[~!@#$%?]/.test(password)
-                        ? "block"
-                        : "none",
+                    marginTop: "5px",
+                    alignSelf: "flex-end",
                   }}
                 />
               </Stack>
             </Stack>
-          </Stack>
 
-          {/* 비밀번호 재입력 입력란 */}
-          <OutlinedInput
-            type={isPasswordConfirmVisible ? "text" : "password"}
-            placeholder="비밀번호 재입력"
-            value={passwordConfirm}
-            onChange={(e) => setPasswordConfirm(e.target.value)}
-            required
-            // 비밀번호 보임/안보임
-            endAdornment={
-              <InputAdornment position="end">
-                <IconButton onClick={handlePasswordConfirmVisibleClick}>
-                  {isPasswordConfirmVisible ? (
-                    <VisibilityRoundedIcon />
-                  ) : (
-                    <VisibilityOffRoundedIcon />
-                  )}
-                </IconButton>
-              </InputAdornment>
-            }
-          />
-
-          <Stack gap={1}>
-            {/* 개인정보 동의서 */}
-            <Stack>
-              {/* 개인정보 동의서 제목 */}
-              <Typography
-                variant="h3"
-                color="primary"
-                marginBottom={1}
-                fontWeight="bold"
-              >
-                개인정보 처리방침
-              </Typography>
-
-              {/* 개인정보 동의서 본문 */}
-              <ScrollBox>
-                <Typography variant="subtitle1">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Blanditiis illum, dolore repellat, in ab reprehenderit
-                  sapiente, culpa sequi modi laudantium minima exercitationem
-                  magnam ratione consequuntur quos voluptatem dolor alias
-                  deserunt. Numquam voluptatum velit enim voluptas quis quae
-                  accusantium incidunt illo, quia non suscipit sit fugiat?
-                  Quisquam optio aut perferendis! Nulla dolorum aut fuga sint
-                  nesciunt? Laborum ab qui suscipit placeat. Esse accusamus
-                  obcaecati quam ipsa dignissimos sit neque veniam itaque nulla
-                  aspernatur excepturi dolorem cupiditate eligendi, ex
-                  reprehenderit, aliquam quos, ipsum sequi inventore? Saepe,
-                  impedit odit perspiciatis quaerat inventore qui. Quaerat
-                  nesciunt, maiores ut delectus, accusantium dolores neque
-                  corporis accusamus odit, esse nisi. Eius maiores maxime, unde
-                  quisquam minima ut voluptates fugiat quae omnis? Modi fuga
-                  cumque odio facilis sit? Nihil cumque neque enim, aut commodi
-                  dolores iusto a aliquid maiores, soluta distinctio impedit
-                  ipsam officiis numquam quam odit quisquam cum incidunt
-                  architecto sequi repellendus mollitia excepturi. Atque,
-                  laborum dolore. Minus officiis ut et cupiditate unde expedita
-                  facilis eaque, perferendis a, aliquid doloribus id tempore
-                  officia fuga dicta, facere impedit molestias nisi animi velit
-                  fugiat. Perferendis esse quia neque excepturi? Aut ullam,
-                  consequuntur sequi, temporibus assumenda aliquam alias iure
-                  iusto reprehenderit eos sint ad sunt fugit asperiores
-                  provident nesciunt vel? Unde voluptate optio rerum corrupti,
-                  doloribus dolor nihil voluptas? Sequi. Repudiandae recusandae
-                  explicabo odio beatae! Nulla eius id non ex beatae nemo
-                  veritatis delectus in debitis sapiente a tempora eum, sequi
-                  laborum inventore quo corrupti rem commodi esse, ad nobis.
-                </Typography>
-              </ScrollBox>
-
-              {/* 약관 동의 체크박스 */}
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={isPersonalInfoAgreed}
-                    onChange={handlePersonalInfoAgreeButtonClick}
-                    color="primary"
-                  />
-                }
-                label="동의합니다"
+            <Stack gap={1}>
+              {/* 회원가입 버튼 */}
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={handleRegisterButtonClick}
+                fullWidth
                 sx={{
-                  marginTop: "5px",
-                  alignSelf: "flex-end",
+                  fontSize: "1.5em",
+                  fontWeight: "bold",
+                  textTransform: "none",
                 }}
-              />
-            </Stack>
-
-            {/* 주의사항 확인서 */}
-            <Stack>
-              {/* 주의사항 확인서 제목 */}
-              <Typography
-                variant="h3"
-                color="primary"
-                marginBottom={1}
-                fontWeight="bold"
               >
-                사전 주의 및 기본예절 확인서
-              </Typography>
+                FabLab 회원가입
+              </Button>
 
-              {/* 주의사항 확인서 본문 */}
-              <ScrollBox>
-                <Typography variant="subtitle1">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Blanditiis illum, dolore repellat, in ab reprehenderit
-                  sapiente, culpa sequi modi laudantium minima exercitationem
-                  magnam ratione consequuntur quos voluptatem dolor alias
-                  deserunt. Numquam voluptatum velit enim voluptas quis quae
-                  accusantium incidunt illo, quia non suscipit sit fugiat?
-                  Quisquam optio aut perferendis! Nulla dolorum aut fuga sint
-                  nesciunt? Laborum ab qui suscipit placeat. Esse accusamus
-                  obcaecati quam ipsa dignissimos sit neque veniam itaque nulla
-                  aspernatur excepturi dolorem cupiditate eligendi, ex
-                  reprehenderit, aliquam quos, ipsum sequi inventore? Saepe,
-                  impedit odit perspiciatis quaerat inventore qui. Quaerat
-                  nesciunt, maiores ut delectus, accusantium dolores neque
-                  corporis accusamus odit, esse nisi. Eius maiores maxime, unde
-                  quisquam minima ut voluptates fugiat quae omnis? Modi fuga
-                  cumque odio facilis sit? Nihil cumque neque enim, aut commodi
-                  dolores iusto a aliquid maiores, soluta distinctio impedit
-                  ipsam officiis numquam quam odit quisquam cum incidunt
-                  architecto sequi repellendus mollitia excepturi. Atque,
-                  laborum dolore. Minus officiis ut et cupiditate unde expedita
-                  facilis eaque, perferendis a, aliquid doloribus id tempore
-                  officia fuga dicta, facere impedit molestias nisi animi velit
-                  fugiat. Perferendis esse quia neque excepturi? Aut ullam,
-                  consequuntur sequi, temporibus assumenda aliquam alias iure
-                  iusto reprehenderit eos sint ad sunt fugit asperiores
-                  provident nesciunt vel? Unde voluptate optio rerum corrupti,
-                  doloribus dolor nihil voluptas? Sequi. Repudiandae recusandae
-                  explicabo odio beatae! Nulla eius id non ex beatae nemo
-                  veritatis delectus in debitis sapiente a tempora eum, sequi
-                  laborum inventore quo corrupti rem commodi esse, ad nobis.
-                </Typography>
-              </ScrollBox>
-
-              {/* 약관 동의 체크박스 */}
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={isGuidelineAgreed}
-                    onChange={handleGuidelineAgreeButtonClick}
-                    color="primary"
-                  />
-                }
-                label="동의합니다"
-                sx={{
-                  marginTop: "5px",
-                  alignSelf: "flex-end",
+              <Link
+                to="/login"
+                css={{
+                  textDecoration: "none",
+                  color: theme.palette.secondary.main,
                 }}
-              />
+              >
+                <Typography variant="subtitle1" color="primary">
+                  로그인으로 돌아가기
+                </Typography>
+              </Link>
             </Stack>
-          </Stack>
-
-          <Stack gap={1}>
-            {/* 회원가입 버튼 */}
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={handleRegisterButtonClick}
-              fullWidth
-              sx={{
-                fontSize: "1.5em",
-                fontWeight: "bold",
-                textTransform: "none",
-              }}
-            >
-              FabLab 회원가입
-            </Button>
-
-            <Link
-              to="/login"
-              css={{
-                textDecoration: "none",
-                color: theme.palette.secondary.main,
-              }}
-            >
-              <Typography variant="subtitle1" color="primary">
-                로그인으로 돌아가기
-              </Typography>
-            </Link>
           </Stack>
         </Stack>
-      </Stack>
-    </ThemeProvider>
+      </ThemeProvider>
+    </TokenRefresher>
   );
 };
 
