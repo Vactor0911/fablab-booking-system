@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Grid2,
   MenuItem,
   Select,
   SelectChangeEvent,
@@ -265,7 +264,7 @@ const handleSeatImageChange = useCallback(
 
       await axiosInstance.patch("/admin/update-seat", formData, {
         headers: {
-          "CSRF-Token": csrfToken,
+          "X-CSRF-Token": csrfToken,
           "Content-Type": "multipart/form-data",
         },
       });

@@ -14,7 +14,7 @@ import { useAtomValue } from "jotai";
 import { loginStateAtom, Permission } from "../states";
 import { useCallback, useEffect, useState } from "react";
 import TokenRefresher from "../components/TokenRefresher";
-import axiosInstance from "../utils/axiosInstance";
+import axiosInstance, { getCsrfToken } from "../utils/axiosInstance";
 import axios from "axios";
 
 const NoticeDetail = () => {
@@ -79,9 +79,34 @@ const NoticeDetail = () => {
     }
   }, [uuid]);
 
+  // 조회수 증가
+  const increaseView = useCallback(async () => {
+    // 새 공지사항 작성 페이지일 경우 종료
+    if (location.pathname === "/notice/new") {
+      return;
+    }
+
+    try {
+      const csrfToken = await getCsrfToken();
+
+      await axiosInstance.patch(
+        `/notice/${uuid}/increment-views`,
+        {},
+        {
+          headers: {
+            "X-CSRF-Token": csrfToken, // CSRF 토큰 추가
+          },
+        }
+      );
+    } catch (err) {
+      console.error("조회수 증가 중 오류 발생:", err);
+    }
+  }, [location.pathname, uuid]);
+
   useEffect(() => {
     fetchNotice();
-  }, [fetchNotice]);
+    increaseView();
+  }, [fetchNotice, increaseView]);
 
   // 등록 버튼 클릭
   const handlePostButtonClick = useCallback(async () => {
@@ -98,7 +123,7 @@ const NoticeDetail = () => {
         "/admin/notice",
         { title, content, userId: loginState.userId },
         {
-          headers: { "CSRF-Token": csrfToken },
+          headers: { "X-CSRF-Token": csrfToken },
         }
       );
       alert("새로운 공지사항이 성공적으로 작성되었습니다.");
@@ -162,7 +187,7 @@ const NoticeDetail = () => {
             noticeId, // 공지사항 ID 추가
           },
           {
-            headers: { "CSRF-Token": csrfToken },
+            headers: { "X-CSRF-Token": csrfToken },
           }
         );
       })
@@ -196,7 +221,7 @@ const NoticeDetail = () => {
           userId: loginState.userId,
           noticeId, // 공지사항 ID 추가
         },
-        headers: { "CSRF-Token": csrfToken },
+        headers: { "X-CSRF-Token": csrfToken },
       });
       alert("공지사항이 성공적으로 삭제되었습니다.");
       navigate("/notice");
@@ -205,34 +230,6 @@ const NoticeDetail = () => {
       alert("공지사항 삭제 중 오류가 발생했습니다.");
     }
   }, [loginState.userId, navigate, noticeId, uuid]);
-
-  // 조회수 증가
-  const increaseView = useCallback(async () => {
-    // 새 공지사항 작성 페이지일 경우 종료
-    if (location.pathname === "/notice/new") {
-      return;
-    }
-
-    try {
-      const csrfToken = await axiosInstance
-        .get("/csrf-token")
-        .then((res) => res.data.csrfToken);
-      await axiosInstance.patch(
-        `/notice/${uuid}/increment-views`,
-        {},
-        {
-          headers: {
-            "CSRF-Token": csrfToken, // CSRF 토큰 추가
-          },
-        }
-      );
-    } catch (err) {
-      console.error("조회수 증가 중 오류 발생:", err);
-    }
-  }, [location.pathname, uuid]);
-  useEffect(() => {
-    increaseView();
-  }, [increaseView]);
 
   return (
     <TokenRefresher>

@@ -209,7 +209,7 @@ const BookRestrictionDetail = () => {
         },
         {
           headers: {
-            "CSRF-Token": csrfToken,
+            "X-CSRF-Token": csrfToken,
           },
         }
       );
@@ -256,7 +256,7 @@ const BookRestrictionDetail = () => {
           selectedNotice: banner?.notice_id,
           userId: loginState.userId, // 관리자 ID 전송
         },
-        { headers: { "CSRF-Token": csrfToken } }
+        { headers: { "X-CSRF-Token": csrfToken } }
       );
 
       alert("수정이 완료되었습니다.");
@@ -291,7 +291,7 @@ const BookRestrictionDetail = () => {
             userId: loginState.userId,
             restrictionId: restrictionId,
           },
-          headers: { "CSRF-Token": csrfToken },
+          headers: { "X-CSRF-Token": csrfToken },
         }
       );
 

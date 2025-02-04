@@ -56,7 +56,7 @@ const MyReservation = () => {
         // CSRF 토큰을 포함하여 API 호출
         return axiosInstance.get(`/users/reservations`, {
           headers: {
-            "CSRF-Token": csrfToken, // CSRF 보호를 위한 토큰 헤더 추가
+            "X-CSRF-Token": csrfToken, // CSRF 보호를 위한 토큰 헤더 추가
           },
           params: {
             page: page,

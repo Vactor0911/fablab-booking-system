@@ -114,7 +114,7 @@ const CommonTabPanel = (props: TabPanelProps) => {
           available_end_time: closingHour.format("HH:mm:00"),
         },
         {
-          headers: { "CSRF-Token": csrfToken },
+          headers: { "X-CSRF-Token": csrfToken },
         }
       );
       alert("설정이 저장되었습니다.");
