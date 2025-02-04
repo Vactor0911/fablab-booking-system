@@ -53,7 +53,7 @@ const Home = () => {
       const csrfToken = await getCsrfToken();
       const response = await axiosInstance.get(`/users/reservations/current`, {
         headers: {
-          "CSRF-Token": csrfToken, // CSRF 보호를 위한 토큰 헤더 추가
+          "X-CSRF-Token": csrfToken, // CSRF 보호를 위한 토큰 헤더 추가
         },
       });
 
