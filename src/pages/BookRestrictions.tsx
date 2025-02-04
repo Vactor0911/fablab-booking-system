@@ -76,8 +76,6 @@ const BookRestrictions = () => {
           },
         });
 
-        console.log(response);
-
         const newBookRestrictions = response.data.restrictions.map(
           (bookRestriction: {
             restriction_uuid: string;

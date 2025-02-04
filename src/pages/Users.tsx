@@ -70,8 +70,6 @@ const Users = () => {
         },
       });
 
-      console.log(response.data);
-
       const newUsers = response.data.users.map(
         (user: {
           user_id: number;
@@ -101,8 +99,6 @@ const Users = () => {
           };
         }
       );
-
-      console.log(newUsers);
 
       setUsers(newUsers || []);
       setUserCount(response.data.usersCount);

@@ -124,8 +124,6 @@ const Logs = () => {
           },
         });
 
-        console.log(response.data);
-
         const newLogs = response.data.logs.map(
           (log: {
             log_type: string;

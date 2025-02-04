@@ -82,10 +82,8 @@ const ReservationDialog = (props: ReservationDialogProps) => {
           const seatsResponse = await axios.get(
             `${SERVER_HOST}/seats/${seatName}`
           );
-          console.log(seatsResponse);
           seatInfo = seatsResponse.data.seat;
         }
-        console.log("좌석 정보", seatInfo.warning);
 
         setEttiqutte(seatInfo.basicManners);
         setCaution(seatInfo.warning);

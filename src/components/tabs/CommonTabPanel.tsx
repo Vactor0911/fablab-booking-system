@@ -39,8 +39,6 @@ const CommonTabPanel = (props: TabPanelProps) => {
     try {
       const response = await axiosInstance.get("/admin/default-settings");
 
-      console.log(response.data.data);
-
       setBasicManners(response.data.data.basic_manners);
 
       const newOpeningHour = response.data.data.available_start_time.split(":");
