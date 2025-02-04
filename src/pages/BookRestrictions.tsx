@@ -58,6 +58,7 @@ const BookRestrictions = () => {
   const [bookRestrictions, setBookRestrictions] = useState<BookRestriction[]>(
     []
   );
+  const [bookRestrictionCount, setBookRestrictionCount] = useState(0);
 
   const fetchBookRestrictions = useCallback(
     async (page: number, search: string) => {
@@ -97,6 +98,7 @@ const BookRestrictions = () => {
           })
         );
         setBookRestrictions(newBookRestrictions);
+        setBookRestrictionCount(response.data.totalRestrictions);
         setTotalPages(Math.ceil(response.data.totalRestrictions / 10));
       } catch (err) {
         console.error("예약 제한 데이터를 가져오는 중 오류 발생:", err);
@@ -213,7 +215,7 @@ const BookRestrictions = () => {
                           }}
                         >
                           <FixedTableCell keepline>
-                            {(page - 1) * 10 + index + 1}
+                            {bookRestrictionCount - (page - 1) * 10 - index}
                           </FixedTableCell>
                           <FixedTableCell keepline>{row.notice}</FixedTableCell>
                           <FixedTableCell>{row.seatCount}</FixedTableCell>

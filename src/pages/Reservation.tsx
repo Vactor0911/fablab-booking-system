@@ -74,7 +74,7 @@ const Reservation = () => {
         },
       });
 
-      setReservationSeat(response.data.reservations[0].seatName);
+      setReservationSeat(response.data.reservations[0]?.seatName);
     } catch (err) {
       console.error("예약 정보를 가져오는 중 오류 발생:", err);
       return [];
@@ -171,7 +171,11 @@ const Reservation = () => {
       <ThemeProvider theme={theme}>
         <Stack className="page-root">
           {/* 공지사항 배너 */}
-          <Box width="100%" padding="10px 0">
+          <Box
+            width="100%"
+            padding="10px 0"
+            display={notices && notices.length > 0 ? "block" : "none"}
+          >
             {notices && (
               <NoticeBanner
                 message={notices[0]?.title}

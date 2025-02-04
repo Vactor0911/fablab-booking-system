@@ -165,6 +165,9 @@ const Header = () => {
       if (response.data.success) {
         // Jotai 상태
         setLoginState({} as LoginState);
+        
+        // 로컬 스토리지 삭제
+        localStorage.removeItem("FabLabLoginState");
 
         alert("로그아웃이 성공적으로 완료되었습니다."); // 성공 메시지
 

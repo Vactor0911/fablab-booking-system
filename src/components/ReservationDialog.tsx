@@ -17,7 +17,12 @@ import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import { dateFormatter, theme } from "../utils";
 import { useCallback, useEffect, useState } from "react";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { loginStateAtom, myCurrentReservationAtom, Permission, reservationSeatAtom } from "../states";
+import {
+  loginStateAtom,
+  myCurrentReservationAtom,
+  Permission,
+  reservationSeatAtom,
+} from "../states";
 import axiosInstance, { getCsrfToken } from "../utils/axiosInstance";
 import TokenRefresher from "./TokenRefresher";
 import { useNavigate } from "react-router";
@@ -124,7 +129,6 @@ const ReservationDialog = (props: ReservationDialogProps) => {
         )
         .then(() => {
           alert("성공적으로 예약되었습니다.");
-          onClose();
         })
         .catch((error) => {
           console.error("예약 요청 실패:", error);
@@ -137,6 +141,9 @@ const ReservationDialog = (props: ReservationDialogProps) => {
               }`
             );
           }
+        })
+        .finally(() => {
+          onClose();
         });
     } catch (error) {
       console.error("예약 중 오류 발생:", error);
@@ -394,7 +401,7 @@ const ReservationDialog = (props: ReservationDialogProps) => {
                 display:
                   !loginState.isLoggedIn ||
                   (loginState.permission === Permission.USER &&
-                    reservationSeat === "")
+                    !reservationSeat)
                     ? "block"
                     : "none",
               }}

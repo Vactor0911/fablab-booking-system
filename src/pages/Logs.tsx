@@ -106,6 +106,7 @@ const Logs = () => {
   }
 
   const [logs, setLogs] = useState<Log[]>([]);
+  const [logsCount, setLogsCount] = useState(0);
 
   const fetchLogs = useCallback(
     async (page: number, filter: string, search: string) => {
@@ -152,6 +153,7 @@ const Logs = () => {
           1,
           Math.ceil(response.data.totalLogs / 10)
         );
+        setLogsCount(response.data.totalLogs);
         setTotalPages(newTotalPages);
         setPage(Math.min(page, newTotalPages));
       } catch (err) {
@@ -273,7 +275,7 @@ const Logs = () => {
                         }}
                       >
                         <FixedTableCell keepline>
-                          {(page - 1) * 10 + index + 1}
+                          {logsCount - (page - 1) * 10 - index}
                         </FixedTableCell>
                         <FixedTableCell>{row.type}</FixedTableCell>
                         <FixedTableCell>{row.user}</FixedTableCell>

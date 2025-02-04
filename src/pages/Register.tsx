@@ -55,6 +55,54 @@ const Register = () => {
   const [isPersonalInfoAgreed, setIsPersonalInfoAgreed] = useState(false); // 개인정보 동의 여부
   const [isGuidelineAgreed, setIsGuidelineAgreed] = useState(false); // 주의사항 확인 여부
 
+  // 학번 입력
+  const handleStudentIdChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setStudentId(e.target.value.replace(" ", ""));
+    },
+    []
+  );
+
+  // 이름 입력
+  const handleNameChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setName(e.target.value);
+    },
+    []
+  );
+
+  // 이메일 입력
+  const handleEmailChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setEmail(e.target.value);
+    },
+    []
+  );
+
+  // 인증번호 입력
+  const handleConfirmCodeChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setConfirmCode(e.target.value.replace(" ", ""));
+    },
+    []
+  );
+
+  // 비밀번호 입력
+  const handlePasswordChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setPassword(e.target.value.replace(" ", ""));
+    },
+    []
+  );
+
+  // 비밀번호 확인 입력
+  const handlePasswordConfirmChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setPasswordConfirm(e.target.value.replace(" ", ""));
+    },
+    []
+  );
+
   // 비밀번호 표시/숨김
   const handlePasswordVisibleClick = useCallback(() => {
     setIsPasswordVisible((prev) => !prev);
@@ -179,9 +227,44 @@ const Register = () => {
   // 회원가입 버튼 클릭
   const navigate = useNavigate();
   const handleRegisterButtonClick = useCallback(async () => {
-    // 사용자가 인증번호를 확인했는지 확인
+    // 학번이 부적절하다면 종료
+    if (!/[0-9]/.test(studentId)) {
+      alert("학번의 형식이 올바르지 않습니다!");
+      return;
+    }
+
+    // 비밀번호가 일치하지 않는다면
+    if (password !== passwordConfirm) {
+      alert("학번의 형식이 올바르지 않습니다!");
+      return;
+    }
+
+    // 비밀번호가 부적절하다면 종료
+    if (
+      password.length < 8 ||
+      !/[a-zA-Z]/.test(password) ||
+      !/[0-9]/.test(password) ||
+      !/[!@#$%^&*?]/.test(password)
+    ) {
+      alert("비밀번호가 너무 짧거나 형식이 올바르지 않습니다!");
+      return;
+    }
+
+    // 이메일 인증을 하지 않았다면 종료
     if (!isConfirmCodeChecked) {
       alert("이메일 인증을 완료해주세요!");
+      return;
+    }
+
+    // 개인정보 동의 버튼 클릭하지 않았다면 종료
+    if (!isPersonalInfoAgreed) {
+      alert("개인정보 처리방침에 동의해주세요!");
+      return;
+    }
+
+    // 주의사항 확인 버튼 클릭하지 않았다면 종료
+    if (!isGuidelineAgreed) {
+      alert("사전 주의 및 기본 예절 확인서에 동의해주세요!");
       return;
     }
 
@@ -227,7 +310,17 @@ const Register = () => {
         alert("예기치 않은 오류가 발생했습니다. 나중에 다시 시도해 주세요.");
       }
     }
-  }, [email, isConfirmCodeChecked, name, navigate, password, studentId]);
+  }, [
+    email,
+    isConfirmCodeChecked,
+    isGuidelineAgreed,
+    isPersonalInfoAgreed,
+    name,
+    navigate,
+    password,
+    passwordConfirm,
+    studentId,
+  ]);
 
   return (
     <TokenRefresher>
@@ -251,7 +344,7 @@ const Register = () => {
             <TextField
               placeholder="학번"
               value={studentId}
-              onChange={(e) => setStudentId(e.target.value)}
+              onChange={handleStudentIdChange}
               fullWidth
             />
 
@@ -259,7 +352,7 @@ const Register = () => {
             <TextField
               placeholder="이름"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={handleNameChange}
               fullWidth
             />
 
@@ -270,7 +363,7 @@ const Register = () => {
                 placeholder="이메일"
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={handleEmailChange}
                 sx={{
                   flex: "1",
                 }}
@@ -295,7 +388,7 @@ const Register = () => {
               <TextField
                 placeholder="인증번호 입력"
                 value={confirmCode}
-                onChange={(e) => setConfirmCode(e.target.value)}
+                onChange={handleConfirmCodeChange}
                 sx={{
                   flex: "1",
                   minWidth: "120px",
@@ -327,7 +420,7 @@ const Register = () => {
                 type={isPasswordVisible ? "text" : "password"}
                 placeholder="비밀번호"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={handlePasswordChange}
                 required
                 // 비밀번호 보임/안보임
                 endAdornment={
@@ -386,7 +479,7 @@ const Register = () => {
               type={isPasswordConfirmVisible ? "text" : "password"}
               placeholder="비밀번호 재입력"
               value={passwordConfirm}
-              onChange={(e) => setPasswordConfirm(e.target.value)}
+              onChange={handlePasswordConfirmChange}
               required
               // 비밀번호 보임/안보임
               endAdornment={
@@ -548,6 +641,16 @@ const Register = () => {
                   fontWeight: "bold",
                   textTransform: "none",
                 }}
+                disabled={
+                  !studentId ||
+                  !name ||
+                  !email ||
+                  !isConfirmCodeChecked ||
+                  !password ||
+                  password !== passwordConfirm ||
+                  !isPersonalInfoAgreed ||
+                  !isGuidelineAgreed
+                }
               >
                 FabLab 회원가입
               </Button>

@@ -1,5 +1,4 @@
 import { atom } from "jotai";
-import { atomWithStorage } from "jotai/utils";
 
 // 다크모드 상태
 export const isDarkModeAtom = atom(false);
@@ -18,7 +17,7 @@ export interface LoginState {
   userName: string;
 }
 
-export const loginStateAtom = atomWithStorage("FabLabLoginState", {} as LoginState);
+export const loginStateAtom = atom<LoginState>({} as LoginState);
 
 // 내 예약 정보 상태
 export interface MyReservation {
@@ -48,4 +47,6 @@ export interface MyReservation {
   image: string;
 }
 
-export const myCurrentReservationAtom = atom<Partial<MyReservation> | null>(null);
+export const myCurrentReservationAtom = atom<Partial<MyReservation> | null>(
+  null
+);

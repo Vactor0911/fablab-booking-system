@@ -34,6 +34,22 @@ const Login = () => {
   const [isLoginStateSave, setIsLoginStateSave] = useState(false); // 로그인 상태 유지 여부
   const setLoginState = useSetAtom(loginStateAtom); // 로그인 상태
 
+  // 학번 입력
+  const handleStudentIdChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setStudentId(e.target.value.replace(" ", ""));
+    },
+    []
+  );
+
+  // 비밀번호 입력
+  const handlePasswordChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setPassword(e.target.value.replace(" ", ""));
+    },
+    []
+  );
+
   // 비밀번호 표시/숨김
   const handlePasswordVisibleClick = useCallback(() => {
     setIsPasswordVisible((prev) => !prev);
@@ -75,7 +91,7 @@ const Login = () => {
       const { name, userId, permissions } = response.data;
       setAccessToken(response.data.accessToken); // Access Token 저장
       // 로그인 성공 메시지
-      alert(`[ ${name} ]님 로그인에 성공했습니다!`);
+      alert(`[ ${name} ]님 환영합니다!`);
 
       let enumPermission = Permission.USER;
       switch (permissions) {
@@ -98,6 +114,11 @@ const Login = () => {
       // Jotai 상태 업데이트
       setLoginState(newLoginState);
 
+      // 로그인 상태 유지 체크시, 로컬 스토리지에 저장
+      if (isLoginStateSave) {
+        localStorage.setItem("FabLabLoginState", JSON.stringify(newLoginState));
+      }
+
       // 성공 후 메인 페이지 이동
       navigate("/");
     } catch (error) {
@@ -112,7 +133,7 @@ const Login = () => {
       // 로그인 실패 시 비밀번호 초기화
       setPassword("");
     }
-  }, [navigate, password, setLoginState, studentId]);
+  }, [isLoginStateSave, navigate, password, setLoginState, studentId]);
 
   return (
     <TokenRefresher>
@@ -136,7 +157,7 @@ const Login = () => {
             <TextField
               placeholder="학번"
               value={studentId}
-              onChange={(e) => setStudentId(e.target.value)}
+              onChange={handleStudentIdChange}
               fullWidth
             />
 
@@ -146,7 +167,7 @@ const Login = () => {
                 type={isPasswordVisible ? "text" : "password"}
                 placeholder="비밀번호"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={handlePasswordChange}
                 required
                 // 비밀번호 보임/안보임
                 endAdornment={
