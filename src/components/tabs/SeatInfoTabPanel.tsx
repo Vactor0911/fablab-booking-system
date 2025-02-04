@@ -189,8 +189,6 @@ const handleSeatImageChange = useCallback(
     try {
       const response = await axiosInstance.get(`/admin/seats/${seatName}`);
 
-      console.log(response.data.seat);
-
       setImage(response.data.seat.image);
       setPcSupport(response.data.seat.pc_support);
       setCaution(response.data.seat.warning);
@@ -256,11 +254,6 @@ const handleSeatImageChange = useCallback(
       if (imageRaw) {
         formData.append("image", imageRaw); // 파일 객체 추가
       }
-
-      // FormData 디버깅용 출력
-      formData.forEach((value, key) => {
-        console.log(`${key}:`, value);
-      });
 
       await axiosInstance.patch("/admin/update-seat", formData, {
         headers: {
