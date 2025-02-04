@@ -114,7 +114,7 @@ const Login = () => {
       // Jotai 상태 업데이트
       setLoginState(newLoginState);
 
-      //  로그인 상태 유지 체크 시 localStorage, 아니면 sessionStorage 저장
+      //  로그인 상태 유지 체크 시 localStorage, 아니면 sessionStorage 에 저장
       if (isLoginStateSave) {
         localStorage.setItem("FabLabLoginState", JSON.stringify(newLoginState));
       } else {
