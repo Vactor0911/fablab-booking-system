@@ -23,9 +23,13 @@ import {
   Permission,
   reservationSeatAtom,
 } from "../states";
-import axiosInstance, { getCsrfToken } from "../utils/axiosInstance";
+import axiosInstance, {
+  getCsrfToken,
+  SERVER_HOST,
+} from "../utils/axiosInstance";
 import TokenRefresher from "./TokenRefresher";
 import { useNavigate } from "react-router";
+import axios from "axios";
 
 interface ReservationDialogProps {
   seatName: string;
@@ -47,61 +51,79 @@ const ReservationDialog = (props: ReservationDialogProps) => {
   const loginState = useAtomValue(loginStateAtom);
 
   // 정보 불러오기
-  const getSeatInfo = useCallback(async () => {
-    // 권한 확인 API 호출
-    const response = await axiosInstance.get("/users/info", {
-      headers: {
-        "X-CSRF-Token": await getCsrfToken(), // CSRF 토큰 헤더 추가
-      },
-    });
+  const fetchSeatInfo = useCallback(
+    async () => {
+      // 좌석 이름이 없으면 종료
+      if (!seatName) {
+        return;
+      }
 
-    // 사용자 권한
-    const userPermission = response.data.user.permission;
+      try {
+        let seatInfo;
+        if (loginState.isLoggedIn) {
+          // 권한 확인 API 호출
+          const response = await axiosInstance.get("/users/info", {
+            headers: {
+              "X-CSRF-Token": await getCsrfToken(), // CSRF 토큰 헤더 추가
+            },
+          });
 
-    // 권한에 따른 좌석 정보 불러오기
-    const seatsResponse = await axiosInstance.get(
-      userPermission === "admin" || userPermission === "superadmin"
-        ? `/admin/seats/${seatName}`
-        : `/seats/${seatName}`
-    );
+          // 사용자 권한
+          const userPermission = response.data.user.permission;
 
-    setEttiqutte(seatsResponse.data.seat.basicManners);
-    setCaution(seatsResponse.data.seat.warning);
-    setPcSupport(seatsResponse.data.seat.pc_support);
-    setSeatImage(seatsResponse.data.seat.image);
+          // 권한에 따른 좌석 정보 불러오기
+          const seatsResponse = await axiosInstance.get(
+            userPermission === "admin" || userPermission === "superadmin"
+              ? `/admin/seats/${seatName}`
+              : `/seats/${seatName}`
+          );
+          seatInfo = seatsResponse.data.seat;
+        } else {
+          const seatsResponse = await axios.get(
+            `${SERVER_HOST}/seats/${seatName}`
+          );
+          console.log(seatsResponse);
+          seatInfo = seatsResponse.data.seat;
+        }
+        console.log("좌석 정보", seatInfo.warning);
 
-    const newIsBooked =
-      !!seatsResponse.data.seat.userName &&
-      seatsResponse.data.seat.userName !== "없음";
-    setIsBooked(newIsBooked);
+        setEttiqutte(seatInfo.basicManners);
+        setCaution(seatInfo.warning);
+        setPcSupport(seatInfo.pc_support);
+        setSeatImage(seatInfo.image);
 
-    const reservationStartTime = seatsResponse.data.seat.reservationTime;
-    const availableEndTime = seatsResponse.data.seat.availableEndTime.substring(
-      0,
-      5
-    );
+        const newIsBooked = !!seatInfo.userName && seatInfo.userName !== "없음";
+        setIsBooked(newIsBooked);
 
-    if (!newIsBooked && loginState.permission !== Permission.USER) {
-      setReservationTime("예약 없음");
-    } else if (reservationStartTime) {
-      setReservationTime(`${reservationStartTime} ~ ${availableEndTime}`);
-    } else {
-      setReservationTime(
-        `${new Date().toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: false,
-        })} ~ ${availableEndTime}`
-      );
-    }
+        const reservationStartTime = seatInfo.reservationTime;
+        const availableEndTime = seatInfo.availableEndTime.substring(0, 5);
 
-    const newPerson = `${seatsResponse.data.seat.userStudentId} ${seatsResponse.data.seat.userName}`;
-    setPerson(newIsBooked ? newPerson : "예약 없음");
-  }, [loginState.permission, seatName]);
+        if (!newIsBooked && loginState.permission !== Permission.USER) {
+          setReservationTime("예약 없음");
+        } else if (reservationStartTime) {
+          setReservationTime(`${reservationStartTime} ~ ${availableEndTime}`);
+        } else {
+          setReservationTime(
+            `${new Date().toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: false,
+            })} ~ ${availableEndTime}`
+          );
+        }
+
+        const newPerson = `${seatInfo.userStudentId} ${seatInfo.userName}`;
+        setPerson(newIsBooked ? newPerson : "예약 없음");
+      } catch (error) {
+        console.error("좌석 데이터를 가져오는 중 오류 발생:", error);
+      }
+    },
+    [loginState.isLoggedIn, loginState.permission, seatName]
+  );
 
   useEffect(() => {
-    getSeatInfo();
-  }, [getSeatInfo, seatName]);
+    fetchSeatInfo();
+  }, [fetchSeatInfo]);
 
   // 예약 버튼 클릭
   const navigate = useNavigate();
@@ -352,7 +374,7 @@ const ReservationDialog = (props: ReservationDialogProps) => {
             <Stack padding="5px 15px" sx={{ backgroundColor: "#f4f4f6" }}>
               <TextField
                 multiline
-                defaultValue={ettiqutte}
+                value={ettiqutte}
                 variant="standard"
                 disabled
                 sx={{
@@ -377,7 +399,7 @@ const ReservationDialog = (props: ReservationDialogProps) => {
               <Stack padding="5px 15px" sx={{ backgroundColor: "#f4f4f6" }}>
                 <TextField
                   multiline
-                  defaultValue={caution}
+                  value={caution}
                   variant="standard"
                   disabled
                   sx={{

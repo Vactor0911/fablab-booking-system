@@ -4,7 +4,7 @@ import SeatLayout from "../components/SeatLayout";
 import { dateFormatter, theme } from "../utils";
 import ReservationDialog from "../components/ReservationDialog";
 import { useCallback, useEffect, useState } from "react";
-import axiosInstance, { getCsrfToken } from "../utils/axiosInstance";
+import axiosInstance, { getCsrfToken, SERVER_HOST } from "../utils/axiosInstance";
 import TokenRefresher from "../components/TokenRefresher";
 import { useAtomValue, useSetAtom } from "jotai";
 import {
@@ -16,32 +16,42 @@ import {
   SeatInfoProps,
 } from "../states";
 import Notice from "./Notice";
+import axios from "axios";
 
 const Reservation = () => {
+  const loginState = useAtomValue(loginStateAtom);
   const setSeatInfo = useSetAtom(seatInfoAtom); // 좌석 정보
 
   // 좌석 정보 불러오기
   const refreshSeatInfo = useCallback(async () => {
     try {
-      // 권한 확인 API 호출
-      const response = await axiosInstance.get("/users/info", {
-        headers: {
-          "X-CSRF-Token": await getCsrfToken(), // CSRF 토큰 헤더 추가
-        },
-      });
+      let seatsInfo;
+      if (loginState.isLoggedIn) {
+        // 권한 확인 API 호출
+        const response = await axiosInstance.get("/users/info", {
+          headers: {
+            "X-CSRF-Token": await getCsrfToken(), // CSRF 토큰 헤더 추가
+          },
+        });
 
-      // 사용자 권한
-      const userPermission = response.data.user.permission;
+        const userPermission = response.data.user.permission;
 
-      // 권한에 따른 좌석 정보 불러오기
-      const seatsResponse = await axiosInstance.get(
-        userPermission === "admin" || userPermission === "superadmin"
-          ? "/admin/seats"
-          : "/seats"
-      );
+        // 권한에 따른 좌석 정보 불러오기
+        const seatsResponse = await axiosInstance.get(
+          userPermission === "admin" || userPermission === "superadmin"
+            ? "/admin/seats"
+            : "/seats"
+        );
+        seatsInfo = seatsResponse.data.seats;
+      } else {
+        // 권한에 따른 좌석 정보 불러오기
+        const seatsResponse = await axios.get(`${SERVER_HOST}/seats`);
+        seatsInfo = seatsResponse.data.seats;
+      }
+
       const newSeatInfo: Record<string, SeatInfoProps> = {};
       // 좌석 정보 저장
-      seatsResponse.data.seats.map(
+      seatsInfo.map(
         (seat: { seat_name: string; state: string; user_name: string }) => {
           newSeatInfo[seat.seat_name] = {
             seatName: seat.seat_name,
@@ -54,10 +64,9 @@ const Reservation = () => {
     } catch (error) {
       console.error("좌석 데이터를 가져오는 중 오류 발생:", error);
     }
-  }, [setSeatInfo]);
+  }, [loginState.isLoggedIn, setSeatInfo]);
 
   // 내 예약 정보 불러오기
-  const loginState = useAtomValue(loginStateAtom);
   const setReservationSeat = useSetAtom(reservationSeatAtom); // 예약된 좌석 이름
 
   const refreshMyReservation = useCallback(async () => {
