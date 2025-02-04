@@ -11,12 +11,14 @@ import {
 } from "@mui/material";
 import { theme } from "../utils";
 import { useCallback, useEffect, useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 
 import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
 import VisibilityOffRoundedIcon from "@mui/icons-material/VisibilityOffRounded";
 import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
 import CircleRoundedIcon from "@mui/icons-material/CircleRounded";
+import axiosInstance, { getCsrfToken } from "../utils/axiosInstance";
+import axios from "axios";
 
 const FindPassword = () => {
   const [studentId, setStudentId] = useState(""); // 학번
@@ -32,14 +34,48 @@ const FindPassword = () => {
     useState(false); // 비밀번호 표시 여부
 
   // 인증번호 요청 버튼 클릭
-  const handleConfirmCodeSendButtonClick = useCallback(() => {
+  const handleConfirmCodeSendButtonClick = useCallback(async () => {
     if (isConfirmCodeChecked) {
       return;
     }
 
     setIsConfirmCodeSent(true);
     setConfirmTimeLeft(300);
-  }, [isConfirmCodeChecked]);
+
+    try {
+      // Step 1: CSRF 토큰 가져오기
+      const csrfToken = await getCsrfToken();
+
+      // Step 2: 인증번호 요청
+      await axiosInstance.post(
+        "/users/verify-email",
+        {
+          email,
+          purpose: "resetPassword", // 계정 복구용 인증번호 요청
+          id: studentId,
+        },
+        {
+          headers: {
+            "X-CSRF-Token": csrfToken, // CSRF 토큰 추가
+          },
+        }
+      );
+
+      // 요청 성공 시 알림
+      alert("인증번호가 이메일로 발송되었습니다!");
+    } catch (error) {
+      // 요청 실패 시 알림
+      if (axios.isAxiosError(error) && error.response) {
+        alert(
+          "이메일 전송 실패\n" +
+            (error.response.data?.message || "알 수 없는 오류")
+        );
+      } else {
+        console.error("요청 오류:", (error as Error).message);
+        alert("예기치 않은 오류가 발생했습니다. 나중에 다시 시도해 주세요.");
+      }
+    }
+  }, [email, isConfirmCodeChecked, studentId]);
 
   // 인증번호 입력 타이머
   useEffect(() => {
@@ -62,9 +98,40 @@ const FindPassword = () => {
   }, []);
 
   // 인증번호 확인 버튼 클릭
-  const handleConfirmCodeCheckButtonClick = useCallback(() => {
-    setIsConfirmCodeChecked(true);
-  }, []);
+  const handleConfirmCodeCheckButtonClick = useCallback(async () => {
+    try {
+      // Step 1: CSRF 토큰 가져오기
+      const csrfToken = await getCsrfToken();
+
+      // Step 2: 인증번호 확인 요청
+      await axiosInstance.post(
+        "/users/verify-code",
+        {
+          email,
+          code: confirmCode,
+        },
+        {
+          headers: {
+            "X-CSRF-Token": csrfToken, // CSRF 토큰 추가
+          },
+        }
+      );
+
+      // 요청 성공 처리
+      alert("인증번호 확인 완료!");
+      setIsConfirmCodeChecked(true); // 인증 성공
+    } catch (error) {
+      // 요청 실패 처리
+      if (axios.isAxiosError(error) && error.response) {
+        alert(
+          "인증 실패\n" + (error.response.data?.message || "알 수 없는 오류")
+        );
+      } else {
+        console.error("요청 오류:", (error as Error).message);
+        alert("예기치 않은 오류가 발생했습니다. 나중에 다시 시도해 주세요.");
+      }
+    }
+  }, [confirmCode, email]);
 
   // 비밀번호 표시/숨김
   const handlePasswordVisibleClick = useCallback(() => {
@@ -77,7 +144,48 @@ const FindPassword = () => {
   }, []);
 
   // 비밀번호 재설정 버튼 클릭
-  const handlePasswordResetButtonClick = useCallback(() => {}, []);
+  const navigate = useNavigate();
+  const handlePasswordResetButtonClick = useCallback(async () => {
+    if (!isConfirmCodeChecked) {
+      alert("이메일 인증을 완료해주세요.");
+      return;
+    }
+
+    try {
+      // Step 1: CSRF 토큰 가져오기
+      const csrfToken = await getCsrfToken();
+
+      // Step 2: 비밀번호 재설정 요청
+      await axiosInstance.patch(
+        "/users/password/reset",
+        {
+          id: studentId,
+          email,
+          password,
+        },
+        {
+          headers: {
+            "X-CSRF-Token": csrfToken, // CSRF 토큰 추가
+          },
+        }
+      );
+
+      // 요청 성공 처리
+      alert("비밀번호가 성공적으로 변경되었습니다.");
+      navigate("/login");
+    } catch (error) {
+      // 요청 실패 처리
+      if (axios.isAxiosError(error) && error.response) {
+        alert(
+          "비밀번호 변경 실패\n" +
+            (error.response.data?.message || "알 수 없는 오류")
+        );
+      } else {
+        console.error("요청 오류:", (error as Error).message);
+        alert("예기치 않은 오류가 발생했습니다. 나중에 다시 시도해 주세요.");
+      }
+    }
+  }, [email, isConfirmCodeChecked, navigate, password, studentId]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -226,7 +334,7 @@ const FindPassword = () => {
                         display:
                           /[a-zA-Z]/.test(password) &&
                           /[0-9]/.test(password) &&
-                          /[~!@#$%?]/.test(password)
+                          /[!@#$%^&*?]/.test(password)
                             ? "block"
                             : "none",
                       }}

@@ -8,7 +8,7 @@
     "devLan": "vite --port 4000 --host",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview --port 4000"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -17,8 +17,10 @@
     "@mui/material": "^6.3.1",
     "@mui/x-charts": "^7.23.2",
     "@mui/x-date-pickers": "^7.24.1",
+    "axios": "^1.7.9",
     "dayjs": "^1.11.13",
     "jotai": "^2.11.0",
+    "lodash": "^4.17.21",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router": "^7.1.1",
@@ -26,6 +28,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
+    "@types/node": "^22.13.0",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
     "@vitejs/plugin-react-swc": "^3.5.0",

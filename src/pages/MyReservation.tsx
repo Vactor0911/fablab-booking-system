@@ -16,6 +16,7 @@ import FixedTableCell from "../components/FixedTableCell";
 import { useNavigate } from "react-router";
 import { useAtomValue } from "jotai";
 import { loginStateAtom, Permission } from "../states";
+import axiosInstance, { getCsrfToken } from "../utils/axiosInstance";
 
 const MyReservation = () => {
   const navigate = useNavigate();
@@ -30,135 +31,75 @@ const MyReservation = () => {
 
   // 페이지
   const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const handlePageChange = useCallback(
-    (event: React.ChangeEvent<unknown>, newPage: number) => {
+    (_event: React.ChangeEvent<unknown>, newPage: number) => {
       setPage(newPage);
     },
     []
   );
 
-  const data = [
-    {
-      state: "예약중",
-      date: "2021-10-20 13:30",
-      seat: "A01",
-      note: "비고",
-    },
-    {
-      state: "예약종료",
-      date: "2021-10-21 14:00",
-      seat: "A02",
-      note: "비고",
-    },
-    {
-      state: "예약종료",
-      date: "2021-10-22 15:30",
-      seat: "A03",
-      note: "비고",
-    },
-    {
-      state: "예약종료",
-      date: "2021-10-23 16:00",
-      seat: "A04",
-      note: "비고",
-    },
-    {
-      state: "예약종료",
-      date: "2021-10-24 17:30",
-      seat: "A05",
-      note: "비고",
-    },
-    {
-      state: "예약종료",
-      date: "2021-10-25 18:00",
-      seat: "A06",
-      note: "비고",
-    },
-    {
-      state: "예약종료",
-      date: "2021-10-26 19:30",
-      seat: "A07",
-      note: "비고",
-    },
-    {
-      state: "예약종료",
-      date: "2021-10-27 20:00",
-      seat: "A08",
-      note: "비고",
-    },
-    {
-      state: "예약종료",
-      date: "2021-10-28 21:30",
-      seat: "A09",
-      note: "비고",
-    },
-    {
-      state: "예약종료",
-      date: "2021-10-29 22:00",
-      seat: "A10",
-      note: "비고",
-    },
-    {
-      state: "예약종료",
-      date: "2021-10-30 23:30",
-      seat: "A11",
-      note: "비고",
-    },
-    {
-      state: "예약종료",
-      date: "2021-10-31 12:00",
-      seat: "A12",
-      note: "비고",
-    },
-    {
-      state: "예약종료",
-      date: "2021-11-01 13:30",
-      seat: "A13",
-      note: "비고",
-    },
-    {
-      state: "예약종료",
-      date: "2021-11-02 14:00",
-      seat: "A14",
-      note: "비고",
-    },
-    {
-      state: "예약종료",
-      date: "2021-11-03 15:30",
-      seat: "A15",
-      note: "비고",
-    },
-    {
-      state: "예약종료",
-      date: "2021-11-04 16:00",
-      seat: "A16",
-      note: "비고",
-    },
-    {
-      state: "예약종료",
-      date: "2021-11-05 17:30",
-      seat: "A17",
-      note: "비고",
-    },
-    {
-      state: "예약종료",
-      date: "2021-11-06 18:00",
-      seat: "A18",
-      note: "비고",
-    },
-    {
-      state: "예약종료",
-      date: "2021-11-07 19:30",
-      seat: "A19",
-      note: "비고",
-    },
-    {
-      state: "예약종료",
-      date: "2021-11-08 20:00",
-      seat: "A20",
-      note: "비고",
-    },
-  ];
+  // 내 예약 정보 불러오기
+  interface MyReservation {
+    state: string;
+    date: string;
+    seat: string;
+    note?: string;
+  }
+
+  const [myReservation, setMyReservation] = useState<MyReservation[]>([]);
+
+  const fetchMyReservation = useCallback(async () => {
+    // CSRF 토큰 가져오기
+    getCsrfToken()
+      .then((csrfToken) => {
+        // CSRF 토큰을 포함하여 API 호출
+        return axiosInstance.get(`/users/reservations`, {
+          headers: {
+            "CSRF-Token": csrfToken, // CSRF 보호를 위한 토큰 헤더 추가
+          },
+          params: {
+            page: page,
+          },
+        });
+      })
+      .then((response) => {
+        setTotalPages(Math.ceil(response.data.totalReservations / 10));
+        const newMyReservation = response.data.reservations.map(
+          (reservation: {
+            state: string;
+            book_date: string;
+            seat_name: string;
+            cancel_reason: string;
+          }) => {
+            let state = "예약중";
+            switch (reservation.state) {
+              case "end":
+                state = "퇴실";
+                break;
+              case "cancel":
+                state = "강제 퇴실";
+                break;
+            }
+
+            return {
+              state: state,
+              date: reservation.book_date,
+              seat: reservation.seat_name,
+              note: reservation.cancel_reason,
+            };
+          }
+        );
+        setMyReservation(newMyReservation);
+      })
+      .catch((err) => {
+        console.error("예약 정보를 가져오는 중 오류 발생:", err);
+      });
+  }, [page]);
+
+  useEffect(() => {
+    fetchMyReservation();
+  }, [fetchMyReservation, page]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -171,7 +112,7 @@ const MyReservation = () => {
 
           {/* 페이지 선택 */}
           <Pagination
-            count={10}
+            count={totalPages}
             page={page}
             onChange={handlePageChange}
             siblingCount={1}
@@ -190,41 +131,39 @@ const MyReservation = () => {
           >
             <TableHead>
               <TableRow>
-                <TableCell width="10%">상태</TableCell>
+                <TableCell width="15%">상태</TableCell>
                 <TableCell width="30%">일시</TableCell>
-                <TableCell width="20%">좌석</TableCell>
+                <TableCell width="15%">좌석</TableCell>
                 <TableCell width="40%">퇴실 사유</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {data
-                .slice((page - 1) * 10, (page - 1) * 10 + 10)
-                .map((row, index) => (
-                  <TableRow
-                    key={index}
+              {myReservation.map((row, index) => (
+                <TableRow
+                  key={index}
+                  sx={{
+                    backgroundColor:
+                      row.state === "예약중" && index === 0 && page === 1
+                        ? "#ddaeb7"
+                        : "inherit",
+                  }}
+                >
+                  <FixedTableCell
+                    keepline
                     sx={{
-                      backgroundColor:
+                      color:
                         row.state === "예약중" && index === 0 && page === 1
-                          ? "#ddaeb7"
+                          ? theme.palette.primary.main
                           : "inherit",
                     }}
                   >
-                    <FixedTableCell
-                      keepline
-                      sx={{
-                        color:
-                          row.state === "예약중" && index === 0 && page === 1
-                            ? theme.palette.primary.main
-                            : "inherit",
-                      }}
-                    >
-                      {row.state}
-                    </FixedTableCell>
-                    <FixedTableCell>{row.date}</FixedTableCell>
-                    <FixedTableCell>{row.seat}</FixedTableCell>
-                    <FixedTableCell>{row.note}</FixedTableCell>
-                  </TableRow>
-                ))}
+                    {row.state}
+                  </FixedTableCell>
+                  <FixedTableCell>{row.date}</FixedTableCell>
+                  <FixedTableCell>{row.seat}</FixedTableCell>
+                  <FixedTableCell>{row.note}</FixedTableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         </Stack>
