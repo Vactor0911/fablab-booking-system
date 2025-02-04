@@ -6,16 +6,25 @@ import {
   ThemeProvider,
   Typography,
 } from "@mui/material";
+import { useAtomValue } from "jotai";
+import {
+  loginStateAtom,
+  Permission,
+  reservationSeatAtom,
+  seatInfoAtom,
+} from "../states";
 
 // 좌석 버튼
 interface SeatButtonProps extends ButtonProps {
-  title: string;
-  content?: string;
+  seatName: string;
   selected?: boolean;
 }
 
 const SeatButton = (props: SeatButtonProps) => {
-  const { title, content, selected } = props;
+  const { seatName, selected } = props;
+  const loginState = useAtomValue(loginStateAtom);
+  const seatInfo = useAtomValue(seatInfoAtom);
+  const reservedSeat = useAtomValue(reservationSeatAtom);
 
   // 버튼 테마 색상
   const buttonTheme = createTheme({
@@ -23,17 +32,30 @@ const SeatButton = (props: SeatButtonProps) => {
       primary: {
         main: "#fffcf2",
       },
+      secondary: {
+        main: "#33c33b",
+      },
     },
     typography: {
       fontFamily: ["Pretendard-Regular", "sans-serif"].join(","),
     },
   });
 
+  const isBooked = seatInfo[seatName]?.state === "book";
+
   return (
     <ThemeProvider theme={buttonTheme}>
       <Button
+        key={seatName}
         variant="contained"
         fullWidth
+        color={isBooked ? "secondary" : "primary"}
+        disabled={
+          isBooked &&
+          ((reservedSeat !== seatName &&
+            loginState.permission === Permission.USER) ||
+            !loginState.isLoggedIn)
+        }
         sx={{
           display: "flex",
           alignItems: "flex-start",
@@ -41,7 +63,11 @@ const SeatButton = (props: SeatButtonProps) => {
           minWidth: 0,
           minHeight: 0,
           boxShadow: "none",
-          backgroundColor: selected ? "#a72b43" : "#fffcf2",
+          backgroundColor: selected
+            ? "#a72b43"
+            : isBooked
+            ? "#33c33b"
+            : "#fffcf2",
           color: selected ? "white" : "black",
           border: "1px solid #666666",
           padding: "0 5px",
@@ -55,7 +81,7 @@ const SeatButton = (props: SeatButtonProps) => {
       >
         <Stack width="100%" height="100%" overflow="hidden" minWidth={0}>
           <Typography variant="subtitle1" textAlign="left">
-            {title}
+            {seatName}
           </Typography>
 
           <Typography
@@ -74,7 +100,7 @@ const SeatButton = (props: SeatButtonProps) => {
               textOverflow: "ellipsis",
             }}
           >
-            {content}
+            {seatInfo[seatName]?.userName}
           </Typography>
         </Stack>
       </Button>

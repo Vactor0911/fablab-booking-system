@@ -14,6 +14,7 @@ const FixedTableCell = ({
   return (
     <TableCell
       sx={{
+        padding: "16px 10px !important",
         whiteSpace: keepline ? "nowrap" : "normal",
         wordBreak: keepline ? "keep-all" : "break-word",
         overflow: keepline ? "hidden" : "visible",

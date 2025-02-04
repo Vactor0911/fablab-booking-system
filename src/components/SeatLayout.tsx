@@ -46,9 +46,7 @@ const SeatLayout = (props: SeatLayoutProps) => {
             {Array.from({ length: 12 }, (_, i) => i).map((i) =>
               i % 2 === 0 ? (
                 <SeatButton
-                  title={`A${i / 2 + 1}`}
-                  key={`A${i / 2 + 1}`}
-                  content="홍길동"
+                  seatName={`A${i / 2 + 1}`}
                   onClick={() => {
                     const seatName = `A${i / 2 + 1}`;
                     onSeatButtonClick(seatName);
@@ -81,19 +79,12 @@ const SeatLayout = (props: SeatLayoutProps) => {
                     ) : (
                       <Grid2 size={1} display="flex" key={`b${i}${j}`}>
                         <SeatButton
-                          title={`B${
+                          seatName={`B${
                             j +
                             Math.floor(j / 3) +
                             (i % 3) * 2 +
                             Math.floor(i / 3) * 16
                           }`}
-                          key={`B${
-                            j +
-                            Math.floor(j / 3) +
-                            (i % 3) * 2 +
-                            Math.floor(i / 3) * 16
-                          }`}
-                          content="홍길동"
                           onClick={() => {
                             const seatName = `B${
                               j +
@@ -118,11 +109,9 @@ const SeatLayout = (props: SeatLayoutProps) => {
               {Array.from({ length: 17 }, (_, i) => i).map((i) =>
                 i % 2 === 0 ? (
                   <SeatButton
-                    title={
+                    seatName={
                       i % 4 === 0 ? `C${i / 4 + 1}` : `D${Math.ceil(i / 4)}`
                     }
-                    key={i % 4 === 0 ? `C${i / 4 + 1}` : `D${Math.ceil(i / 4)}`}
-                    content="홍길동"
                     onClick={() => {
                       const seatName =
                         i % 4 === 0 ? `C${i / 4 + 1}` : `D${Math.ceil(i / 4)}`;
@@ -152,9 +141,7 @@ const SeatLayout = (props: SeatLayoutProps) => {
             {Array.from({ length: 12 }, (_, i) => i).map((i) =>
               i % 2 === 0 ? (
                 <SeatButton
-                  title={`A${i / 2 + 7}`}
-                  key={`A${i / 2 + 7}`}
-                  content="홍길동"
+                  seatName={`A${i / 2 + 7}`}
                   onClick={() => {
                     const seatName = `A${i / 2 + 7}`;
                     onSeatButtonClick(seatName);
