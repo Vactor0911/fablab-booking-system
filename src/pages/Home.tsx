@@ -121,7 +121,7 @@ const Home = () => {
     notice_uuid: string;
     title: string;
   }
-  
+
   const [notices, setNotices] = useState<Notice[]>([]);
   const fetchNotices = useCallback(async () => {
     try {
@@ -191,8 +191,11 @@ const Home = () => {
               padding="0 30px"
               textAlign="center"
               color="white"
+              sx={{
+                textShadow: "0 0 5px rgba(0, 0, 0, 0.5)",
+              }}
             >
-              FabLab 슬로건 입력될 자리
+              컴공인의 꿈을 키우는 창의공간 팹랩
             </Typography>
           </Stack>
 

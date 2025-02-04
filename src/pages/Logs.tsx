@@ -3,6 +3,7 @@ import AdminPage from "../components/AdminPage";
 import { theme } from "../utils";
 import {
   Box,
+  debounce,
   Divider,
   InputAdornment,
   MenuItem,
@@ -20,18 +21,73 @@ import {
 } from "@mui/material";
 
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import FixedTableCell from "../components/FixedTableCell";
+import TokenRefresher from "../components/TokenRefresher";
+import axiosInstance from "../utils/axiosInstance";
+
+/**
+ * 로그의 종류와 액션에 따라 표시되는 타입을 반환한다.
+ * @param logType 로그 종류 (book, notice, restriction)
+ * @param action 로그 액션 (book: book, end, cancel / notice: create, edit, delete / restriction: create, edit, delete)
+ * @returns 로그 타입
+ */
+const getLogType = (logType: string, action: string) => {
+  switch (logType) {
+    case "book": // 예약
+      switch (action) {
+        case "book":
+          return "예약";
+        case "end":
+          return "퇴실";
+        case "cancel":
+          return "강제 퇴실";
+      }
+      break;
+    case "notice": // 공지사항
+      switch (action) {
+        case "create":
+          return "공지사항 작성";
+        case "edit":
+          return "공지사항 수정";
+        case "delete":
+          return "공지사항 삭제";
+      }
+      break;
+    case "restriction": // 예약 제한
+      switch (action) {
+        case "create":
+          return "예약 제한 추가";
+        case "edit":
+          return "예약 제한 수정";
+        case "delete":
+          return "예약 제한 삭제";
+      }
+      break;
+  }
+};
 
 const Logs = () => {
   // 필터
   const [filter, setFilter] = useState("all");
   const handleFilterChange = useCallback((e: SelectChangeEvent<string>) => {
     setFilter(e.target.value);
+    setPage(1);
   }, []);
+
+  // 검색어 필터
+  const [search, setSearch] = useState("");
+  const handleSearchChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setSearch(e.target.value);
+      setPage(1);
+    },
+    []
+  );
 
   // 페이지
   const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const handlePageChange = useCallback(
     (_event: React.ChangeEvent<unknown>, newPage: number) => {
       setPage(newPage);
@@ -39,277 +95,183 @@ const Logs = () => {
     []
   );
 
-  const data = [
-    {
-      id: 1,
-      type: "예약",
-      user: "2051001/홍길동",
-      admin: "2051000/김철수",
-      seat: "A01",
-      date: "2021-10-20",
-      note: "비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고비고",
+  // 로그 조회
+  interface Log {
+    type: string;
+    user: string;
+    admin: string;
+    seat: string;
+    date: string;
+    note: string;
+  }
+
+  const [logs, setLogs] = useState<Log[]>([]);
+
+  const fetchLogs = useCallback(
+    async (page: number, filter: string, search: string) => {
+      try {
+        const csrfTokenResponse = await axiosInstance.get("/csrf-token");
+        const csrfToken = csrfTokenResponse.data.csrfToken;
+
+        const response = await axiosInstance.get(`/admin/logs/${filter}`, {
+          headers: {
+            "X-CSRF-Token": csrfToken,
+          },
+          params: {
+            page: page,
+            search: search,
+          },
+        });
+
+        console.log(response.data);
+
+        const newLogs = response.data.logs.map(
+          (log: {
+            log_type: string;
+            log_action: string;
+            user_id: string;
+            user_name: string;
+            admin_id: string;
+            admin_name: string;
+            seat_name: string;
+            log_date: string;
+            restriction_reason: string;
+          }) => ({
+            type: getLogType(log.log_type, log.log_action),
+            user: log.user_id ? `${log.user_id} ${log.user_name}` : "",
+            admin: log.admin_id ? `${log.admin_id} ${log.admin_name}` : "",
+            seat: log.seat_name,
+            date: log.log_date,
+            note: log.restriction_reason,
+          })
+        );
+
+        setLogs(newLogs);
+
+        const newTotalPages = Math.max(
+          1,
+          Math.ceil(response.data.totalLogs / 10)
+        );
+        setTotalPages(newTotalPages);
+        setPage(Math.min(page, newTotalPages));
+      } catch (err) {
+        console.error("로그 데이터를 가져오는 중 오류 발생:", err);
+      }
     },
-    {
-      id: 2,
-      type: "퇴실",
-      user: "2051002/이순신",
-      admin: "2051000/김철수",
-      seat: "A02",
-      date: "2021-10-21",
-      note: "비고",
-    },
-    {
-      id: 3,
-      type: "강제 퇴실",
-      user: "2051003/박문수",
-      admin: "2051000/김철수",
-      seat: "A03",
-      date: "2021-10-22",
-      note: "비고",
-    },
-    {
-      id: 4,
-      type: "공지사항",
-      user: "2051004/정약용",
-      admin: "2051000/김철수",
-      seat: "A04",
-      date: "2021-10-23",
-      note: "비고",
-    },
-    {
-      id: 5,
-      type: "예약 제한",
-      user: "2051005/김유신",
-      admin: "2051000/김철수",
-      seat: "A05",
-      date: "2021-10-24",
-      note: "비고",
-    },
-    {
-      id: 6,
-      type: "예약",
-      user: "2051006/유관순",
-      admin: "2051000/김철수",
-      seat: "A06",
-      date: "2021-10-25",
-      note: "비고",
-    },
-    {
-      id: 7,
-      type: "퇴실",
-      user: "2051007/안중근",
-      admin: "2051000/김철수",
-      seat: "A07",
-      date: "2021-10-26",
-      note: "비고",
-    },
-    {
-      id: 8,
-      type: "강제 퇴실",
-      user: "2051008/윤봉길",
-      admin: "2051000/김철수",
-      seat: "A08",
-      date: "2021-10-27",
-      note: "비고",
-    },
-    {
-      id: 9,
-      type: "공지사항",
-      user: "2051009/김구",
-      admin: "2051000/김철수",
-      seat: "A09",
-      date: "2021-10-28",
-      note: "비고",
-    },
-    {
-      id: 10,
-      type: "예약 제한",
-      user: "2051010/신사임당",
-      admin: "2051000/김철수",
-      seat: "A10",
-      date: "2021-10-29",
-      note: "비고",
-    },
-    {
-      id: 11,
-      type: "예약",
-      user: "2051011/세종대왕",
-      admin: "2051000/김철수",
-      seat: "A11",
-      date: "2021-10-30",
-      note: "비고",
-    },
-    {
-      id: 12,
-      type: "퇴실",
-      user: "2051012/장영실",
-      admin: "2051000/김철수",
-      seat: "A12",
-      date: "2021-10-31",
-      note: "비고",
-    },
-    {
-      id: 13,
-      type: "강제 퇴실",
-      user: "2051013/이황",
-      admin: "2051000/김철수",
-      seat: "A13",
-      date: "2021-11-01",
-      note: "비고",
-    },
-    {
-      id: 14,
-      type: "공지사항",
-      user: "2051014/이이",
-      admin: "2051000/김철수",
-      seat: "A14",
-      date: "2021-11-02",
-      note: "비고",
-    },
-    {
-      id: 15,
-      type: "예약 제한",
-      user: "2051015/허준",
-      admin: "2051000/김철수",
-      seat: "A15",
-      date: "2021-11-03",
-      note: "비고",
-    },
-    {
-      id: 16,
-      type: "예약",
-      user: "2051016/신채호",
-      admin: "2051000/김철수",
-      seat: "A16",
-      date: "2021-11-04",
-      note: "비고",
-    },
-    {
-      id: 17,
-      type: "퇴실",
-      user: "2051017/안창호",
-      admin: "2051000/김철수",
-      seat: "A17",
-      date: "2021-11-05",
-      note: "비고",
-    },
-    {
-      id: 18,
-      type: "강제 퇴실",
-      user: "2051018/김좌진",
-      admin: "2051000/김철수",
-      seat: "A18",
-      date: "2021-11-06",
-      note: "비고",
-    },
-    {
-      id: 19,
-      type: "공지사항",
-      user: "2051019 유성룡",
-      admin: "2051000/김철수",
-      seat: "A19",
-      date: "2021-11-07",
-      note: "비고",
-    },
-    {
-      id: 20,
-      type: "예약 제한",
-      user: "2051020/이순신",
-      admin: "2051000/김철수",
-      seat: "A20",
-      date: "2021-11-08",
-      note: "비고",
-    },
-  ];
+    []
+  );
+
+  // 로그 조회 API 호출 디바운싱
+  const debouncedFetchLogs = useMemo(
+    () => debounce(() => fetchLogs(page, filter, search), 500),
+    [fetchLogs, filter, page, search]
+  );
+
+  // 로그 조회 API 호출
+  useEffect(() => {
+    debouncedFetchLogs();
+  }, [debouncedFetchLogs]);
 
   return (
-    <AdminPage>
-      <ThemeProvider theme={theme}>
-        <Stack className="page-root">
-          <Stack className="base-layout" gap={2}>
-            {/* 페이지명 */}
-            <Typography variant="h2">로그 관리</Typography>
+    <TokenRefresher>
+      <AdminPage>
+        <ThemeProvider theme={theme}>
+          <Stack className="page-root">
+            <Stack className="base-layout" gap={2}>
+              {/* 페이지명 */}
+              <Typography variant="h2">로그 관리</Typography>
 
-            {/* 구분선 */}
-            <Divider
-              sx={{
-                borderWidth: "1px",
-              }}
-            />
-
-            <Stack direction="row" gap={1} justifyContent="flex-end">
-              {/* 필터 콤보박스 */}
-              <Box width="110px">
-                <Select value={filter} onChange={handleFilterChange} fullWidth>
-                  <MenuItem value="all">전체</MenuItem>
-                  <MenuItem value="reservation">예약</MenuItem>
-                  <MenuItem value="leave">퇴실</MenuItem>
-                  <MenuItem value="force-leave">강제 퇴실</MenuItem>
-                  <MenuItem value="notice">공지사항</MenuItem>
-                  <MenuItem value="restriction">예약 제한</MenuItem>
-                </Select>
-              </Box>
-
-              {/* 검색어 입력란 */}
-              <Box>
-                <TextField
-                  variant="outlined"
-                  placeholder="학번 / 이름 검색"
-                  slotProps={{
-                    input: {
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <SearchRoundedIcon />
-                        </InputAdornment>
-                      ),
-                    },
-                  }}
-                />
-              </Box>
-            </Stack>
-
-            {/* 페이지 선택 */}
-            <Pagination
-              count={10}
-              page={page}
-              onChange={handlePageChange}
-              siblingCount={1}
-              boundaryCount={0}
-              showFirstButton
-              showLastButton
-              sx={{
-                alignSelf: "flex-end",
-              }}
-            />
-
-            {/* 로그 목록 */}
-            <Box
-              sx={{
-                overflowX: "auto",
-              }}
-            >
-              <Table
+              {/* 구분선 */}
+              <Divider
                 sx={{
-                  tableLayout: "fixed",
-                  minWidth: "600px",
+                  borderWidth: "1px",
+                }}
+              />
+
+              <Stack direction="row" gap={1} justifyContent="flex-end">
+                {/* 필터 콤보박스 */}
+                <Box width="110px">
+                  <Select
+                    value={filter}
+                    onChange={handleFilterChange}
+                    fullWidth
+                  >
+                    <MenuItem value="all">전체</MenuItem>
+                    <MenuItem value="book">예약</MenuItem>
+                    <MenuItem value="end">퇴실</MenuItem>
+                    <MenuItem value="cancel">강제 퇴실</MenuItem>
+                    <MenuItem value="notice/all">공지사항</MenuItem>
+                    <MenuItem value="book_restriction/all">예약 제한</MenuItem>
+                  </Select>
+                </Box>
+
+                {/* 검색어 입력란 */}
+                <Box>
+                  <TextField
+                    variant="outlined"
+                    placeholder="학번 / 이름 검색"
+                    value={search}
+                    onChange={handleSearchChange}
+                    slotProps={{
+                      input: {
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <SearchRoundedIcon />
+                          </InputAdornment>
+                        ),
+                      },
+                    }}
+                  />
+                </Box>
+              </Stack>
+
+              {/* 페이지 선택 */}
+              <Pagination
+                count={totalPages}
+                page={page}
+                onChange={handlePageChange}
+                siblingCount={1}
+                boundaryCount={0}
+                showFirstButton
+                showLastButton
+                sx={{
+                  alignSelf: "flex-end",
+                }}
+              />
+
+              {/* 로그 목록 */}
+              <Box
+                sx={{
+                  overflowX: "auto",
                 }}
               >
-                <TableHead>
-                  <TableRow>
-                    <TableCell width="10%">번호</TableCell>
-                    <TableCell width="10%">로그 종류</TableCell>
-                    <TableCell width="15%">예약자 정보</TableCell>
-                    <TableCell width="15%">관리자 정보</TableCell>
-                    <TableCell width="10%">좌석 정보</TableCell>
-                    <TableCell width="15%">기록 일자</TableCell>
-                    <TableCell width="25%">비고</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {data
-                    .slice((page - 1) * 10, (page - 1) * 10 + 10)
-                    .map((row, index) => (
-                      <TableRow key={index}>
+                <Table
+                  sx={{
+                    tableLayout: "fixed",
+                    minWidth: "600px",
+                  }}
+                >
+                  <TableHead>
+                    <TableRow>
+                      <TableCell width="7%">번호</TableCell>
+                      <TableCell width="13%">로그 종류</TableCell>
+                      <TableCell width="15%">예약자 정보</TableCell>
+                      <TableCell width="15%">관리자 정보</TableCell>
+                      <TableCell width="10%">좌석 정보</TableCell>
+                      <TableCell width="15%">기록 일자</TableCell>
+                      <TableCell width="25%">비고</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {logs.map((row, index) => (
+                      <TableRow
+                        key={index}
+                        sx={{
+                          "&:nth-of-type(odd)": {
+                            backgroundColor: "#f4f4f6",
+                          },
+                        }}
+                      >
                         <FixedTableCell keepline>
                           {(page - 1) * 10 + index + 1}
                         </FixedTableCell>
@@ -321,13 +283,14 @@ const Logs = () => {
                         <FixedTableCell>{row.note}</FixedTableCell>
                       </TableRow>
                     ))}
-                </TableBody>
-              </Table>
-            </Box>
+                  </TableBody>
+                </Table>
+              </Box>
+            </Stack>
           </Stack>
-        </Stack>
-      </ThemeProvider>
-    </AdminPage>
+        </ThemeProvider>
+      </AdminPage>
+    </TokenRefresher>
   );
 };
 

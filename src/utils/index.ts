@@ -44,6 +44,16 @@ export const theme = createTheme({
         inputProps: { spellCheck: false },
       },
     },
+    MuiTableCell: {
+      styleOverrides: {
+        head: {
+          padding: "16px 10px",
+        },
+        body: {
+          padding: "16px 10px",
+        },
+      },
+    },
     MuiTooltip: {
       styleOverrides: {
         tooltip: {
