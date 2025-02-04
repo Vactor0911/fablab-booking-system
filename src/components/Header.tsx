@@ -35,6 +35,7 @@ import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
 import DrawerMenu from "./DrawerMenu";
 import axiosInstance, { getCsrfToken } from "../utils/axiosInstance";
+import { setAccessToken } from "../utils/accessToken";
 
 // Link 요소 CSS
 const LinkCss = {
@@ -166,8 +167,9 @@ const Header = () => {
         // Jotai 상태
         setLoginState({} as LoginState);
         
-        // 로컬 스토리지 삭제
-        localStorage.removeItem("FabLabLoginState");
+        setAccessToken(""); // 토큰 초기화
+        sessionStorage.removeItem("FabLabLoginState"); // 세션 스토리지 제거
+        localStorage.removeItem("FabLabLoginState"); // 로컬 스토리지 제거
 
         alert("로그아웃이 성공적으로 완료되었습니다."); // 성공 메시지
 
