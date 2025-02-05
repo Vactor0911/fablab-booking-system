@@ -50,3 +50,6 @@ export interface MyReservation {
 export const myCurrentReservationAtom = atom<Partial<MyReservation> | null>(
   null
 );
+
+// 예약 제한된 좌석 배열
+export const bookRestrictedSeatsAtom = atom<string[]>([]);
