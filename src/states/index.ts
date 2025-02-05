@@ -34,7 +34,7 @@ export interface SeatInfoProps {
   userName: string;
 }
 
-export const seatInfoAtom = atom({} as Record<string, SeatInfoProps>);
+export const seatInfoAtom = atom({});
 
 // 내 예약 좌석 이름
 export const reservationSeatAtom = atom("");
