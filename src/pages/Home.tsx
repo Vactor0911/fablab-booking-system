@@ -32,8 +32,6 @@ const LinkCss = {
   color: "black",
 };
 
-// 내 예약 정보 인터페이스
-
 const Home = () => {
   const loginState = useAtomValue(loginStateAtom); // 로그인 상태
   const navigate = useNavigate(); // 페이지 이동
@@ -309,7 +307,7 @@ const Home = () => {
                 <>
                   <Stack direction="row">
                     <Link
-                      to="/my-reservation"
+                      to={loginState.isLoggedIn ? "/my-reservation" : "/login"}
                       css={{
                         ...LinkCss,
                         display: "flex",
