@@ -11,17 +11,21 @@ import {
   ThemeProvider,
   Typography,
 } from "@mui/material";
-import { theme } from "../utils";
+import {
+  isPasswordCombinationValid,
+  isPasswordLengthValid,
+  theme,
+} from "../utils";
 import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router";
 
 import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
 import VisibilityOffRoundedIcon from "@mui/icons-material/VisibilityOffRounded";
 import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
-import CircleRoundedIcon from "@mui/icons-material/CircleRounded";
 import axios from "axios";
 import axiosInstance, { getCsrfToken } from "../utils/axiosInstance";
 import TokenRefresher from "../components/TokenRefresher";
+import PasswordValidation from "../components/PasswordValidation";
 
 // 스크롤 있는 Stack 요소
 const ScrollBox: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -143,7 +147,7 @@ const Register = () => {
       // 요청 성공 시 알림
       setIsConfirmCodeSent(true);
       setConfirmTimeLeft(300);
-      alert("인증번호가 이메일로 발송되었습니다!");
+      alert("인증번호가 이메일로 발송되었습니다.");
     } catch (error) {
       // 요청 실패 시 알림
       if (axios.isAxiosError(error) && error.response) {
@@ -153,7 +157,7 @@ const Register = () => {
         );
       } else {
         console.error("요청 오류:", (error as Error).message);
-        alert("예기치 않은 오류가 발생했습니다. 나중에 다시 시도해 주세요.");
+        alert("예기치 않은 오류가 발생했습니다. 다시 시도해 주세요.");
       }
     }
   }, [email, isConfirmCodeChecked, name, studentId]);
@@ -199,7 +203,7 @@ const Register = () => {
       );
 
       // 요청 성공 처리
-      alert("인증번호 확인 완료!");
+      alert("인증번호 확인이 완료되었습니다.");
       setIsConfirmCodeChecked(true); // 인증 성공
     } catch (error) {
       // 요청 실패 처리
@@ -229,42 +233,40 @@ const Register = () => {
   const handleRegisterButtonClick = useCallback(async () => {
     // 학번이 부적절하다면 종료
     if (!/[0-9]/.test(studentId)) {
-      alert("학번의 형식이 올바르지 않습니다!");
+      alert("학번의 형식이 올바르지 않습니다.");
       return;
     }
 
     // 비밀번호가 일치하지 않는다면
     if (password !== passwordConfirm) {
-      alert("학번의 형식이 올바르지 않습니다!");
+      alert("학번의 형식이 올바르지 않습니다.");
       return;
     }
 
     // 비밀번호가 부적절하다면 종료
     if (
-      password.length < 8 ||
-      !/[a-zA-Z]/.test(password) ||
-      !/[0-9]/.test(password) ||
-      !/[!@#$%^&*?]/.test(password)
+      !isPasswordLengthValid(password) ||
+      !isPasswordCombinationValid(password)
     ) {
-      alert("비밀번호가 너무 짧거나 형식이 올바르지 않습니다!");
+      alert("비밀번호가 너무 짧거나 형식이 올바르지 않습니다.");
       return;
     }
 
     // 이메일 인증을 하지 않았다면 종료
     if (!isConfirmCodeChecked) {
-      alert("이메일 인증을 완료해주세요!");
+      alert("이메일 인증을 완료해주세요.");
       return;
     }
 
     // 개인정보 동의 버튼 클릭하지 않았다면 종료
     if (!isPersonalInfoAgreed) {
-      alert("개인정보 처리방침에 동의해주세요!");
+      alert("개인정보 처리방침에 동의해주세요.");
       return;
     }
 
     // 주의사항 확인 버튼 클릭하지 않았다면 종료
     if (!isGuidelineAgreed) {
-      alert("사전 주의 및 기본 예절 확인서에 동의해주세요!");
+      alert("사전 주의 및 기본 예절 확인서에 동의해주세요.");
       return;
     }
 
@@ -289,7 +291,7 @@ const Register = () => {
       );
 
       // 사용자에게 성공 메시지 보여주기 (UI 반영)
-      alert("회원가입이 성공적으로 완료되었습니다!");
+      alert("회원가입이 성공적으로 완료되었습니다.");
       navigate("/login"); // 회원가입 성공 시 로그인 페이지로 이동
     } catch (error) {
       // 서버로부터 반환된 에러 메시지 확인
@@ -437,41 +439,7 @@ const Register = () => {
               />
 
               {/* 비밀번호 필요 조건 */}
-              <Stack>
-                <Stack direction="row" alignItems="center" gap={1}>
-                  <CircleRoundedIcon
-                    color="primary"
-                    sx={{ fontSize: "0.8em" }}
-                  />{" "}
-                  <Typography variant="subtitle1">8글자 이상</Typography>
-                  <CheckRoundedIcon
-                    color="success"
-                    sx={{
-                      display: password.length >= 8 ? "block" : "none",
-                    }}
-                  />
-                </Stack>
-                <Stack direction="row" alignItems="center" gap={1}>
-                  <CircleRoundedIcon
-                    color="primary"
-                    sx={{ fontSize: "0.8em" }}
-                  />{" "}
-                  <Typography variant="subtitle1">
-                    영문, 숫자, 특수문자 포함
-                  </Typography>
-                  <CheckRoundedIcon
-                    color="success"
-                    sx={{
-                      display:
-                        /[a-zA-Z]/.test(password) &&
-                        /[0-9]/.test(password) &&
-                        /[!@#$%^&*?]/.test(password)
-                          ? "block"
-                          : "none",
-                    }}
-                  />
-                </Stack>
-              </Stack>
+              <PasswordValidation password={password} />
             </Stack>
 
             {/* 비밀번호 재입력 입력란 */}
