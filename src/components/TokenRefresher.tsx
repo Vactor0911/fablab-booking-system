@@ -1,7 +1,19 @@
-import { useAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import { ReactNode, useEffect, useState } from "react";
-import { loginStateAtom, Permission } from "../states";
-import { getCsrfToken, SERVER_HOST, setupAxiosInterceptors } from "../utils/axiosInstance";
+import {
+  bookRestrictedSeatsAtom,
+  LoginState,
+  loginStateAtom,
+  myCurrentReservationAtom,
+  Permission,
+  reservationSeatAtom,
+  seatInfoAtom,
+} from "../states";
+import {
+  getCsrfToken,
+  SERVER_HOST,
+  setupAxiosInterceptors,
+} from "../utils/axiosInstance";
 import { useNavigate } from "react-router";
 import { setAccessToken } from "../utils/accessToken";
 import axios from "axios";
@@ -15,8 +27,12 @@ const TokenRefresher = ({ children }: TokenRefresherProps) => {
   const [isInitialized, setIsInitialized] = useState(false); // 로그인 정보 복구 완료 여부
   const navigate = useNavigate();
 
-  useEffect(() => {
+  const setSeatInfo = useSetAtom(seatInfoAtom);
+  const setReservationSeat = useSetAtom(reservationSeatAtom);
+  const setMyCurrentReservation = useSetAtom(myCurrentReservationAtom);
+  const setBookRestrictedSeats = useSetAtom(bookRestrictedSeatsAtom);
 
+  useEffect(() => {
     // 1. sessionStorage or localStorage에서 로그인 정보 복구
     const storedLoginState =
       localStorage.getItem("FabLabLoginState") ||
@@ -95,15 +111,19 @@ const TokenRefresher = ({ children }: TokenRefresherProps) => {
         }
       } catch (error) {
         console.error("자동 로그인 유지 실패, 로그아웃 처리:", error);
-        setLoginState({
-          isLoggedIn: false,
-          userId: "",
-          permission: Permission.USER,
-          userName: "",
-        });
+
+        // 상태 초기화
+        // Jotai 상태
+        setLoginState({} as LoginState); // 로그인 상태 초기화
+        setSeatInfo({}); // 좌석 정보 초기화
+        setReservationSeat(""); // 내 예약 좌석 이름 초기화
+        setMyCurrentReservation(null); // 내 예약 정보 초기화
+        setBookRestrictedSeats([]); // 예약 제한된 좌석 배열 초기화
+
         setAccessToken(""); // 토큰 초기화
         sessionStorage.removeItem("FabLabLoginState"); // 세션 스토리지 제거
         localStorage.removeItem("FabLabLoginState"); // 로컬 스토리지 제거
+
         navigate("/login"); // 로그인 페이지로 이동
       } finally {
         setIsInitialized(true); // 초기화 완료 상태로 변경
@@ -116,8 +136,16 @@ const TokenRefresher = ({ children }: TokenRefresherProps) => {
     }
 
     // Axios Interceptor 설정 (자동 토큰 갱신)
-    setupAxiosInterceptors(setLoginState, navigate);
-  }, [setLoginState, navigate, loginState]);
+    setupAxiosInterceptors(navigate);
+  }, [
+    setLoginState,
+    navigate,
+    loginState,
+    setSeatInfo,
+    setReservationSeat,
+    setMyCurrentReservation,
+    setBookRestrictedSeats,
+  ]);
 
   //  로그인 정보가 복구될 때까지 UI 렌더링 방지
   if (!isInitialized) {

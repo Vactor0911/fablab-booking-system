@@ -8,6 +8,7 @@ import axiosInstance, { getCsrfToken, SERVER_HOST } from "../utils/axiosInstance
 import TokenRefresher from "../components/TokenRefresher";
 import { useAtomValue, useSetAtom } from "jotai";
 import {
+  bookRestrictedSeatsAtom,
   loginStateAtom,
   myCurrentReservationAtom,
   Permission,
@@ -21,6 +22,7 @@ import axios from "axios";
 const Reservation = () => {
   const loginState = useAtomValue(loginStateAtom);
   const setSeatInfo = useSetAtom(seatInfoAtom); // 좌석 정보
+  const setBookRestrictedSeats = useSetAtom(bookRestrictedSeatsAtom); // 예약 제한 좌석 정보
 
   // 좌석 정보 불러오기
   const refreshSeatInfo = useCallback(async () => {
@@ -46,8 +48,11 @@ const Reservation = () => {
         const seatsResponse = await axios.get(`${SERVER_HOST}/seats`);
         seatsInfo = seatsResponse.data.seats;
       }
-      const bookRestrictionSeats = await axios.get(`${SERVER_HOST}/book/restriction/seats`);
-      console.log("예약 제한된 좌석: ",bookRestrictionSeats);
+
+      // 예약 제한된 좌석 불러오기
+      const bookRestrictionSeatsResponse = await axios.get(`${SERVER_HOST}/book/restriction/seats`);
+      console.log(bookRestrictionSeatsResponse);
+      setBookRestrictedSeats(bookRestrictionSeatsResponse.data.restrictedSeats);
 
       const newSeatInfo: Record<string, SeatInfoProps> = {};
       // 좌석 정보 저장
@@ -64,7 +69,7 @@ const Reservation = () => {
     } catch (error) {
       console.error("좌석 데이터를 가져오는 중 오류 발생:", error);
     }
-  }, [loginState.isLoggedIn, setSeatInfo]);
+  }, [loginState.isLoggedIn, setBookRestrictedSeats, setSeatInfo]);
 
   // 내 예약 정보 불러오기
   const setReservationSeat = useSetAtom(reservationSeatAtom); // 예약된 좌석 이름

@@ -17,11 +17,13 @@ import { Link, useLocation, useNavigate } from "react-router";
 import { useCallback, useRef, useState } from "react";
 import { useAtom, useSetAtom } from "jotai";
 import {
+  bookRestrictedSeatsAtom,
   isDarkModeAtom,
   LoginState,
   loginStateAtom,
   myCurrentReservationAtom,
   Permission,
+  reservationSeatAtom,
   seatInfoAtom,
   SeatInfoProps,
 } from "../states";
@@ -142,7 +144,17 @@ const Header = () => {
     setIsDarkMode((prev) => !prev);
   }, [setIsDarkMode]);
 
+  // 내 예약 정보 불러오기
+  const [myCurrentReservation, setMyCurrentReservation] = useAtom(
+    myCurrentReservationAtom
+  );
+
+  
   // 로그아웃 버튼 클릭
+  const setReservationSeat = useSetAtom(reservationSeatAtom); // 내 예약 좌석 이름
+  const setSeatInfo = useSetAtom(seatInfoAtom);
+  const setBookRestrictedSeats = useSetAtom(bookRestrictedSeatsAtom); // 예약 제한된 좌석 배열
+
   const handleLogoutButtonClick = useCallback(async () => {
     if (!loginState.isLoggedIn) {
       alert("로그인이 필요합니다."); // 로그인 상태가 아닌 경우 알림
@@ -165,8 +177,12 @@ const Header = () => {
     try {
       if (response.data.success) {
         // Jotai 상태
-        setLoginState({} as LoginState);
-        
+        setLoginState({} as LoginState); // 로그인 상태 초기화
+        setSeatInfo({}); // 좌석 정보 초기화
+        setReservationSeat(""); // 내 예약 좌석 이름 초기화
+        setMyCurrentReservation(null); // 내 예약 정보 초기화
+        setBookRestrictedSeats([]); // 예약 제한된 좌석 배열 초기화
+
         setAccessToken(""); // 토큰 초기화
         sessionStorage.removeItem("FabLabLoginState"); // 세션 스토리지 제거
         localStorage.removeItem("FabLabLoginState"); // 로컬 스토리지 제거
@@ -181,15 +197,17 @@ const Header = () => {
       console.error("로그아웃 중 오류 발생:", error);
       alert("로그아웃 중 오류가 발생했습니다. 다시 시도해 주세요."); // 에러 메시지
     }
-  }, [loginState.isLoggedIn, navigate, setLoginState]);
-
-  // 내 예약 정보 불러오기
-  const [myCurrentReservation, setMyCurrentReservation] = useAtom(
-    myCurrentReservationAtom
-  );
+  }, [
+    loginState.isLoggedIn,
+    navigate,
+    setBookRestrictedSeats,
+    setLoginState,
+    setMyCurrentReservation,
+    setReservationSeat,
+    setSeatInfo,
+  ]);
 
   // 좌석 정보 불러오기
-  const setSeatInfo = useSetAtom(seatInfoAtom);
   const refreshSeatInfo = useCallback(async () => {
     try {
       // 권한 확인 API 호출
