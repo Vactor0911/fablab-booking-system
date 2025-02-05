@@ -37,17 +37,17 @@ const Reservation = () => {
         const userPermission = response.data.user.permission;
 
         // 권한에 따른 좌석 정보 불러오기
-        const seatsResponse = await axiosInstance.get(
-          userPermission === "admin" || userPermission === "superadmin"
-            ? "/admin/seats"
-            : "/seats"
-        );
+        const seatsResponse = await (userPermission === "admin" || userPermission === "superadmin"
+          ? axiosInstance.get("/admin/seats")
+          : axios.get(`${SERVER_HOST}/seats`));
         seatsInfo = seatsResponse.data.seats;
       } else {
         // 권한에 따른 좌석 정보 불러오기
         const seatsResponse = await axios.get(`${SERVER_HOST}/seats`);
         seatsInfo = seatsResponse.data.seats;
       }
+      const bookRestrictionSeats = await axios.get(`${SERVER_HOST}/book/restriction/seats`);
+      console.log("예약 제한된 좌석: ",bookRestrictionSeats);
 
       const newSeatInfo: Record<string, SeatInfoProps> = {};
       // 좌석 정보 저장

@@ -71,12 +71,13 @@ const ReservationDialog = (props: ReservationDialogProps) => {
           // 사용자 권한
           const userPermission = response.data.user.permission;
 
-          // 권한에 따른 좌석 정보 불러오기
-          const seatsResponse = await axiosInstance.get(
-            userPermission === "admin" || userPermission === "superadmin"
-              ? `/admin/seats/${seatName}`
-              : `/seats/${seatName}`
-          );
+            // 권한에 따른 좌석 정보 불러오기
+            let seatsResponse;
+            if (userPermission === "admin" || userPermission === "superadmin") {
+            seatsResponse = await axiosInstance.get(`/admin/seats/${seatName}`);
+            } else {
+            seatsResponse = await axios.get(`${SERVER_HOST}/seats/${seatName}`);
+            }
           seatInfo = seatsResponse.data.seat;
         } else {
           const seatsResponse = await axios.get(
