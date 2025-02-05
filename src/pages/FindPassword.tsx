@@ -62,7 +62,7 @@ const FindPassword = () => {
       );
 
       // 요청 성공 시 알림
-      alert("인증번호가 이메일로 발송되었습니다!");
+      alert("인증번호가 이메일로 발송되었습니다.");
     } catch (error) {
       // 요청 실패 시 알림
       if (axios.isAxiosError(error) && error.response) {
@@ -72,7 +72,7 @@ const FindPassword = () => {
         );
       } else {
         console.error("요청 오류:", (error as Error).message);
-        alert("예기치 않은 오류가 발생했습니다. 나중에 다시 시도해 주세요.");
+        alert("예기치 않은 오류가 발생했습니다. 다시 시도해 주세요.");
       }
     }
   }, [email, isConfirmCodeChecked, studentId]);
@@ -118,7 +118,7 @@ const FindPassword = () => {
       );
 
       // 요청 성공 처리
-      alert("인증번호 확인 완료!");
+      alert("인증번호 확인이 완료되었습니다.");
       setIsConfirmCodeChecked(true); // 인증 성공
     } catch (error) {
       // 요청 실패 처리
@@ -128,7 +128,7 @@ const FindPassword = () => {
         );
       } else {
         console.error("요청 오류:", (error as Error).message);
-        alert("예기치 않은 오류가 발생했습니다. 나중에 다시 시도해 주세요.");
+        alert("예기치 않은 오류가 발생했습니다. 다시 시도해 주세요.");
       }
     }
   }, [confirmCode, email]);

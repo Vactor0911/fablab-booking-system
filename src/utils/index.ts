@@ -127,3 +127,21 @@ export const range = (startOrEnd: number, end?: number, step = 1) => {
 
 // 날짜 포맷터
 export const dateFormatter = Intl.DateTimeFormat("sv-SE");
+
+// 비밀번호
+/**
+ * 비밀번호의 길이가 8자 이상인지 확인하는 함수
+ * @param password 비밀번호 문자열
+ * @returns 비밀번호 길이가 8자 이상인지 여부
+ */
+export const isPasswordLengthValid = (password: string) => password.length >= 8;
+
+/**
+ * 비밀번호 조합이 올바른지 확인하는 함수
+ * @param password 비밀번호 문자열
+ * @returns 비밀번호에 영문, 숫자, 특수문자가 모두 포함되어 있는지 여부
+ */
+export const isPasswordCombinationValid = (password: string) =>
+  /[a-zA-Z]/.test(password) &&
+  /[0-9]/.test(password) &&
+  /[!@#$%^&*?]/.test(password);

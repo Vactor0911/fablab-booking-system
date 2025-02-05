@@ -127,7 +127,7 @@ const Login = () => {
         alert(error.response.data.message || "로그인 실패");
       } else {
         console.error("요청 오류:", (error as Error).message);
-        alert("예기치 않은 오류가 발생했습니다. 나중에 다시 시도해 주세요.");
+        alert("예기치 않은 오류가 발생했습니다. 다시 시도해 주세요.");
       }
 
       // 로그인 실패 시 비밀번호 초기화
