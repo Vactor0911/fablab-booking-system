@@ -140,6 +140,16 @@ const Login = () => {
     }
   }, [isLoginStateSave, navigate, password, setLoginState, studentId]);
 
+  // 비밀번호 입력란 엔터키 입력
+  const handlePasswordEnterPressed = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === "Enter") {
+        handleLoginButtonClick();
+      }
+    },
+    [handleLoginButtonClick]
+  );
+
   return (
     <TokenRefresher>
       <ThemeProvider theme={theme}>
@@ -174,6 +184,7 @@ const Login = () => {
                 value={password}
                 onChange={handlePasswordChange}
                 required
+                onKeyDown={handlePasswordEnterPressed}
                 // 비밀번호 보임/안보임
                 endAdornment={
                   <InputAdornment position="end">
