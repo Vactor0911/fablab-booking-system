@@ -1,5 +1,15 @@
 import { createTheme } from "@mui/material";
 import { color } from "./theme";
+import { useSetAtom } from "jotai";
+import {
+  bookRestrictedSeatsAtom,
+  LoginState,
+  loginStateAtom,
+  myCurrentReservationAtom,
+  reservationSeatAtom,
+  seatInfoAtom,
+} from "../states";
+import { setAccessToken } from "./accessToken";
 
 /**
  * MUI 테마 객체
@@ -145,3 +155,33 @@ export const isPasswordCombinationValid = (password: string) =>
   /[a-zA-Z]/.test(password) &&
   /[0-9]/.test(password) &&
   /[!@#$%^&*?]/.test(password);
+
+/**
+ * 모든 상태를 초기화하는 함수
+ * @returns
+ */
+export const useResetStates = () => {
+  const setLoginState = useSetAtom(loginStateAtom);
+  const setSeatInfo = useSetAtom(seatInfoAtom);
+  const setReservationSeat = useSetAtom(reservationSeatAtom);
+  const setMyCurrentReservation = useSetAtom(myCurrentReservationAtom);
+  const setBookRestrictedSeats = useSetAtom(bookRestrictedSeatsAtom);
+
+  setLoginState({} as LoginState); // 로그인 상태 초기화
+  setSeatInfo({}); // 좌석 정보 초기화
+  setReservationSeat(""); // 내 예약 좌석 이름 초기화
+  setMyCurrentReservation(null); // 내 예약 정보 초기화
+  setBookRestrictedSeats([]); // 예약 제한된 좌석 배열 초기화
+
+  setAccessToken(""); // 토큰 초기화
+  sessionStorage.removeItem("FabLabLoginState"); // 세션 스토리지 제거
+  localStorage.removeItem("FabLabLoginState"); // 로컬 스토리지 제거
+
+  return {
+    setLoginState,
+    setSeatInfo,
+    setReservationSeat,
+    setMyCurrentReservation,
+    setBookRestrictedSeats,
+  };
+};
