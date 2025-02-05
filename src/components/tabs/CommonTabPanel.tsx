@@ -17,6 +17,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import axios from "axios";
 import { useAtomValue } from "jotai";
 import { loginStateAtom } from "../../states";
+import TokenRefresher from "../TokenRefresher";
 
 const CommonTabPanel = (props: TabPanelProps) => {
   const { value, index } = props;
@@ -38,8 +39,6 @@ const CommonTabPanel = (props: TabPanelProps) => {
   const fetchSettings = useCallback(async () => {
     try {
       const response = await axiosInstance.get("/admin/default-settings");
-
-      console.log(response.data.data);
 
       setBasicManners(response.data.data.basic_manners);
 
@@ -114,7 +113,7 @@ const CommonTabPanel = (props: TabPanelProps) => {
           available_end_time: closingHour.format("HH:mm:00"),
         },
         {
-          headers: { "CSRF-Token": csrfToken },
+          headers: { "X-CSRF-Token": csrfToken },
         }
       );
       alert("설정이 저장되었습니다.");
@@ -127,91 +126,93 @@ const CommonTabPanel = (props: TabPanelProps) => {
         }`
       );
     }
-  }, [basicManners, closingHour, openingHour]);
+  }, [basicManners, closingHour, loginState.userId, openingHour]);
 
   return (
-    <Box role="tabpanel" hidden={value !== index}>
-      <Stack gap={5}>
-        {/* 공통 설정 */}
-        <Stack
-          direction={{
-            xs: "column",
-            sm: "row",
-          }}
-          gap={{
-            xs: 5,
-            md: 10,
-          }}
-        >
-          {/* 기본 예절 */}
-          <Stack gap={3} flex={1}>
-            <SectionHeader title="기본 예절" />
-            <TextField
-              multiline
-              value={basicManners}
-              onChange={handleBasicMannersChange}
-              minRows={14}
-              maxRows={14}
-              fullWidth
-            />
-          </Stack>
-
-          {/* 이용 가능 시간 */}
-          <Stack gap={3} flex={1}>
-            <SectionHeader title="이용 가능 시간" />
-            <ThemeProvider
-              theme={createTheme({
-                typography: {
-                  h3: {
-                    fontSize: "3rem",
-                    lineHeight: "3rem",
-                  },
-                },
-              })}
-            >
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <Stack direction="row" gap={2}>
-                  <Box flex={1}>
-                    <MobileTimePicker
-                      label="이용 시작 시간"
-                      value={openingHour}
-                      onChange={setOpeningHour}
-                      sx={{ width: "100%" }}
-                    />
-                  </Box>
-                  <Box flex={1}>
-                    <MobileTimePicker
-                      label="이용 종료 시간"
-                      value={closingHour}
-                      onChange={setClosingHour}
-                      minTime={openingHour?.add(1, "minute")}
-                      sx={{ width: "100%" }}
-                    />
-                  </Box>
-                </Stack>
-              </LocalizationProvider>
-            </ThemeProvider>
-          </Stack>
-        </Stack>
-
-        {/* 수정 버튼 */}
-        <Box
-          alignSelf="flex-end"
-          width={{
-            xs: "100%",
-            sm: "auto",
-          }}
-        >
-          <Button
-            variant="contained"
-            onClick={handleCommonEditButtonClick}
-            fullWidth
+    <TokenRefresher>
+      <Box role="tabpanel" hidden={value !== index}>
+        <Stack gap={5}>
+          {/* 공통 설정 */}
+          <Stack
+            direction={{
+              xs: "column",
+              sm: "row",
+            }}
+            gap={{
+              xs: 5,
+              md: 10,
+            }}
           >
-            <Typography variant="h2">수정하기</Typography>
-          </Button>
-        </Box>
-      </Stack>
-    </Box>
+            {/* 기본 예절 */}
+            <Stack gap={3} flex={1}>
+              <SectionHeader title="기본 예절" />
+              <TextField
+                multiline
+                value={basicManners}
+                onChange={handleBasicMannersChange}
+                minRows={14}
+                maxRows={14}
+                fullWidth
+              />
+            </Stack>
+
+            {/* 이용 가능 시간 */}
+            <Stack gap={3} flex={1}>
+              <SectionHeader title="이용 가능 시간" />
+              <ThemeProvider
+                theme={createTheme({
+                  typography: {
+                    h3: {
+                      fontSize: "3rem",
+                      lineHeight: "3rem",
+                    },
+                  },
+                })}
+              >
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <Stack direction="row" gap={2}>
+                    <Box flex={1}>
+                      <MobileTimePicker
+                        label="이용 시작 시간"
+                        value={openingHour}
+                        onChange={setOpeningHour}
+                        sx={{ width: "100%" }}
+                      />
+                    </Box>
+                    <Box flex={1}>
+                      <MobileTimePicker
+                        label="이용 종료 시간"
+                        value={closingHour}
+                        onChange={setClosingHour}
+                        minTime={openingHour?.add(1, "minute")}
+                        sx={{ width: "100%" }}
+                      />
+                    </Box>
+                  </Stack>
+                </LocalizationProvider>
+              </ThemeProvider>
+            </Stack>
+          </Stack>
+
+          {/* 수정 버튼 */}
+          <Box
+            alignSelf="flex-end"
+            width={{
+              xs: "100%",
+              sm: "auto",
+            }}
+          >
+            <Button
+              variant="contained"
+              onClick={handleCommonEditButtonClick}
+              fullWidth
+            >
+              <Typography variant="h2">수정하기</Typography>
+            </Button>
+          </Box>
+        </Stack>
+      </Box>
+    </TokenRefresher>
   );
 };
 

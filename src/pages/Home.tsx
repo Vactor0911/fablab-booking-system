@@ -32,8 +32,6 @@ const LinkCss = {
   color: "black",
 };
 
-// 내 예약 정보 인터페이스
-
 const Home = () => {
   const loginState = useAtomValue(loginStateAtom); // 로그인 상태
   const navigate = useNavigate(); // 페이지 이동
@@ -53,7 +51,7 @@ const Home = () => {
       const csrfToken = await getCsrfToken();
       const response = await axiosInstance.get(`/users/reservations/current`, {
         headers: {
-          "CSRF-Token": csrfToken, // CSRF 보호를 위한 토큰 헤더 추가
+          "X-CSRF-Token": csrfToken, // CSRF 보호를 위한 토큰 헤더 추가
         },
       });
 
@@ -309,7 +307,7 @@ const Home = () => {
                 <>
                   <Stack direction="row">
                     <Link
-                      to="/my-reservation"
+                      to={loginState.isLoggedIn ? "/my-reservation" : "/login"}
                       css={{
                         ...LinkCss,
                         display: "flex",

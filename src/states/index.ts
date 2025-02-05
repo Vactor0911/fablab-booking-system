@@ -34,7 +34,7 @@ export interface SeatInfoProps {
   userName: string;
 }
 
-export const seatInfoAtom = atom({} as Record<string, SeatInfoProps>);
+export const seatInfoAtom = atom({});
 
 // 내 예약 좌석 이름
 export const reservationSeatAtom = atom("");
@@ -50,3 +50,6 @@ export interface MyReservation {
 export const myCurrentReservationAtom = atom<Partial<MyReservation> | null>(
   null
 );
+
+// 예약 제한된 좌석 배열
+export const bookRestrictedSeatsAtom = atom<string[]>([]);

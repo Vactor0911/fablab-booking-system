@@ -9,7 +9,11 @@ import {
   ThemeProvider,
   Typography,
 } from "@mui/material";
-import { theme } from "../utils";
+import {
+  isPasswordCombinationValid,
+  isPasswordLengthValid,
+  theme,
+} from "../utils";
 import SectionHeader from "../components/SectionHeader";
 import { useCallback, useEffect, useState } from "react";
 
@@ -22,6 +26,7 @@ import { useAtomValue } from "jotai";
 import { loginStateAtom } from "../states";
 import axios from "axios";
 import TokenRefresher from "../components/TokenRefresher";
+import PasswordValidation from "../components/PasswordValidation";
 
 const MyPage = () => {
   const [email, setEmail] = useState(""); // 이메일
@@ -62,7 +67,7 @@ const MyPage = () => {
       // 요청 성공 시 알림
       setIsConfirmCodeSent(true);
       setConfirmTimeLeft(300);
-      alert("인증번호가 이메일로 발송되었습니다!");
+      alert("인증번호가 이메일로 발송되었습니다.");
     } catch (error) {
       // 요청 실패 시 알림
       if (axios.isAxiosError(error) && error.response) {
@@ -201,12 +206,10 @@ const MyPage = () => {
 
     // 비밀번호 충족 조건
     if (
-      newPassword.length < 8 ||
-      !/[a-zA-Z]/.test(newPassword) ||
-      !/[0-9]/.test(newPassword) ||
-      !/[!@#$%^&*?]/.test(newPassword)
+      !isPasswordLengthValid(newPassword) ||
+      !isPasswordCombinationValid(newPassword)
     ) {
-      alert("비밀번호는 8자 이상의 영문, 숫자, 특수문자를 포함해야 합니다.");
+      alert("비밀번호가 너무 짧거나 형식이 올바르지 않습니다.");
       return;
     }
 
@@ -405,41 +408,7 @@ const MyPage = () => {
                 />
 
                 {/* 비밀번호 필요 조건 */}
-                <Stack>
-                  <Stack direction="row" alignItems="center" gap={1}>
-                    <CircleRoundedIcon
-                      color="primary"
-                      sx={{ fontSize: "0.8em" }}
-                    />{" "}
-                    <Typography variant="subtitle1">8글자 이상</Typography>
-                    <CheckRoundedIcon
-                      color="success"
-                      sx={{
-                        display: newPassword.length >= 8 ? "block" : "none",
-                      }}
-                    />
-                  </Stack>
-                  <Stack direction="row" alignItems="center" gap={1}>
-                    <CircleRoundedIcon
-                      color="primary"
-                      sx={{ fontSize: "0.8em" }}
-                    />{" "}
-                    <Typography variant="subtitle1">
-                      영문, 숫자, 특수문자 포함
-                    </Typography>
-                    <CheckRoundedIcon
-                      color="success"
-                      sx={{
-                        display:
-                          /[a-zA-Z]/.test(newPassword) &&
-                          /[0-9]/.test(newPassword) &&
-                          /[!@#$%^&*?]/.test(newPassword)
-                            ? "block"
-                            : "none",
-                      }}
-                    />
-                  </Stack>
-                </Stack>
+                <PasswordValidation password={newPassword} />
 
                 {/* 새 비밀번호 확인 입력란 */}
                 <OutlinedInput

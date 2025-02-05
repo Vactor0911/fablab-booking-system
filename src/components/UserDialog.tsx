@@ -19,18 +19,21 @@ import {
   ThemeProvider,
   Typography,
 } from "@mui/material";
-import { theme } from "../utils";
+import {
+  isPasswordCombinationValid,
+  isPasswordLengthValid,
+  theme,
+} from "../utils";
 import { useCallback, useEffect, useState } from "react";
 import { useAtomValue } from "jotai";
 import { loginStateAtom, Permission } from "../states";
 
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import SettingsRoundedIcon from "@mui/icons-material/SettingsRounded";
-import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
-import CircleRoundedIcon from "@mui/icons-material/CircleRounded";
 import { User } from "../pages/Users";
 import axiosInstance from "../utils/axiosInstance";
 import TokenRefresher from "./TokenRefresher";
+import PasswordValidation from "./PasswordValidation";
 
 interface UserDialogContentProps {
   title: string;
@@ -188,12 +191,10 @@ const UserDialog = (props: UserDialogProps) => {
       // 비밀번호가 조건에 맞지 않을 경우 종료
       if (password) {
         if (
-          password.length < 8 ||
-          !/[a-zA-Z]/.test(password) ||
-          !/[0-9]/.test(password) ||
-          !/[!@#$%^&*?]/.test(password)
+          !isPasswordLengthValid(password) ||
+          !isPasswordCombinationValid(password)
         ) {
-          alert("비밀번호가 적절하지 않습니다.");
+          alert("비밀번호가 너무 짧거나 형식이 올바르지 않습니다.");
           return;
         }
       }
@@ -430,41 +431,7 @@ const UserDialog = (props: UserDialogProps) => {
                   />
 
                   {/* 비밀번호 필요 조건 */}
-                  <Stack>
-                    <Stack direction="row" alignItems="center" gap={1}>
-                      <CircleRoundedIcon
-                        color="primary"
-                        sx={{ fontSize: "0.8em" }}
-                      />{" "}
-                      <Typography variant="subtitle1">8글자 이상</Typography>
-                      <CheckRoundedIcon
-                        color="success"
-                        sx={{
-                          display: password.length >= 8 ? "block" : "none",
-                        }}
-                      />
-                    </Stack>
-                    <Stack direction="row" alignItems="center" gap={1}>
-                      <CircleRoundedIcon
-                        color="primary"
-                        sx={{ fontSize: "0.8em" }}
-                      />{" "}
-                      <Typography variant="subtitle1">
-                        영문, 숫자, 특수문자 포함
-                      </Typography>
-                      <CheckRoundedIcon
-                        color="success"
-                        sx={{
-                          display:
-                            /[a-zA-Z]/.test(password) &&
-                            /[0-9]/.test(password) &&
-                            /[!@#$%^&*?]/.test(password)
-                              ? "block"
-                              : "none",
-                        }}
-                      />
-                    </Stack>
-                  </Stack>
+                  <PasswordValidation password={password} />
                 </UserDialogContent>
               </Grid2>
             </Grid2>

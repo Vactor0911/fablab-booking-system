@@ -114,9 +114,14 @@ const Login = () => {
       // Jotai 상태 업데이트
       setLoginState(newLoginState);
 
-      // 로그인 상태 유지 체크시, 로컬 스토리지에 저장
+      //  로그인 상태 유지 체크 시 localStorage, 아니면 sessionStorage 에 저장
       if (isLoginStateSave) {
         localStorage.setItem("FabLabLoginState", JSON.stringify(newLoginState));
+      } else {
+        sessionStorage.setItem(
+          "FabLabLoginState",
+          JSON.stringify(newLoginState)
+        );
       }
 
       // 성공 후 메인 페이지 이동
@@ -127,13 +132,23 @@ const Login = () => {
         alert(error.response.data.message || "로그인 실패");
       } else {
         console.error("요청 오류:", (error as Error).message);
-        alert("예기치 않은 오류가 발생했습니다. 나중에 다시 시도해 주세요.");
+        alert("예기치 않은 오류가 발생했습니다. 다시 시도해 주세요.");
       }
 
       // 로그인 실패 시 비밀번호 초기화
       setPassword("");
     }
   }, [isLoginStateSave, navigate, password, setLoginState, studentId]);
+
+  // 비밀번호 입력란 엔터키 입력
+  const handlePasswordEnterPressed = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === "Enter") {
+        handleLoginButtonClick();
+      }
+    },
+    [handleLoginButtonClick]
+  );
 
   return (
     <TokenRefresher>
@@ -169,6 +184,7 @@ const Login = () => {
                 value={password}
                 onChange={handlePasswordChange}
                 required
+                onKeyDown={handlePasswordEnterPressed}
                 // 비밀번호 보임/안보임
                 endAdornment={
                   <InputAdornment position="end">

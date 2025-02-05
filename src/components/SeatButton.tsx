@@ -8,6 +8,7 @@ import {
 } from "@mui/material";
 import { useAtomValue } from "jotai";
 import {
+  bookRestrictedSeatsAtom,
   loginStateAtom,
   Permission,
   reservationSeatAtom,
@@ -25,15 +26,26 @@ const SeatButton = (props: SeatButtonProps) => {
   const loginState = useAtomValue(loginStateAtom);
   const seatInfo = useAtomValue(seatInfoAtom);
   const reservedSeat = useAtomValue(reservationSeatAtom);
+  const bookRestrictedSeats = useAtomValue(bookRestrictedSeatsAtom);
 
   // 버튼 테마 색상
   const buttonTheme = createTheme({
     palette: {
       primary: {
+        // 빈 좌석
         main: "#fffcf2",
       },
       secondary: {
+        // 예약된 좌석
         main: "#33c33b",
+      },
+      error: {
+        // 예약 제한된 좌석
+        main: "#e0e0e0",
+      },
+      success: {
+        // 선택된 좌석
+        main: "#a72b43",
       },
     },
     typography: {
@@ -49,9 +61,17 @@ const SeatButton = (props: SeatButtonProps) => {
         key={seatName}
         variant="contained"
         fullWidth
-        color={isBooked ? "secondary" : "primary"}
+        color={
+          isBooked
+            ? "secondary"
+            : selected
+            ? "success"
+            : bookRestrictedSeats.includes(seatName)
+            ? "error"
+            : "primary"
+        }
         disabled={
-          isBooked &&
+          (isBooked || bookRestrictedSeats.includes(seatName)) &&
           ((reservedSeat !== seatName &&
             loginState.permission === Permission.USER) ||
             !loginState.isLoggedIn)
@@ -63,11 +83,6 @@ const SeatButton = (props: SeatButtonProps) => {
           minWidth: 0,
           minHeight: 0,
           boxShadow: "none",
-          backgroundColor: selected
-            ? "#a72b43"
-            : isBooked
-            ? "#33c33b"
-            : "#fffcf2",
           color: selected ? "white" : "black",
           border: "1px solid #666666",
           padding: "0 5px",

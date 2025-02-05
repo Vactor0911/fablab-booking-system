@@ -143,8 +143,6 @@ const BookRestrictionDetail = () => {
         `/admin/book/restriction/${location.pathname.split("/").pop()}`
       );
 
-      console.log(response);
-
       setRestrictionId(response.data.restrictions.restriction_id);
       setSelectedSeats(response.data.restrictions.seat_names);
       setStartDate(dayjs(response.data.restrictions.restriction_start_date));
@@ -173,8 +171,6 @@ const BookRestrictionDetail = () => {
       alert("금지할 좌석을 선택하세요.");
       return;
     }
-
-    console.log(dayjs());
 
     // 시작 날짜 부적절
     if (!startDate || startDate.isBefore(dayjs().hour(0).minute(0).second(0))) {
@@ -209,7 +205,7 @@ const BookRestrictionDetail = () => {
         },
         {
           headers: {
-            "CSRF-Token": csrfToken,
+            "X-CSRF-Token": csrfToken,
           },
         }
       );
@@ -241,8 +237,6 @@ const BookRestrictionDetail = () => {
       const csrfResponse = await axiosInstance.get("/csrf-token");
       const csrfToken = csrfResponse.data.csrfToken;
 
-      console.log(banner?.notice_id);
-
       await axiosInstance.patch(
         `/admin/book/restriction/${location.pathname.split("/").pop()}`,
         {
@@ -256,7 +250,7 @@ const BookRestrictionDetail = () => {
           selectedNotice: banner?.notice_id,
           userId: loginState.userId, // 관리자 ID 전송
         },
-        { headers: { "CSRF-Token": csrfToken } }
+        { headers: { "X-CSRF-Token": csrfToken } }
       );
 
       alert("수정이 완료되었습니다.");
@@ -291,7 +285,7 @@ const BookRestrictionDetail = () => {
             userId: loginState.userId,
             restrictionId: restrictionId,
           },
-          headers: { "CSRF-Token": csrfToken },
+          headers: { "X-CSRF-Token": csrfToken },
         }
       );
 
@@ -439,7 +433,6 @@ const BookRestrictionDetail = () => {
                         />
                       )}
                       renderOption={(props, option) => {
-                        console.log(option);
                         return (
                           <Box component="li" {...props}>
                             {option.title}

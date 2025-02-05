@@ -62,9 +62,12 @@ const DrawerMenu = (props: DrawerMenuProps) => {
           if (onClick) onClick();
         }}
         sx={{
-          backgroundColor: location.pathname === to ? "white" : "transparent",
+          backgroundColor: location.pathname === to ? "white" : "inherit",
           color:
             location.pathname === to ? theme.palette.primary.main : "white",
+          "&:active, &:hover": {
+            backgroundColor: location.pathname === to ? "white" : "inherit",
+          },
         }}
       >
         <ListItemText
@@ -106,59 +109,63 @@ const DrawerMenu = (props: DrawerMenuProps) => {
           <List
             disablePadding
             sx={{
+              marginTop: "2px",
               color: "white",
               fontWeight: "bold",
             }}
           >
             {/* 예약하기 */}
-            {loginState.permission === Permission.USER && (
+            {(!loginState.isLoggedIn ||
+              loginState.permission === Permission.USER) && (
               <DrawerNavButton text="예약하기" to="/reservation" />
             )}
 
             {/* 관리자용 메뉴 */}
-            {loginState.permission !== Permission.USER && (
-              <>
-                {/* 관리 메뉴 */}
-                <ListItemButton
-                  onClick={handleManageMenuButtonClick}
-                  sx={{
-                    backgroundColor: "transparent",
-                    color: "white",
-                  }}
-                >
-                  <ListItemText
-                    primary="관리메뉴"
-                    slotProps={{ primary: { fontWeight: "bold" } }}
-                  />
-                  {manageMenuOpen ? (
-                    <ExpandLessRoundedIcon />
-                  ) : (
-                    <ExpandMoreRoundedIcon />
-                  )}
-                </ListItemButton>
-
-                {/* 접이식 메뉴 */}
-                <Collapse in={manageMenuOpen}>
-                  <List
-                    disablePadding
+            {loginState.isLoggedIn &&
+              loginState.permission !== Permission.USER && (
+                <>
+                  {/* 관리 메뉴 */}
+                  <ListItemButton
+                    onClick={handleManageMenuButtonClick}
                     sx={{
-                      "& .MuiListItemButton-root": {
-                        paddingLeft: "30px",
-                      },
+                      backgroundColor: "transparent",
+                      color: "white",
                     }}
                   >
-                    <DrawerNavButton text="기본 설정" to="/settings" />
-                    <DrawerNavButton text="예약 조회" to="/reservation" />
-                    <DrawerNavButton
-                      text="예약 제한 관리"
-                      to="/book-restrictions"
+                    <ListItemText
+                      primary="관리메뉴"
+                      slotProps={{ primary: { fontWeight: "bold" } }}
                     />
-                    <DrawerNavButton text="사용자 관리" to="/users" />
-                    <DrawerNavButton text="로그 관리" to="/logs" />
-                  </List>
-                </Collapse>
-              </>
-            )}
+                    {manageMenuOpen ? (
+                      <ExpandLessRoundedIcon />
+                    ) : (
+                      <ExpandMoreRoundedIcon />
+                    )}
+                  </ListItemButton>
+
+                  {/* 접이식 메뉴 */}
+                  <Collapse in={manageMenuOpen}>
+                    <List
+                      disablePadding
+                      sx={{
+                        backgroundColor: "#49101d",
+                        "& .MuiListItemButton-root": {
+                          paddingLeft: "30px",
+                        },
+                      }}
+                    >
+                      <DrawerNavButton text="기본 설정" to="/settings" />
+                      <DrawerNavButton text="예약 조회" to="/reservation" />
+                      <DrawerNavButton
+                        text="예약 제한 관리"
+                        to="/book-restrictions"
+                      />
+                      <DrawerNavButton text="사용자 관리" to="/users" />
+                      <DrawerNavButton text="로그 관리" to="/logs" />
+                    </List>
+                  </Collapse>
+                </>
+              )}
 
             {/* 공통 표시 메뉴 */}
             <DrawerNavButton
