@@ -1,14 +1,18 @@
-import { Box, Typography } from "@mui/material";
+import { Box, BoxProps, Typography } from "@mui/material";
 import { theme } from "../utils";
 
-interface SectionHeaderProps {
+interface SectionHeaderProps extends BoxProps {
   title: string;
   underline?: boolean;
 }
 
-const SectionHeader: React.FC<SectionHeaderProps> = ({ title, underline=false }) => {
+const SectionHeader = ({ title, underline = false }: SectionHeaderProps) => {
   return (
-    <Box sx={{ borderBottom: underline ? `2px solid ${theme.palette.divider}` : "none" }}>
+    <Box
+      sx={{
+        borderBottom: underline ? `2px solid ${theme.palette.divider}` : "none",
+      }}
+    >
       <Typography
         variant="h3"
         padding="5px"

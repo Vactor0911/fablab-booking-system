@@ -5,6 +5,7 @@ import {
   FormControlLabel,
   IconButton,
   InputAdornment,
+  Link as MuiLink,
   OutlinedInput,
   Stack,
   TextField,
@@ -26,12 +27,18 @@ import axios from "axios";
 import axiosInstance, { getCsrfToken } from "../utils/axiosInstance";
 import TokenRefresher from "../components/TokenRefresher";
 import PasswordValidation from "../components/PasswordValidation";
+import SectionHeader from "../components/SectionHeader";
 
 // 스크롤 있는 Stack 요소
-const ScrollBox: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+interface ScrollBoxProps {
+  children: React.ReactNode;
+  height: string;
+}
+
+const ScrollBox = ({ children, height }: ScrollBoxProps) => {
   return (
     <Box
-      height="250px"
+      height={height}
       padding={2}
       sx={{
         backgroundColor: "#f4f4f4",
@@ -40,6 +47,30 @@ const ScrollBox: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     >
       {children}
     </Box>
+  );
+};
+
+// 리스트 아이템 객체
+const korChars = ["가", "나", "다", "라"];
+
+interface OrderedListItemProps {
+  text: string;
+  index?: number;
+}
+
+const OrderedListItem = ({ text, index = -1 }: OrderedListItemProps) => {
+  return (
+    <Stack direction="row" paddingLeft={2} key={`${text}`} gap={1}>
+      <Typography
+        variant="subtitle1"
+        color="primary"
+        fontWeight="bold"
+        display={index >= 0 ? "block" : "none"}
+      >
+        {`${index >= 0 ? korChars[index] : ""})`}
+      </Typography>
+      <Typography variant="subtitle1">{text}</Typography>
+    </Stack>
   );
 };
 
@@ -477,41 +508,30 @@ const Register = () => {
                 </Typography>
 
                 {/* 개인정보 동의서 본문 */}
-                <ScrollBox>
+                <Stack
+                  gap={2}
+                  padding={2}
+                  sx={{
+                    backgroundColor: "#f4f4f4",
+                  }}
+                >
                   <Typography variant="subtitle1">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Blanditiis illum, dolore repellat, in ab reprehenderit
-                    sapiente, culpa sequi modi laudantium minima exercitationem
-                    magnam ratione consequuntur quos voluptatem dolor alias
-                    deserunt. Numquam voluptatum velit enim voluptas quis quae
-                    accusantium incidunt illo, quia non suscipit sit fugiat?
-                    Quisquam optio aut perferendis! Nulla dolorum aut fuga sint
-                    nesciunt? Laborum ab qui suscipit placeat. Esse accusamus
-                    obcaecati quam ipsa dignissimos sit neque veniam itaque
-                    nulla aspernatur excepturi dolorem cupiditate eligendi, ex
-                    reprehenderit, aliquam quos, ipsum sequi inventore? Saepe,
-                    impedit odit perspiciatis quaerat inventore qui. Quaerat
-                    nesciunt, maiores ut delectus, accusantium dolores neque
-                    corporis accusamus odit, esse nisi. Eius maiores maxime,
-                    unde quisquam minima ut voluptates fugiat quae omnis? Modi
-                    fuga cumque odio facilis sit? Nihil cumque neque enim, aut
-                    commodi dolores iusto a aliquid maiores, soluta distinctio
-                    impedit ipsam officiis numquam quam odit quisquam cum
-                    incidunt architecto sequi repellendus mollitia excepturi.
-                    Atque, laborum dolore. Minus officiis ut et cupiditate unde
-                    expedita facilis eaque, perferendis a, aliquid doloribus id
-                    tempore officia fuga dicta, facere impedit molestias nisi
-                    animi velit fugiat. Perferendis esse quia neque excepturi?
-                    Aut ullam, consequuntur sequi, temporibus assumenda aliquam
-                    alias iure iusto reprehenderit eos sint ad sunt fugit
-                    asperiores provident nesciunt vel? Unde voluptate optio
-                    rerum corrupti, doloribus dolor nihil voluptas? Sequi.
-                    Repudiandae recusandae explicabo odio beatae! Nulla eius id
-                    non ex beatae nemo veritatis delectus in debitis sapiente a
-                    tempora eum, sequi laborum inventore quo corrupti rem
-                    commodi esse, ad nobis.
+                    목원대학교는 「개인정보 보호법」 및 관계 법령이 정한 바를
+                    준수하여, 적법하게 개인정보를 처리하고 안전하게 관리하고
+                    있습니다.
                   </Typography>
-                </ScrollBox>
+                  <Stack direction="row">
+                    <MuiLink
+                      href="https://www.mokwon.ac.kr/kr/html/sub09/090501.html"
+                      target="_blank"
+                      underline="hover"
+                    >
+                      <Typography variant="h3" color="primary">
+                        전문 보기
+                      </Typography>
+                    </MuiLink>
+                  </Stack>
+                </Stack>
 
                 {/* 약관 동의 체크박스 */}
                 <FormControlLabel
@@ -543,40 +563,108 @@ const Register = () => {
                 </Typography>
 
                 {/* 주의사항 확인서 본문 */}
-                <ScrollBox>
-                  <Typography variant="subtitle1">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Blanditiis illum, dolore repellat, in ab reprehenderit
-                    sapiente, culpa sequi modi laudantium minima exercitationem
-                    magnam ratione consequuntur quos voluptatem dolor alias
-                    deserunt. Numquam voluptatum velit enim voluptas quis quae
-                    accusantium incidunt illo, quia non suscipit sit fugiat?
-                    Quisquam optio aut perferendis! Nulla dolorum aut fuga sint
-                    nesciunt? Laborum ab qui suscipit placeat. Esse accusamus
-                    obcaecati quam ipsa dignissimos sit neque veniam itaque
-                    nulla aspernatur excepturi dolorem cupiditate eligendi, ex
-                    reprehenderit, aliquam quos, ipsum sequi inventore? Saepe,
-                    impedit odit perspiciatis quaerat inventore qui. Quaerat
-                    nesciunt, maiores ut delectus, accusantium dolores neque
-                    corporis accusamus odit, esse nisi. Eius maiores maxime,
-                    unde quisquam minima ut voluptates fugiat quae omnis? Modi
-                    fuga cumque odio facilis sit? Nihil cumque neque enim, aut
-                    commodi dolores iusto a aliquid maiores, soluta distinctio
-                    impedit ipsam officiis numquam quam odit quisquam cum
-                    incidunt architecto sequi repellendus mollitia excepturi.
-                    Atque, laborum dolore. Minus officiis ut et cupiditate unde
-                    expedita facilis eaque, perferendis a, aliquid doloribus id
-                    tempore officia fuga dicta, facere impedit molestias nisi
-                    animi velit fugiat. Perferendis esse quia neque excepturi?
-                    Aut ullam, consequuntur sequi, temporibus assumenda aliquam
-                    alias iure iusto reprehenderit eos sint ad sunt fugit
-                    asperiores provident nesciunt vel? Unde voluptate optio
-                    rerum corrupti, doloribus dolor nihil voluptas? Sequi.
-                    Repudiandae recusandae explicabo odio beatae! Nulla eius id
-                    non ex beatae nemo veritatis delectus in debitis sapiente a
-                    tempora eum, sequi laborum inventore quo corrupti rem
-                    commodi esse, ad nobis.
-                  </Typography>
+                <ScrollBox height="600px">
+                  <Stack gap={5}>
+                    {/* 운영 시간 및 출입 관리 */}
+                    <Stack gap={1}>
+                      <SectionHeader title="운영 시간 및 출입 관리" underline />
+                      <Box marginBottom="5px" />
+                      {[
+                        "운영 시간: 월~금(공휴일 제외), 09:00 ~ 22:00",
+                        "입실시 반드시 출입관리 장치(지문)를 사용하여 출입합니다.",
+                        "입실 기록이 누락되거나 무단 출입이 3회 이상 확인될 경우, 사용 권한이 취소됩니다.",
+                        "시험기간 및 졸업과제, 경진대회 출품 등의 사유로 운영 시간 연장이 필요할 시에는 컴퓨터공학과 과사무실로 신청하시기 바랍니다.",
+                      ].map((text, index) => (
+                        <OrderedListItem text={text} index={index} />
+                      ))}
+                    </Stack>
+
+                    {/* 공용 공간 매너 */}
+                    <Stack gap={1}>
+                      <SectionHeader title="공용 공간 매너" underline />
+                      <Box marginBottom="5px" />
+                      {[
+                        "조용한 환경 유지: 큰 소리로 대화하거나 소음을 발생시키는 행동은 삼가세요.",
+                        "공용 물품 관리: 컴퓨터, 책상, 교탁 등 공용 물품은 신중히 다루며, 손상시 서포터즈에게 즉시 보고합니다.",
+                        "음식물 취식: 음료 및 초콜릿, 사탕 등의 간식은 취식 가능하나, 식사류 및 주류 반입은 불가합니다. 취식 후 쓰레기 처리 및 뒷정리를 깔끔하게 해주시기 바랍니다.",
+                      ].map((text, index) => (
+                        <OrderedListItem text={text} index={index} />
+                      ))}
+                    </Stack>
+
+                    {/* 좌석 및 시설 사용 */}
+                    <Stack gap={1}>
+                      <SectionHeader title="좌석 및 시설 사용" underline />
+                      <Box marginBottom="5px" />
+                      {[
+                        "장기 점유 금지: 자리를 비우고 1시간 이상 미이용 시 서포터즈가 해당 좌석의 예약을 취소할 수 있습니다.",
+                      ].map((text, index) => (
+                        <OrderedListItem text={text} index={index} />
+                      ))}
+                    </Stack>
+
+                    {/* 정리 및 청소 */}
+                    <Stack gap={1}>
+                      <SectionHeader title="정리 및 청소" underline />
+                      <Box marginBottom="5px" />
+                      {[
+                        "사용한 기기 및 자리를 깨끗이 정리하고, 개인 쓰레기는 팹랩 외부 쓰레기통 및 지정된 장소에 버립니다.",
+                        "다음 사용자를 위해 공간을 청결히 유지합니다.",
+                      ].map((text, index) => (
+                        <OrderedListItem text={text} index={index} />
+                      ))}
+                    </Stack>
+
+                    {/* 수업 및 특강 우선 사용 */}
+                    <Stack gap={1}>
+                      <SectionHeader title="수업 및 특강 우선 사용" underline />
+                      <Box marginBottom="5px" />
+                      {[
+                        "학기별 수업(예: 캡스톤디자인2) 및 학과 행사 일정이 우선 적용됩니다.",
+                        "1인석(A좌석)의 경우 팹랩 서포터즈에 우선 배정 예정이며, 미배정 좌석의 경우 자유롭게 사용 가능합니다.",
+                      ].map((text, index) => (
+                        <OrderedListItem text={text} index={index} />
+                      ))}
+                    </Stack>
+
+                    {/* 팹랩 내 기기 및 기구의 이용 */}
+                    <Stack gap={1}>
+                      <SectionHeader
+                        title="팹랩 내 기기 및 기구의 이용"
+                        underline
+                      />
+                      <Box marginBottom="5px" />
+                      {[
+                        "팹랩 실습도구장에 비치되어 있는 노트북 및 실습용 로봇, 아이맥을 포함한 어떤 기기 및 기구도 팹랩 외부 반출 사용을 금합니다.",
+                        "팹랩 내 기기 및 기구의 사용은 팹랩 서포터즈 또는 학과 사무실로 문의하시기 바랍니다.",
+                      ].map((text, index) => (
+                        <OrderedListItem text={text} index={index} />
+                      ))}
+                    </Stack>
+
+                    {/* 위반 시 조치 */}
+                    <Stack gap={1}>
+                      <SectionHeader title="위반 시 조치" underline />
+                      <Box marginBottom="5px" />
+                      {[
+                        "위의 내용을 반복적으로 위반하거나, 공용 물품을 고의로 훼손하는 경우 팹랩 사용 권한이 제한될 수 있습니다.",
+                        "팹랩 서포터즈는 좌석 및 시설 관리 권한을 가지며, 사용자 간 문제 발생 시 중재할 수 있습니다.",
+                      ].map((text, index) => (
+                        <OrderedListItem text={text} index={index} />
+                      ))}
+                    </Stack>
+
+                    {/* 팹랩 이용을 위한 다짐 */}
+                    <Stack gap={1}>
+                      <SectionHeader title="팹랩 이용을 위한 다짐" underline />
+                      <Box marginBottom="5px" />
+                      {[
+                        "모든 사용자는 본 확인서 내용을 숙지하고 준수함으로써 팹랩의 쾌적한 운영에 협조하겠습니다.",
+                      ].map((text, index) => (
+                        <OrderedListItem text={text} index={index} />
+                      ))}
+                    </Stack>
+                  </Stack>
                 </ScrollBox>
 
                 {/* 약관 동의 체크박스 */}
