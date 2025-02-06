@@ -261,6 +261,7 @@ const Header = () => {
         );
         setMyCurrentReservation(null);
         refreshSeatInfo();
+        window.location.reload(); // 페이지 새로고침
       })
       .catch((error) => {
         console.error("퇴실 처리 중 오류 발생:", error);

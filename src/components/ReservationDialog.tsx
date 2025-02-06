@@ -30,6 +30,7 @@ import axiosInstance, {
 import TokenRefresher from "./TokenRefresher";
 import { useNavigate } from "react-router";
 import axios from "axios";
+import dayjs from "dayjs";
 
 interface ReservationDialogProps {
   seatName: string;
@@ -45,6 +46,7 @@ const ReservationDialog = (props: ReservationDialogProps) => {
   const [pcSupport, setPcSupport] = useState("");
   const [seatImage, setSeatImage] = useState("");
   const [reservationTime, setReservationTime] = useState("");
+  const [endTime, setEndTime] = useState({ hour: 0, minute: 0 });
   const [isBooked, setIsBooked] = useState(false);
   const [person, setPerson] = useState(""); // TODO: 명칭 변경 필요
 
@@ -95,6 +97,9 @@ const ReservationDialog = (props: ReservationDialogProps) => {
 
       const reservationStartTime = seatInfo.reservationTime;
       const availableEndTime = seatInfo.availableEndTime.substring(0, 5);
+
+      const newEndTime = availableEndTime.split(":");
+      setEndTime({ hour: newEndTime[0], minute: newEndTime[1] });
 
       if (!newIsBooked && loginState.permission !== Permission.USER) {
         setReservationTime("예약 없음");
@@ -427,8 +432,17 @@ const ReservationDialog = (props: ReservationDialogProps) => {
                     : "none",
               }}
               onClick={handleReservationButtonClick}
+              disabled={
+                !dayjs().isBefore(
+                  dayjs().hour(endTime.hour).minute(endTime.minute)
+                )
+              }
             >
-              동의 후 예약
+              {dayjs().isBefore(
+                dayjs().hour(endTime.hour).minute(endTime.minute)
+              )
+                ? "동의 후 예약"
+                : "운영 시간이 아닙니다."}
             </Button>
 
             {/* 관리자용 강제 퇴실 버튼 */}
