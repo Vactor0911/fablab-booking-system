@@ -6,8 +6,8 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  ThemeProvider,
   Typography,
+  useColorScheme,
 } from "@mui/material";
 import { theme } from "../utils";
 import SectionHeader from "../components/SectionHeader";
@@ -101,74 +101,78 @@ const MyReservation = () => {
     fetchMyReservation();
   }, [fetchMyReservation, page]);
 
+  const { mode } = useColorScheme();
+
   return (
-    <ThemeProvider theme={theme}>
-      <Stack className="page-root">
-        <Stack className="base-layout" gap={5}>
-          {/* 페이지명 */}
-          <Typography variant="h2">내 예약정보</Typography>
+    <Stack className="page-root">
+      <Stack className="base-layout" gap={5}>
+        {/* 페이지명 */}
+        <Typography variant="h2">내 예약정보</Typography>
 
-          <SectionHeader title="예약내역" underline />
+        <SectionHeader title="예약내역" underline />
 
-          {/* 페이지 선택 */}
-          <Pagination
-            count={totalPages}
-            page={page}
-            onChange={handlePageChange}
-            siblingCount={1}
-            boundaryCount={0}
-            showFirstButton
-            showLastButton
-            sx={{
-              alignSelf: "flex-end",
-            }}
-          />
+        {/* 페이지 선택 */}
+        <Pagination
+          count={totalPages}
+          page={page}
+          onChange={handlePageChange}
+          siblingCount={1}
+          boundaryCount={0}
+          showFirstButton
+          showLastButton
+          sx={{
+            alignSelf: "flex-end",
+          }}
+        />
 
-          <Table
-            sx={{
-              tableLayout: "fixed",
-            }}
-          >
-            <TableHead>
-              <TableRow>
-                <TableCell width="15%">상태</TableCell>
-                <TableCell width="30%">일시</TableCell>
-                <TableCell width="15%">좌석</TableCell>
-                <TableCell width="40%">퇴실 사유</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {myReservation.map((row, index) => (
-                <TableRow
-                  key={index}
-                  sx={{
-                    backgroundColor:
-                      row.state === "예약중" && index === 0 && page === 1
+        <Table
+          sx={{
+            tableLayout: "fixed",
+          }}
+        >
+          <TableHead>
+            <TableRow>
+              <TableCell width="15%">상태</TableCell>
+              <TableCell width="30%">일시</TableCell>
+              <TableCell width="15%">좌석</TableCell>
+              <TableCell width="40%">퇴실 사유</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {myReservation.map((row, index) => (
+              <TableRow
+                key={index}
+                sx={{
+                  backgroundColor:
+                    row.state === "예약중" && index === 0 && page === 1
+                      ? mode === "light"
                         ? "#ddaeb7"
+                        : "#b44b5e"
+                      : "inherit",
+                }}
+              >
+                <FixedTableCell
+                  keepline
+                  sx={{
+                    color:
+                      row.state === "예약중" && index === 0 && page === 1
+                        ? mode === "light"
+                          ? theme.palette.primary.main
+                          : "white"
                         : "inherit",
                   }}
                 >
-                  <FixedTableCell
-                    keepline
-                    sx={{
-                      color:
-                        row.state === "예약중" && index === 0 && page === 1
-                          ? theme.palette.primary.main
-                          : "inherit",
-                    }}
-                  >
-                    {row.state}
-                  </FixedTableCell>
-                  <FixedTableCell>{row.date}</FixedTableCell>
-                  <FixedTableCell>{row.seat}</FixedTableCell>
-                  <FixedTableCell>{row.note}</FixedTableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </Stack>
+                  {row.state}
+                </FixedTableCell>
+                <FixedTableCell>{row.date}</FixedTableCell>
+                <FixedTableCell>{row.seat}</FixedTableCell>
+                <FixedTableCell>{row.note}</FixedTableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </Stack>
-    </ThemeProvider>
+    </Stack>
   );
 };
 

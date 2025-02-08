@@ -1,4 +1,4 @@
-import { Box, BoxProps, Typography } from "@mui/material";
+import { Box, BoxProps, Typography, useColorScheme } from "@mui/material";
 import { theme } from "../utils";
 
 interface SectionHeaderProps extends BoxProps {
@@ -7,10 +7,14 @@ interface SectionHeaderProps extends BoxProps {
 }
 
 const SectionHeader = ({ title, underline = false }: SectionHeaderProps) => {
+  const { mode } = useColorScheme();
+
   return (
     <Box
       sx={{
         borderBottom: underline ? `2px solid ${theme.palette.divider}` : "none",
+        borderColor:
+          mode === "light" ? theme.palette.divider : "rgba(255, 255, 255, 0.5)",
       }}
     >
       <Typography

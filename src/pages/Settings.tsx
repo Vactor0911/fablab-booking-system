@@ -1,12 +1,4 @@
-import {
-  Box,
-  Stack,
-  Tab,
-  Tabs,
-  ThemeProvider,
-  Typography,
-} from "@mui/material";
-import { theme } from "../utils";
+import { Box, Stack, Tab, Tabs, Typography } from "@mui/material";
 import AdminPage from "../components/AdminPage";
 import { ReactNode, useCallback, useState } from "react";
 import TokenRefresher from "../components/TokenRefresher";
@@ -32,43 +24,41 @@ const Settings = () => {
   return (
     <TokenRefresher>
       <AdminPage>
-        <ThemeProvider theme={theme}>
-          <Stack className="page-root">
-            <Stack className="base-layout" gap={3}>
-              {/* 페이지명 */}
-              <Typography variant="h2">기본 설정</Typography>
+        <Stack className="page-root">
+          <Stack className="base-layout" gap={3}>
+            {/* 페이지명 */}
+            <Typography variant="h2">기본 설정</Typography>
 
+            {/* 탭 메뉴 */}
+            <Box
+              sx={{
+                borderBottom: 1,
+                borderColor: "divider",
+                position: "relative",
+              }}
+            >
               {/* 탭 메뉴 */}
-              <Box
-                sx={{
-                  borderBottom: 1,
-                  borderColor: "divider",
-                  position: "relative",
-                }}
-              >
-                {/* 탭 메뉴 */}
-                <Tabs value={tabIndex} onChange={handleTabIndexChange}>
-                  <Tab
-                    label="공통"
-                    value="common"
-                    sx={{ fontSize: "1.17em", fontWeight: "bold" }}
-                  />
-                  <Tab
-                    label="좌석 정보"
-                    value="seat-info"
-                    sx={{ fontSize: "1.17em", fontWeight: "bold" }}
-                  />
-                </Tabs>
-              </Box>
+              <Tabs value={tabIndex} onChange={handleTabIndexChange}>
+                <Tab
+                  label="공통"
+                  value="common"
+                  sx={{ fontSize: "1.17em", fontWeight: "bold" }}
+                />
+                <Tab
+                  label="좌석 정보"
+                  value="seat-info"
+                  sx={{ fontSize: "1.17em", fontWeight: "bold" }}
+                />
+              </Tabs>
+            </Box>
 
-              {/* 탭 패널 (공통) */}
-              <CommonTabPanel value={tabIndex} index="common" />
+            {/* 탭 패널 (공통) */}
+            <CommonTabPanel value={tabIndex} index="common" />
 
-              {/* 탭 패널 (좌석 정보) */}
-              <SeatInfoTabPanel value={tabIndex} index="seat-info" />
-            </Stack>
+            {/* 탭 패널 (좌석 정보) */}
+            <SeatInfoTabPanel value={tabIndex} index="seat-info" />
           </Stack>
-        </ThemeProvider>
+        </Stack>
       </AdminPage>
     </TokenRefresher>
   );

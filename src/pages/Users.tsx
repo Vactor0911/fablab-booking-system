@@ -12,10 +12,8 @@ import {
   TableHead,
   TableRow,
   TextField,
-  ThemeProvider,
   Typography,
 } from "@mui/material";
-import { theme } from "../utils";
 import AdminPage from "../components/AdminPage";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
@@ -138,135 +136,133 @@ const Users = () => {
   return (
     <TokenRefresher>
       <AdminPage>
-        <ThemeProvider theme={theme}>
-          <Stack className="page-root">
-            <Stack className="base-layout" gap={7}>
-              <Stack gap={2}>
-                {/* 페이지명 */}
-                <Typography variant="h2">사용자 관리</Typography>
+        <Stack className="page-root">
+          <Stack className="base-layout" gap={7}>
+            <Stack gap={2}>
+              {/* 페이지명 */}
+              <Typography variant="h2">사용자 관리</Typography>
 
-                <Divider
-                  sx={{
-                    borderWidth: "1px",
-                  }}
-                />
-              </Stack>
-
-              <Stack
-                direction={{
-                  xs: "column",
-                  sm: "row",
+              <Divider
+                sx={{
+                  borderWidth: "1px",
                 }}
-                gap={3}
-                justifyContent="space-between"
-              >
-                {/* 사용자 수 */}
-                <Stack direction="row" gap={3}>
-                  {/* 총 사용자 */}
-                  <Stack gap={1}>
-                    <Typography variant="h3">총 사용자</Typography>
-                    <Typography variant="h2">{totalUsers}</Typography>
-                  </Stack>
-                  {/* 총 관리자 */}
-                  <Stack gap={1}>
-                    <Typography variant="h3">총 관리자</Typography>
-                    <Typography variant="h2">{totalAdmins}</Typography>
-                  </Stack>
+              />
+            </Stack>
+
+            <Stack
+              direction={{
+                xs: "column",
+                sm: "row",
+              }}
+              gap={3}
+              justifyContent="space-between"
+            >
+              {/* 사용자 수 */}
+              <Stack direction="row" gap={3}>
+                {/* 총 사용자 */}
+                <Stack gap={1}>
+                  <Typography variant="h3">총 사용자</Typography>
+                  <Typography variant="h2">{totalUsers}</Typography>
                 </Stack>
-
-                {/* 검색 필터 */}
-                <TextField
-                  variant="outlined"
-                  placeholder="학번 / 이름 검색"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  slotProps={{
-                    input: {
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <SearchRoundedIcon />
-                        </InputAdornment>
-                      ),
-                    },
-                  }}
-                />
+                {/* 총 관리자 */}
+                <Stack gap={1}>
+                  <Typography variant="h3">총 관리자</Typography>
+                  <Typography variant="h2">{totalAdmins}</Typography>
+                </Stack>
               </Stack>
 
-              <Stack justifyContent="flex-end">
-                {/* 페이지 선택 */}
-                <Pagination
-                  count={Math.ceil(userCount / 10)}
-                  page={page}
-                  onChange={handlePageChange}
-                  siblingCount={1}
-                  boundaryCount={0}
-                  showFirstButton
-                  showLastButton
+              {/* 검색 필터 */}
+              <TextField
+                variant="outlined"
+                placeholder="학번 / 이름 검색"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                slotProps={{
+                  input: {
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchRoundedIcon />
+                      </InputAdornment>
+                    ),
+                  },
+                }}
+              />
+            </Stack>
+
+            <Stack justifyContent="flex-end">
+              {/* 페이지 선택 */}
+              <Pagination
+                count={Math.ceil(userCount / 10)}
+                page={page}
+                onChange={handlePageChange}
+                siblingCount={1}
+                boundaryCount={0}
+                showFirstButton
+                showLastButton
+                sx={{
+                  alignSelf: "flex-end",
+                }}
+              />
+
+              {/* 사용자 목록 */}
+              <Box sx={{ overflowX: "auto" }}>
+                <Table
                   sx={{
-                    alignSelf: "flex-end",
+                    tableLayout: "fixed",
+                    minWidth: "600px",
                   }}
-                />
-
-                {/* 사용자 목록 */}
-                <Box sx={{ overflowX: "auto" }}>
-                  <Table
-                    sx={{
-                      tableLayout: "fixed",
-                      minWidth: "600px",
-                    }}
-                  >
-                    <TableHead>
-                      <TableRow>
-                        <TableCell width="10%">번호</TableCell>
-                        <TableCell width="20%">학번</TableCell>
-                        <TableCell width="15%">이름</TableCell>
-                        <TableCell width="12%">권한</TableCell>
-                        <TableCell width="10%">상태</TableCell>
-                        <TableCell width="20%">최근 예약 일자</TableCell>
-                        <TableCell width="13%"></TableCell>
+                >
+                  <TableHead>
+                    <TableRow>
+                      <TableCell width="10%">번호</TableCell>
+                      <TableCell width="20%">학번</TableCell>
+                      <TableCell width="15%">이름</TableCell>
+                      <TableCell width="12%">권한</TableCell>
+                      <TableCell width="10%">상태</TableCell>
+                      <TableCell width="20%">최근 예약 일자</TableCell>
+                      <TableCell width="13%"></TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {users.map((user, index) => (
+                      <TableRow
+                        key={index}
+                        sx={{
+                          position: "relative",
+                          "& .MuiTableCell-root": {
+                            padding: "8px 16px",
+                          },
+                        }}
+                      >
+                        <FixedTableCell keepline>
+                          {userCount - (page - 1) * 10 - index}
+                        </FixedTableCell>
+                        <FixedTableCell>{user.studentId}</FixedTableCell>
+                        <FixedTableCell>{user.name}</FixedTableCell>
+                        <FixedTableCell>{user.permission}</FixedTableCell>
+                        <FixedTableCell>{user.state}</FixedTableCell>
+                        <FixedTableCell>
+                          {user.recentReservation}
+                        </FixedTableCell>
+                        <TableCell>
+                          <Box justifyContent="flex-end" display="flex">
+                            <Button
+                              variant="contained"
+                              startIcon={<SettingsRoundedIcon />}
+                              onClick={() => handleManageButtonClick(user)}
+                            >
+                              관리
+                            </Button>
+                          </Box>
+                        </TableCell>
                       </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {users.map((user, index) => (
-                        <TableRow
-                          key={index}
-                          sx={{
-                            position: "relative",
-                            "& .MuiTableCell-root": {
-                              padding: "8px 16px",
-                            },
-                          }}
-                        >
-                          <FixedTableCell keepline>
-                            {userCount - (page - 1) * 10 - index}
-                          </FixedTableCell>
-                          <FixedTableCell>{user.studentId}</FixedTableCell>
-                          <FixedTableCell>{user.name}</FixedTableCell>
-                          <FixedTableCell>{user.permission}</FixedTableCell>
-                          <FixedTableCell>{user.state}</FixedTableCell>
-                          <FixedTableCell>
-                            {user.recentReservation}
-                          </FixedTableCell>
-                          <TableCell>
-                            <Box justifyContent="flex-end" display="flex">
-                              <Button
-                                variant="contained"
-                                startIcon={<SettingsRoundedIcon />}
-                                onClick={() => handleManageButtonClick(user)}
-                              >
-                                관리
-                              </Button>
-                            </Box>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </Box>
-              </Stack>
+                    ))}
+                  </TableBody>
+                </Table>
+              </Box>
             </Stack>
           </Stack>
-        </ThemeProvider>
+        </Stack>
 
         {/* 유저 관리 대화상자 */}
         <UserDialog

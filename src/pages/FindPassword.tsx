@@ -6,7 +6,6 @@ import {
   OutlinedInput,
   Stack,
   TextField,
-  ThemeProvider,
   Typography,
 } from "@mui/material";
 import { theme } from "../utils";
@@ -188,173 +187,110 @@ const FindPassword = () => {
   }, [email, isConfirmCodeChecked, navigate, password, studentId]);
 
   return (
-    <ThemeProvider theme={theme}>
-      <Stack className="page-root" justifyContent="center">
-        <Stack
-          width={{
-            xs: "90%",
-            sm: "65%",
-          }}
-          maxWidth="600px"
-          padding="80px 0"
-          gap={3}
-        >
-          {/* 페이지명 */}
-          <Typography variant="h2" fontWeight="bold">
-            비밀번호 찾기
-          </Typography>
+    <Stack className="page-root" justifyContent="center">
+      <Stack
+        width={{
+          xs: "90%",
+          sm: "65%",
+        }}
+        maxWidth="600px"
+        padding="80px 0"
+        gap={3}
+      >
+        {/* 페이지명 */}
+        <Typography variant="h2" fontWeight="bold">
+          비밀번호 찾기
+        </Typography>
 
-          {/* 학번 입력란 */}
+        {/* 학번 입력란 */}
+        <TextField
+          placeholder="학번"
+          value={studentId}
+          onChange={(e) => setStudentId(e.target.value)}
+          fullWidth
+        />
+
+        {/* 이메일 */}
+        <Stack direction="row" gap={1}>
+          {/* 이메일 입력란 */}
           <TextField
-            placeholder="학번"
-            value={studentId}
-            onChange={(e) => setStudentId(e.target.value)}
-            fullWidth
+            placeholder="이메일"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            sx={{
+              flex: "1",
+            }}
           />
 
-          {/* 이메일 */}
-          <Stack direction="row" gap={1}>
-            {/* 이메일 입력란 */}
-            <TextField
-              placeholder="이메일"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              sx={{
-                flex: "1",
-              }}
-            />
+          {/* 인증 요청 버튼 */}
+          <Button variant="outlined" onClick={handleConfirmCodeSendButtonClick}>
+            인증 요청
+          </Button>
+        </Stack>
 
-            {/* 인증 요청 버튼 */}
-            <Button
-              variant="outlined"
-              onClick={handleConfirmCodeSendButtonClick}
-            >
-              인증 요청
-            </Button>
-          </Stack>
+        {/* 인증번호 */}
+        <Stack
+          direction="row"
+          gap={1}
+          display={isConfirmCodeSent ? "flex" : "none"}
+        >
+          {/* 인증번호 입력란 */}
+          <TextField
+            placeholder="인증번호 입력"
+            value={confirmCode}
+            onChange={(e) => setConfirmCode(e.target.value)}
+            sx={{
+              flex: "1",
+              minWidth: "120px",
+            }}
+          />
 
-          {/* 인증번호 */}
-          <Stack
-            direction="row"
-            gap={1}
-            display={isConfirmCodeSent ? "flex" : "none"}
+          {/* 남은 시간 타이머 */}
+          <Box display="flex" alignItems="center" flex={1}>
+            {!isConfirmCodeChecked && (
+              <Typography variant="subtitle1" color="primary">
+                {formatTime(confirmTimeLeft)}
+              </Typography>
+            )}
+            {isConfirmCodeChecked && <CheckRoundedIcon color="success" />}
+          </Box>
+
+          {/* 인증 확인 버튼 */}
+          <Button
+            variant="contained"
+            onClick={handleConfirmCodeCheckButtonClick}
           >
-            {/* 인증번호 입력란 */}
-            <TextField
-              placeholder="인증번호 입력"
-              value={confirmCode}
-              onChange={(e) => setConfirmCode(e.target.value)}
-              sx={{
-                flex: "1",
-                minWidth: "120px",
-              }}
-            />
+            인증 확인
+          </Button>
+        </Stack>
 
-            {/* 남은 시간 타이머 */}
-            <Box display="flex" alignItems="center" flex={1}>
-              {!isConfirmCodeChecked && (
-                <Typography variant="subtitle1" color="primary">
-                  {formatTime(confirmTimeLeft)}
-                </Typography>
-              )}
-              {isConfirmCodeChecked && <CheckRoundedIcon color="success" />}
-            </Box>
+        {/* 비밀번호 재설정 */}
+        <Box display={isConfirmCodeChecked ? "block" : "none"}>
+          {/* 비밀번호 재설정 제목 */}
+          <Typography
+            variant="h3"
+            color="primary"
+            marginBottom={1}
+            fontWeight="bold"
+          >
+            새 비밀번호 입력
+          </Typography>
 
-            {/* 인증 확인 버튼 */}
-            <Button
-              variant="contained"
-              onClick={handleConfirmCodeCheckButtonClick}
-            >
-              인증 확인
-            </Button>
-          </Stack>
-
-          {/* 비밀번호 재설정 */}
-          <Box display={isConfirmCodeChecked ? "block" : "none"}>
-            {/* 비밀번호 재설정 제목 */}
-            <Typography
-              variant="h3"
-              color="primary"
-              marginBottom={1}
-              fontWeight="bold"
-            >
-              새 비밀번호 입력
-            </Typography>
-
-            <Stack gap={3}>
-              <Stack gap={1}>
-                {/* 비밀번호 입력란 */}
-                <OutlinedInput
-                  type={isPasswordVisible ? "text" : "password"}
-                  placeholder="비밀번호"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  // 비밀번호 보임/안보임
-                  endAdornment={
-                    <InputAdornment position="end">
-                      <IconButton onClick={handlePasswordVisibleClick}>
-                        {isPasswordVisible ? (
-                          <VisibilityRoundedIcon />
-                        ) : (
-                          <VisibilityOffRoundedIcon />
-                        )}
-                      </IconButton>
-                    </InputAdornment>
-                  }
-                />
-
-                {/* 비밀번호 필요 조건 */}
-                <Stack>
-                  <Stack direction="row" alignItems="center" gap={1}>
-                    <CircleRoundedIcon
-                      color="primary"
-                      sx={{ fontSize: "0.8em" }}
-                    />
-                    <Typography variant="subtitle1">8글자 이상</Typography>
-                    <CheckRoundedIcon
-                      color="success"
-                      sx={{
-                        display: password.length >= 8 ? "block" : "none",
-                      }}
-                    />
-                  </Stack>
-                  <Stack direction="row" alignItems="center" gap={1}>
-                    <CircleRoundedIcon
-                      color="primary"
-                      sx={{ fontSize: "0.8em" }}
-                    />
-                    <Typography variant="subtitle1">
-                      영문, 숫자, 특수문자 포함
-                    </Typography>
-                    <CheckRoundedIcon
-                      color="success"
-                      sx={{
-                        display:
-                          /[a-zA-Z]/.test(password) &&
-                          /[0-9]/.test(password) &&
-                          /[!@#$%^&*?]/.test(password)
-                            ? "block"
-                            : "none",
-                      }}
-                    />
-                  </Stack>
-                </Stack>
-              </Stack>
-
-              {/* 비밀번호 재입력 입력란 */}
+          <Stack gap={3}>
+            <Stack gap={1}>
+              {/* 비밀번호 입력란 */}
               <OutlinedInput
-                type={isPasswordConfirmVisible ? "text" : "password"}
-                placeholder="비밀번호 재입력"
-                value={passwordConfirm}
-                onChange={(e) => setPasswordConfirm(e.target.value)}
+                type={isPasswordVisible ? "text" : "password"}
+                placeholder="비밀번호"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 required
                 // 비밀번호 보임/안보임
                 endAdornment={
                   <InputAdornment position="end">
-                    <IconButton onClick={handlePasswordConfirmVisibleClick}>
-                      {isPasswordConfirmVisible ? (
+                    <IconButton onClick={handlePasswordVisibleClick}>
+                      {isPasswordVisible ? (
                         <VisibilityRoundedIcon />
                       ) : (
                         <VisibilityOffRoundedIcon />
@@ -363,40 +299,98 @@ const FindPassword = () => {
                   </InputAdornment>
                 }
               />
+
+              {/* 비밀번호 필요 조건 */}
+              <Stack>
+                <Stack direction="row" alignItems="center" gap={1}>
+                  <CircleRoundedIcon
+                    color="primary"
+                    sx={{ fontSize: "0.8em" }}
+                  />
+                  <Typography variant="subtitle1">8글자 이상</Typography>
+                  <CheckRoundedIcon
+                    color="success"
+                    sx={{
+                      display: password.length >= 8 ? "block" : "none",
+                    }}
+                  />
+                </Stack>
+                <Stack direction="row" alignItems="center" gap={1}>
+                  <CircleRoundedIcon
+                    color="primary"
+                    sx={{ fontSize: "0.8em" }}
+                  />
+                  <Typography variant="subtitle1">
+                    영문, 숫자, 특수문자 포함
+                  </Typography>
+                  <CheckRoundedIcon
+                    color="success"
+                    sx={{
+                      display:
+                        /[a-zA-Z]/.test(password) &&
+                        /[0-9]/.test(password) &&
+                        /[!@#$%^&*?]/.test(password)
+                          ? "block"
+                          : "none",
+                    }}
+                  />
+                </Stack>
+              </Stack>
             </Stack>
-          </Box>
 
-          <Stack gap={1}>
-            {/* 비밀번호 재설정 버튼 */}
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={handlePasswordResetButtonClick}
-              fullWidth
-              sx={{
-                fontSize: "1.5em",
-                fontWeight: "bold",
-                textTransform: "none",
-              }}
-            >
-              비밀번호 재설정
-            </Button>
-
-            <Link
-              to="/login"
-              css={{
-                textDecoration: "none",
-                color: theme.palette.secondary.main,
-              }}
-            >
-              <Typography variant="subtitle1" color="primary">
-                로그인으로 돌아가기
-              </Typography>
-            </Link>
+            {/* 비밀번호 재입력 입력란 */}
+            <OutlinedInput
+              type={isPasswordConfirmVisible ? "text" : "password"}
+              placeholder="비밀번호 재입력"
+              value={passwordConfirm}
+              onChange={(e) => setPasswordConfirm(e.target.value)}
+              required
+              // 비밀번호 보임/안보임
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton onClick={handlePasswordConfirmVisibleClick}>
+                    {isPasswordConfirmVisible ? (
+                      <VisibilityRoundedIcon />
+                    ) : (
+                      <VisibilityOffRoundedIcon />
+                    )}
+                  </IconButton>
+                </InputAdornment>
+              }
+            />
           </Stack>
+        </Box>
+
+        <Stack gap={1}>
+          {/* 비밀번호 재설정 버튼 */}
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={handlePasswordResetButtonClick}
+            fullWidth
+            sx={{
+              fontSize: "1.5em",
+              fontWeight: "bold",
+              textTransform: "none",
+            }}
+          >
+            비밀번호 재설정
+          </Button>
+
+          <Link
+            to="/login"
+            css={{
+              textDecoration: "none",
+              color: theme.palette.secondary.main,
+            }}
+          >
+            <Typography variant="subtitle1" color="primary">
+              로그인으로 돌아가기
+            </Typography>
+          </Link>
         </Stack>
       </Stack>
-    </ThemeProvider>
+    </Stack>
   );
 };
 

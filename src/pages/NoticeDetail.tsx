@@ -1,11 +1,5 @@
-import {
-  Button,
-  Stack,
-  TextField,
-  ThemeProvider,
-  Typography,
-} from "@mui/material";
-import { dateFormatter, theme } from "../utils";
+import { Button, Stack, TextField, Typography } from "@mui/material";
+import { dateFormatter } from "../utils";
 import { Link, useLocation, useNavigate } from "react-router";
 import SectionHeader from "../components/SectionHeader";
 
@@ -233,89 +227,150 @@ const NoticeDetail = () => {
 
   return (
     <TokenRefresher>
-      <ThemeProvider theme={theme}>
-        <Stack className="page-root">
-          <Stack className="base-layout" gap={5}>
-            {/* 페이지명 */}
-            <Stack direction="row">
-              <Link
-                to="/notice"
-                css={{
-                  textDecoration: "none",
-                  color: "black",
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
-                <ChevronLeftRoundedIcon fontSize="large" color="secondary" />
-                <Typography variant="h2" fontWeight="bold">
-                  공지사항
-                </Typography>
-              </Link>
-            </Stack>
+      <Stack className="page-root">
+        <Stack className="base-layout" gap={5}>
+          {/* 페이지명 */}
+          <Stack direction="row">
+            <Link
+              to="/notice"
+              css={{
+                textDecoration: "none",
+                color: "black",
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <ChevronLeftRoundedIcon fontSize="large" color="secondary" />
+              <Typography variant="h2" fontWeight="bold" color="textPrimary">
+                공지사항
+              </Typography>
+            </Link>
+          </Stack>
 
+          <Stack
+            gap={{
+              xs: 5,
+              md: 7,
+            }}
+            flex={1}
+          >
+            {/* 상단 */}
             <Stack
+              direction={{
+                xs: "column",
+                md: "row",
+              }}
               gap={{
                 xs: 5,
-                md: 7,
+                md: 10,
+              }}
+            >
+              {/* 제목 */}
+              <Stack gap={2} flex={1}>
+                <SectionHeader title="제목" />
+                {isEditing ? (
+                  <TextField
+                    placeholder="제목"
+                    fullWidth
+                    value={title}
+                    onChange={handleTitleChange}
+                  />
+                ) : (
+                  <Typography
+                    variant="subtitle1"
+                    sx={{
+                      textWrap: "wrap",
+                      wordBreak: "break-all",
+                    }}
+                  >
+                    {title}
+                  </Typography>
+                )}
+              </Stack>
+
+              {/* 작성자 */}
+              <Stack
+                gap={2}
+                width={{
+                  md: "250px",
+                }}
+              >
+                <SectionHeader title="작성자" />
+                <Typography variant="subtitle1">
+                  {location.pathname === "/notice/new"
+                    ? loginState.userName
+                    : author}
+                </Typography>
+              </Stack>
+
+              {/* 태블릿, 모바일용 작성일 */}
+              <Stack
+                gap={2}
+                display={{
+                  xs: "flex",
+                  md: "none",
+                }}
+              >
+                <SectionHeader title="작성일" />
+                <Typography variant="subtitle1">
+                  {location.pathname === "/notice/new"
+                    ? dateFormatter.format(new Date())
+                    : date}
+                </Typography>
+              </Stack>
+            </Stack>
+
+            {/* 하단 */}
+            <Stack
+              direction={{
+                xs: "column",
+                md: "row",
+              }}
+              gap={{
+                xs: 5,
+                md: 10,
               }}
               flex={1}
             >
-              {/* 상단 */}
-              <Stack
-                direction={{
-                  xs: "column",
-                  md: "row",
-                }}
-                gap={{
-                  xs: 5,
-                  md: 10,
-                }}
-              >
-                {/* 제목 */}
-                <Stack gap={2} flex={1}>
-                  <SectionHeader title="제목" />
-                  {isEditing ? (
-                    <TextField
-                      placeholder="제목"
-                      fullWidth
-                      value={title}
-                      onChange={handleTitleChange}
-                    />
-                  ) : (
-                    <Typography
-                      variant="subtitle1"
-                      sx={{
-                        textWrap: "wrap",
-                        wordBreak: "break-all",
-                      }}
-                    >
-                      {title}
-                    </Typography>
-                  )}
-                </Stack>
+              {/* 내용 */}
+              <Stack gap={2} flex={1}>
+                <SectionHeader title="내용" />
 
-                {/* 작성자 */}
-                <Stack
-                  gap={2}
-                  width={{
-                    md: "250px",
-                  }}
-                >
-                  <SectionHeader title="작성자" />
-                  <Typography variant="subtitle1">
-                    {location.pathname === "/notice/new"
-                      ? loginState.userName
-                      : author}
+                {isEditing ? (
+                  <TextField
+                    placeholder="내용"
+                    multiline
+                    rows={18}
+                    value={content}
+                    onChange={handleContentChange}
+                  />
+                ) : (
+                  <Typography
+                    component="pre"
+                    variant="subtitle1"
+                    sx={{
+                      textWrap: "wrap",
+                      wordBreak: "break-all",
+                    }}
+                  >
+                    {content}
                   </Typography>
-                </Stack>
+                )}
+              </Stack>
 
-                {/* 태블릿, 모바일용 작성일 */}
+              <Stack
+                width={{
+                  md: "250px",
+                }}
+                gap={5}
+                justifyContent="space-between"
+              >
+                {/* 작성일 */}
                 <Stack
                   gap={2}
                   display={{
-                    xs: "flex",
-                    md: "none",
+                    xs: "none",
+                    md: "flex",
                   }}
                 >
                   <SectionHeader title="작성일" />
@@ -325,74 +380,27 @@ const NoticeDetail = () => {
                       : date}
                   </Typography>
                 </Stack>
-              </Stack>
 
-              {/* 하단 */}
-              <Stack
-                direction={{
-                  xs: "column",
-                  md: "row",
-                }}
-                gap={{
-                  xs: 5,
-                  md: 10,
-                }}
-                flex={1}
-              >
-                {/* 내용 */}
-                <Stack gap={2} flex={1}>
-                  <SectionHeader title="내용" />
-
-                  {isEditing ? (
-                    <TextField
-                      placeholder="내용"
-                      multiline
-                      rows={18}
-                      value={content}
-                      onChange={handleContentChange}
-                    />
-                  ) : (
-                    <Typography
-                      component="pre"
-                      variant="subtitle1"
+                {/* 버튼 */}
+                {loginState.isLoggedIn &&
+                  loginState.permission !== Permission.USER &&
+                  (location.pathname === "/notice/new" ? (
+                    // 등록
+                    <Button
+                      variant="outlined"
+                      color="secondary"
+                      fullWidth
                       sx={{
-                        textWrap: "wrap",
-                        wordBreak: "break-all",
+                        borderRadius: "30px",
                       }}
+                      onClick={handlePostButtonClick}
                     >
-                      {content}
-                    </Typography>
-                  )}
-                </Stack>
-
-                <Stack
-                  width={{
-                    md: "250px",
-                  }}
-                  gap={5}
-                  justifyContent="space-between"
-                >
-                  {/* 작성일 */}
-                  <Stack
-                    gap={2}
-                    display={{
-                      xs: "none",
-                      md: "flex",
-                    }}
-                  >
-                    <SectionHeader title="작성일" />
-                    <Typography variant="subtitle1">
-                      {location.pathname === "/notice/new"
-                        ? dateFormatter.format(new Date())
-                        : date}
-                    </Typography>
-                  </Stack>
-
-                  {/* 버튼 */}
-                  {loginState.isLoggedIn &&
-                    loginState.permission !== Permission.USER &&
-                    (location.pathname === "/notice/new" ? (
-                      // 등록
+                      <Typography variant="h2">등록</Typography>
+                    </Button>
+                  ) : isEditing ? (
+                    // 수정 모드
+                    <Stack direction="row" gap={3}>
+                      {/* 취소 */}
                       <Button
                         variant="outlined"
                         color="secondary"
@@ -400,75 +408,59 @@ const NoticeDetail = () => {
                         sx={{
                           borderRadius: "30px",
                         }}
-                        onClick={handlePostButtonClick}
+                        onClick={handleCancelButtonClick}
                       >
-                        <Typography variant="h2">등록</Typography>
+                        <Typography variant="h2">취소</Typography>
                       </Button>
-                    ) : isEditing ? (
-                      // 수정 모드
-                      <Stack direction="row" gap={3}>
-                        {/* 취소 */}
-                        <Button
-                          variant="outlined"
-                          color="secondary"
-                          fullWidth
-                          sx={{
-                            borderRadius: "30px",
-                          }}
-                          onClick={handleCancelButtonClick}
-                        >
-                          <Typography variant="h2">취소</Typography>
-                        </Button>
 
-                        {/* 확인 */}
-                        <Button
-                          variant="outlined"
-                          color="error"
-                          fullWidth
-                          sx={{
-                            borderRadius: "30px",
-                          }}
-                          onClick={handleConfirmButtonClick}
-                        >
-                          <Typography variant="h2">확인</Typography>
-                        </Button>
-                      </Stack>
-                    ) : (
-                      // 일반 모드
-                      <Stack direction="row" gap={3}>
-                        {/* 수정 */}
-                        <Button
-                          variant="outlined"
-                          color="secondary"
-                          fullWidth
-                          sx={{
-                            borderRadius: "30px",
-                          }}
-                          onClick={handleEditButtonClick}
-                        >
-                          <Typography variant="h2">수정</Typography>
-                        </Button>
+                      {/* 확인 */}
+                      <Button
+                        variant="outlined"
+                        color="error"
+                        fullWidth
+                        sx={{
+                          borderRadius: "30px",
+                        }}
+                        onClick={handleConfirmButtonClick}
+                      >
+                        <Typography variant="h2">확인</Typography>
+                      </Button>
+                    </Stack>
+                  ) : (
+                    // 일반 모드
+                    <Stack direction="row" gap={3}>
+                      {/* 수정 */}
+                      <Button
+                        variant="outlined"
+                        color="secondary"
+                        fullWidth
+                        sx={{
+                          borderRadius: "30px",
+                        }}
+                        onClick={handleEditButtonClick}
+                      >
+                        <Typography variant="h2">수정</Typography>
+                      </Button>
 
-                        {/* 삭제 */}
-                        <Button
-                          variant="outlined"
-                          color="error"
-                          fullWidth
-                          sx={{
-                            borderRadius: "30px",
-                          }}
-                          onClick={handleDeleteButtonClick}
-                        >
-                          <Typography variant="h2">삭제</Typography>
-                        </Button>
-                      </Stack>
-                    ))}
-                </Stack>
+                      {/* 삭제 */}
+                      <Button
+                        variant="outlined"
+                        color="error"
+                        fullWidth
+                        sx={{
+                          borderRadius: "30px",
+                        }}
+                        onClick={handleDeleteButtonClick}
+                      >
+                        <Typography variant="h2">삭제</Typography>
+                      </Button>
+                    </Stack>
+                  ))}
               </Stack>
             </Stack>
           </Stack>
         </Stack>
-      </ThemeProvider>
+      </Stack>
     </TokenRefresher>
   );
 };

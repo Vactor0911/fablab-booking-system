@@ -7,10 +7,10 @@ import {
   Menu,
   MenuItem,
   Stack,
-  ThemeProvider,
   Toolbar,
   Tooltip,
   Typography,
+  useColorScheme,
 } from "@mui/material";
 import { theme } from "../utils";
 import { Link, useLocation, useNavigate } from "react-router";
@@ -18,7 +18,6 @@ import { useCallback, useRef, useState } from "react";
 import { useAtom, useSetAtom } from "jotai";
 import {
   bookRestrictedSeatsAtom,
-  isDarkModeAtom,
   LoginState,
   loginStateAtom,
   myCurrentReservationAtom,
@@ -33,6 +32,7 @@ import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import CalendarMonthRoundedIcon from "@mui/icons-material/CalendarMonthRounded";
 import ExitToAppRoundedIcon from "@mui/icons-material/ExitToAppRounded";
 import LightModeRoundedIcon from "@mui/icons-material/LightMode";
+import DarkModeRoundedIcon from "@mui/icons-material/DarkModeRounded";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
 import DrawerMenu from "./DrawerMenu";
@@ -88,12 +88,8 @@ const Header = () => {
 
   // 내 계정 버튼 클릭
   const handleAccountButtonClick = useCallback(() => {
-    if (!loginState.isLoggedIn) {
-      navigate("/login");
-      return;
-    }
     setAccountMenuOpen(true);
-  }, [loginState, navigate]);
+  }, []);
 
   // 내 계정 메뉴 닫기
   const handleAccountMenuClose = useCallback(() => {
@@ -136,20 +132,11 @@ const Header = () => {
     setDrawerOpen(false);
   }, []);
 
-  // 다크모드
-  const [isDarkMode, setIsDarkMode] = useAtom(isDarkModeAtom); // 다크모드 상태
-
-  // 테마 변경 버튼 클릭
-  const handleThemeChangeClick = useCallback(() => {
-    setIsDarkMode((prev) => !prev);
-  }, [setIsDarkMode]);
-
   // 내 예약 정보 불러오기
   const [myCurrentReservation, setMyCurrentReservation] = useAtom(
     myCurrentReservationAtom
   );
 
-  
   // 로그아웃 버튼 클릭
   const setReservationSeat = useSetAtom(reservationSeatAtom); // 내 예약 좌석 이름
   const setSeatInfo = useSetAtom(seatInfoAtom);
@@ -275,8 +262,17 @@ const Header = () => {
       });
   }, [refreshSeatInfo, setMyCurrentReservation]);
 
+  // 테마 모드
+  const { mode, setMode } = useColorScheme();
+
+  // 테마 변경 버튼 클릭
+  const handleThemeChangeClick = useCallback(() => {
+    const newMode = mode === "dark" ? "light" : "dark";
+    setMode(newMode);
+  }, [mode, setMode]);
+
   return (
-    <ThemeProvider theme={theme}>
+    <>
       <AppBar
         position="static"
         sx={{
@@ -287,6 +283,8 @@ const Header = () => {
               : theme.palette.primary.main,
           position: location.pathname === "/" ? "absolute" : "relative",
           zIndex: 100,
+          "--Paper-shadow": "none!important",
+          "--Paper-overlay": "none!important",
         }}
       >
         <Toolbar
@@ -401,19 +399,37 @@ const Header = () => {
           marginTop: "5px",
         }}
       >
+        {/* 로그인 */}
+        {!loginState.isLoggedIn && (
+          <MenuItem
+            onClick={() => {
+              handleAccountMenuClose();
+              navigate("/login");
+            }}
+            sx={MenuItemCss}
+          >
+            <ListItemIcon>
+              <PersonRoundedIcon />
+            </ListItemIcon>
+            <ListItemText>로그인</ListItemText>
+          </MenuItem>
+        )}
+
         {/* 내 정보 */}
-        <MenuItem
-          onClick={() => {
-            handleAccountMenuClose();
-            navigate("/my-page");
-          }}
-          sx={MenuItemCss}
-        >
-          <ListItemIcon>
-            <PersonRoundedIcon />
-          </ListItemIcon>
-          <ListItemText>내 정보</ListItemText>
-        </MenuItem>
+        {loginState.isLoggedIn && (
+          <MenuItem
+            onClick={() => {
+              handleAccountMenuClose();
+              navigate("/my-page");
+            }}
+            sx={MenuItemCss}
+          >
+            <ListItemIcon>
+              <PersonRoundedIcon />
+            </ListItemIcon>
+            <ListItemText>내 정보</ListItemText>
+          </MenuItem>
+        )}
 
         {/* 내 예약정보 */}
         {loginState.permission === Permission.USER && (
@@ -450,35 +466,41 @@ const Header = () => {
           </MenuItem>
         )}
 
-        {/* 라이트모드 */}
-        {isDarkMode && (
-          <MenuItem
-            onClick={() => {
-              handleAccountMenuClose();
-              handleThemeChangeClick();
-            }}
-            sx={MenuItemCss}
-          >
-            <ListItemIcon>
-              <LightModeRoundedIcon />
-            </ListItemIcon>
-            <ListItemText>라이트모드</ListItemText>
-          </MenuItem>
-        )}
-
-        {/* 로그아웃 */}
+        {/* 테마 색상 */}
         <MenuItem
           onClick={() => {
             handleAccountMenuClose();
-            handleLogoutButtonClick();
+            handleThemeChangeClick();
           }}
           sx={MenuItemCss}
         >
           <ListItemIcon>
-            <MeetingRoomIcon />
+            {mode === "light" ? (
+              <DarkModeRoundedIcon />
+            ) : (
+              <LightModeRoundedIcon />
+            )}
           </ListItemIcon>
-          <ListItemText>로그아웃</ListItemText>
+          <ListItemText>
+            {mode === "light" ? "다크모드" : "라이트모드"}
+          </ListItemText>
         </MenuItem>
+
+        {/* 로그아웃 */}
+        {loginState.isLoggedIn && (
+          <MenuItem
+            onClick={() => {
+              handleAccountMenuClose();
+              handleLogoutButtonClick();
+            }}
+            sx={MenuItemCss}
+          >
+            <ListItemIcon>
+              <MeetingRoomIcon />
+            </ListItemIcon>
+            <ListItemText>로그아웃</ListItemText>
+          </MenuItem>
+        )}
       </Menu>
 
       {/* 관리 메뉴 드롭다운 메뉴 */}
@@ -535,7 +557,7 @@ const Header = () => {
 
       {/* 드로어 메뉴 */}
       <DrawerMenu drawerOpen={drawerOpen} drawerClose={handleDrawerClose} />
-    </ThemeProvider>
+    </>
   );
 };
 
