@@ -14,7 +14,7 @@ body:
     attributes:
       label: 진행해야 할 업무
       description: 진행해야 할 작업 모두 나열해주세요.
-      placeholder: |
+      value: |
         - [ ] 작업 1
         - [ ] 작업 2
         - [ ] 작업 3
