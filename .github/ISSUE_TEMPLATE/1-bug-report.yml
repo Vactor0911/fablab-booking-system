@@ -35,7 +35,7 @@ body:
     id: logs
     attributes:
       label: 오류 로그
-      description: 출력된 오류 로그가 있다면 복사하여 붙여넣어주세요.
+      description: 출력된 오류 로그가 있다면 복사하여 붙여 넣어주세요.
       render: shell
   - type: input
     id: contact
