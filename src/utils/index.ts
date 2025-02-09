@@ -17,7 +17,7 @@ export const theme = createTheme({
   colorSchemes: {
     light: {
       palette: {
-        primary: { main: "#a72b43" },
+        primary: { main: "#a72b43", light: "#a72b43" },
         secondary: { main: "#6e6e6e", light: "#f4f4f4", dark: "#4d4d4d" },
         text: { primary: "#000" },
       },
@@ -68,7 +68,18 @@ export const theme = createTheme({
     },
     MuiTextField: {
       defaultProps: {
-        inputProps: { spellCheck: false },
+        inputProps: {
+          spellCheck: false,
+        },
+      },
+      styleOverrides: {
+        root: ({ theme }) => ({
+          "input:autofill": {
+            boxShadow: `0 0 0 1000px ${
+              theme.palette.mode === "light" ? "white" : "#323232"
+            } inset`,
+          },
+        }),
       },
     },
     MuiTableCell: {
