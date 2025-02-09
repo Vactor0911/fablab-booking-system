@@ -9,7 +9,6 @@ import {
   Typography,
 } from "@mui/material";
 import AdminPage from "../components/AdminPage";
-import { theme } from "../utils";
 import dayjs, { Dayjs } from "dayjs";
 import { Link, useLocation, useNavigate } from "react-router";
 
@@ -303,54 +302,69 @@ const BookRestrictionDetail = () => {
   return (
     <TokenRefresher>
       <AdminPage>
-        <ThemeProvider theme={theme}>
-          <Stack className="page-root">
-            <Stack className="base-layout" gap={5}>
-              {/* 페이지명 */}
-              <Stack direction="row">
-                <Link
-                  to="/book-restrictions"
-                  css={{
-                    textDecoration: "none",
-                    color: "black",
-                    display: "flex",
-                    alignItems: "center",
-                  }}
-                >
-                  <ChevronLeftRoundedIcon fontSize="large" color="secondary" />
-                  <Typography variant="h2" fontWeight="bold">
-                    예약 제한 관리
-                  </Typography>
-                </Link>
-              </Stack>
-
-              <Stack
-                direction={{
-                  xs: "column-reverse",
-                  md: "row",
-                }}
-                gap={5}
-                flexWrap={{
-                  xs: "nowrap",
-                  md: "wrap-reverse",
+        <Stack className="page-root">
+          <Stack className="base-layout" gap={5}>
+            {/* 페이지명 */}
+            <Stack direction="row">
+              <Link
+                to="/book-restrictions"
+                css={{
+                  textDecoration: "none",
+                  color: "black",
+                  display: "flex",
+                  alignItems: "center",
                 }}
               >
-                {/* 좌측 컨테이너 */}
-                <Stack gap={5} flex={1}>
-                  <Stack gap={2}>
-                    {/* 날짜 / 시간 선택기 */}
-                    <SectionHeader title="날짜 / 시간" underline />
+                <ChevronLeftRoundedIcon fontSize="large" color="secondary" />
+                <Typography variant="h2" fontWeight="bold" color="textPrimary">
+                  예약 제한 관리
+                </Typography>
+              </Link>
+            </Stack>
 
-                    <ThemeProvider
-                      theme={createTheme({
-                        typography: {
-                          h3: {
-                            fontSize: "3rem",
-                          },
+            <Stack
+              direction={{
+                xs: "column-reverse",
+                md: "row",
+              }}
+              gap={5}
+              flexWrap={{
+                xs: "nowrap",
+                md: "wrap-reverse",
+              }}
+            >
+              {/* 좌측 컨테이너 */}
+              <Stack gap={5} flex={1}>
+                <Stack gap={2}>
+                  {/* 날짜 / 시간 선택기 */}
+                  <SectionHeader title="날짜 / 시간" underline />
+
+                  <ThemeProvider
+                    theme={createTheme({
+                      typography: {
+                        h3: {
+                          fontSize: "3rem",
                         },
-                      })}
-                    >
-                      <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      },
+                    })}
+                  >
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <ThemeProvider
+                        theme={createTheme({
+                          colorSchemes: {
+                            light: {
+                              palette: {
+                                primary: { main: "#a72b43" },
+                              },
+                            },
+                            dark: {
+                              palette: {
+                                primary: { main: "#a72b43" },
+                              },
+                            },
+                          },
+                        })}
+                      >
                         <Stack
                           direction={{
                             xs: "column",
@@ -410,152 +424,152 @@ const BookRestrictionDetail = () => {
                             }}
                           />
                         </Stack>
-                      </LocalizationProvider>
-                    </ThemeProvider>
-                  </Stack>
+                      </ThemeProvider>
+                    </LocalizationProvider>
+                  </ThemeProvider>
+                </Stack>
 
-                  <Stack gap={2}>
-                    {/* 공지사항 배너 선택기 */}
-                    <SectionHeader title="공지사항 배너" underline />
+                <Stack gap={2}>
+                  {/* 공지사항 배너 선택기 */}
+                  <SectionHeader title="공지사항 배너" underline />
 
-                    <Autocomplete
-                      options={banners}
-                      getOptionLabel={(option) => option.title}
-                      value={banner}
-                      onChange={(event, value) =>
-                        handleBannerChange(event, value)
-                      }
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          placeholder="관리자 설정으로 좌석 예약이 제한되고 있습니다."
-                          variant="outlined"
-                        />
-                      )}
-                      renderOption={(props, option) => {
-                        return (
-                          <Box component="li" {...props}>
-                            {option.title}
-                          </Box>
-                        );
-                      }}
-                    />
-                  </Stack>
+                  <Autocomplete
+                    options={banners}
+                    getOptionLabel={(option) => option.title}
+                    value={banner}
+                    onChange={(event, value) =>
+                      handleBannerChange(event, value)
+                    }
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        placeholder="관리자 설정으로 좌석 예약이 제한되고 있습니다."
+                        variant="outlined"
+                      />
+                    )}
+                    renderOption={(props, option) => {
+                      return (
+                        <Box component="li" {...props}>
+                          {option.title}
+                        </Box>
+                      );
+                    }}
+                  />
+                </Stack>
 
-                  {location.pathname === "/book-restrictions/new" && (
+                {location.pathname === "/book-restrictions/new" && (
+                  <Button
+                    variant="contained"
+                    fullWidth
+                    onClick={handleRegisterButtonClick}
+                  >
+                    <Typography variant="h2">등록하기</Typography>
+                  </Button>
+                )}
+                {location.pathname !== "/book-restrictions/new" && (
+                  <Stack direction="row" gap={2}>
                     <Button
                       variant="contained"
                       fullWidth
-                      onClick={handleRegisterButtonClick}
+                      onClick={handleEditButtonClick}
                     >
-                      <Typography variant="h2">등록하기</Typography>
+                      <Typography variant="h2">수정하기</Typography>
                     </Button>
-                  )}
-                  {location.pathname !== "/book-restrictions/new" && (
-                    <Stack direction="row" gap={2}>
-                      <Button
-                        variant="contained"
-                        fullWidth
-                        onClick={handleEditButtonClick}
-                      >
-                        <Typography variant="h2">수정하기</Typography>
-                      </Button>
 
-                      <Button
-                        variant="outlined"
-                        color="error"
-                        fullWidth
-                        onClick={handleDeleteButtonClick}
-                      >
-                        <Typography variant="h2">삭제하기</Typography>
-                      </Button>
-                    </Stack>
-                  )}
-                </Stack>
-
-                {/* 우측 컨테이너 */}
-                <Stack flex={2} gap={2}>
-                  {/* 전체 선택기 */}
-                  <Stack direction="row" justifyContent="flex-end" gap={2}>
-                    <Button
-                      variant="outlined"
-                      color="secondary"
-                      onClick={handleSeatSelectAllButtonClick}
-                    >
-                      전체 선택
-                    </Button>
                     <Button
                       variant="outlined"
                       color="error"
-                      onClick={handleSeatCancelAllButtonClick}
+                      fullWidth
+                      onClick={handleDeleteButtonClick}
                     >
-                      전체 취소
+                      <Typography variant="h2">삭제하기</Typography>
                     </Button>
                   </Stack>
+                )}
+              </Stack>
 
-                  {/* 좌석 선택기 */}
-                  <Box overflow="auto">
-                    <SeatSelecter
-                      minWidth="600px"
-                      minHeight="400px"
-                      multiple
-                      selectedseats={selectedSeats}
-                      setselectedseats={setSelectedSeats}
-                    />
-                  </Box>
+              {/* 우측 컨테이너 */}
+              <Stack flex={2} gap={2}>
+                {/* 전체 선택기 */}
+                <Stack direction="row" justifyContent="flex-end" gap={2}>
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    onClick={handleSeatSelectAllButtonClick}
+                  >
+                    전체 선택
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    onClick={handleSeatCancelAllButtonClick}
+                  >
+                    전체 취소
+                  </Button>
+                </Stack>
 
-                  {/* 좌석 열 선택기 */}
-                  <Stack direction="row" justifyContent="space-evenly">
-                    <Button
-                      color={
-                        selectedSeats.filter((name) => name.startsWith("A"))
-                          .length >= seatsPerRow["A"]
-                          ? "primary"
-                          : "secondary"
-                      }
-                      onClick={() => handleSeatRowButtonClick("A")}
-                    >
-                      <Typography variant="h1">A 좌석</Typography>
-                    </Button>
-                    <Button
-                      color={
-                        selectedSeats.filter((name) => name.startsWith("B"))
-                          .length >= seatsPerRow["B"]
-                          ? "primary"
-                          : "secondary"
-                      }
-                      onClick={() => handleSeatRowButtonClick("B")}
-                    >
-                      <Typography variant="h1">B 좌석</Typography>
-                    </Button>
-                    <Button
-                      color={
-                        selectedSeats.filter((name) => name.startsWith("C"))
-                          .length >= seatsPerRow["C"]
-                          ? "primary"
-                          : "secondary"
-                      }
-                      onClick={() => handleSeatRowButtonClick("C")}
-                    >
-                      <Typography variant="h1">C 좌석</Typography>
-                    </Button>
-                    <Button
-                      color={
-                        selectedSeats.filter((name) => name.startsWith("D"))
-                          .length >= seatsPerRow["D"]
-                          ? "primary"
-                          : "secondary"
-                      }
-                      onClick={() => handleSeatRowButtonClick("D")}
-                    >
-                      <Typography variant="h1">D 좌석</Typography>
-                    </Button>
-                  </Stack>
+                {/* 좌석 선택기 */}
+                <Box overflow="auto">
+                  <SeatSelecter
+                    minWidth="600px"
+                    minHeight="400px"
+                    multiple
+                    selectedseats={selectedSeats}
+                    setselectedseats={setSelectedSeats}
+                  />
+                </Box>
+
+                {/* 좌석 열 선택기 */}
+                <Stack direction="row" justifyContent="space-evenly">
+                  <Button
+                    color={
+                      selectedSeats.filter((name) => name.startsWith("A"))
+                        .length >= seatsPerRow["A"]
+                        ? "primary"
+                        : "secondary"
+                    }
+                    onClick={() => handleSeatRowButtonClick("A")}
+                  >
+                    <Typography variant="h1">A 좌석</Typography>
+                  </Button>
+                  <Button
+                    color={
+                      selectedSeats.filter((name) => name.startsWith("B"))
+                        .length >= seatsPerRow["B"]
+                        ? "primary"
+                        : "secondary"
+                    }
+                    onClick={() => handleSeatRowButtonClick("B")}
+                  >
+                    <Typography variant="h1">B 좌석</Typography>
+                  </Button>
+                  <Button
+                    color={
+                      selectedSeats.filter((name) => name.startsWith("C"))
+                        .length >= seatsPerRow["C"]
+                        ? "primary"
+                        : "secondary"
+                    }
+                    onClick={() => handleSeatRowButtonClick("C")}
+                  >
+                    <Typography variant="h1">C 좌석</Typography>
+                  </Button>
+                  <Button
+                    color={
+                      selectedSeats.filter((name) => name.startsWith("D"))
+                        .length >= seatsPerRow["D"]
+                        ? "primary"
+                        : "secondary"
+                    }
+                    onClick={() => handleSeatRowButtonClick("D")}
+                  >
+                    <Typography variant="h1">D 좌석</Typography>
+                  </Button>
                 </Stack>
               </Stack>
             </Stack>
           </Stack>
-        </ThemeProvider>
+        </Stack>
       </AdminPage>
     </TokenRefresher>
   );

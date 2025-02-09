@@ -1,5 +1,4 @@
 import { createTheme } from "@mui/material";
-import { color } from "./theme";
 import { useSetAtom } from "jotai";
 import {
   bookRestrictedSeatsAtom,
@@ -15,6 +14,24 @@ import { setAccessToken } from "./accessToken";
  * MUI 테마 객체
  */
 export const theme = createTheme({
+  colorSchemes: {
+    light: {
+      palette: {
+        primary: { main: "#a72b43" },
+        secondary: { main: "#6e6e6e", light: "#f4f4f4", dark: "#4d4d4d" },
+        text: { primary: "#000" },
+      },
+    },
+    dark: {
+      palette: {
+        primary: { main: "#cb3452" },
+        secondary: { main: "#ccc" },
+        background: { default: "#323232", paper: "#323232" },
+        divider: "rgba(255, 255, 255, 0.5)",
+        text: { primary: "#fff" },
+      },
+    },
+  },
   components: {
     MuiStack: {
       styleOverrides: {
@@ -71,10 +88,6 @@ export const theme = createTheme({
         },
       },
     },
-  },
-  palette: {
-    primary: { main: color.primary },
-    secondary: { main: "#6e6e6e" },
   },
   typography: {
     fontFamily: ["Pretendard-Regular", "sans-serif"].join(","),

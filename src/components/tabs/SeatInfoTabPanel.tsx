@@ -21,44 +21,45 @@ const SeatInfoTabPanel = (props: TabPanelProps) => {
   // 좌석 사진 변경
   const [image, setImage] = useState<string | null>(null);
   const [imageRaw, setImageRaw] = useState<File | null>(null);
-const handleSeatImageChange = useCallback(
+
+  const handleSeatImageChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
-        const files = event.target.files;
-        if (files && files[0]) {
-            const newImage = files[0];
-            const reader = new FileReader();
-            reader.readAsDataURL(newImage);
-            reader.onload = () => {
-                const img = new Image();
-                img.src = reader.result as string;
-                img.onload = () => {
-                    const canvas = document.createElement("canvas");
-                    const ctx = canvas.getContext("2d");
-                    if (ctx) {
-                        const MAX_SIZE = 200 * 1024; // 200KB
-                        const width = img.width;
-                        const height = img.height;
-                        let quality = 0.7; // Initial quality
+      const files = event.target.files;
+      if (files && files[0]) {
+        const newImage = files[0];
+        const reader = new FileReader();
+        reader.readAsDataURL(newImage);
+        reader.onload = () => {
+          const img = new Image();
+          img.src = reader.result as string;
+          img.onload = () => {
+            const canvas = document.createElement("canvas");
+            const ctx = canvas.getContext("2d");
+            if (ctx) {
+              const MAX_SIZE = 200 * 1024; // 200KB
+              const width = img.width;
+              const height = img.height;
+              let quality = 0.7; // Initial quality
 
-                        canvas.width = width;
-                        canvas.height = height;
-                        ctx.drawImage(img, 0, 0, width, height);
+              canvas.width = width;
+              canvas.height = height;
+              ctx.drawImage(img, 0, 0, width, height);
 
-                        let dataUrl = canvas.toDataURL("image/jpeg", quality);
-                        while (dataUrl.length > MAX_SIZE && quality > 0.1) {
-                            quality -= 0.1;
-                            dataUrl = canvas.toDataURL("image/jpeg", quality);
-                        }
+              let dataUrl = canvas.toDataURL("image/jpeg", quality);
+              while (dataUrl.length > MAX_SIZE && quality > 0.1) {
+                quality -= 0.1;
+                dataUrl = canvas.toDataURL("image/jpeg", quality);
+              }
 
-                        setImage(dataUrl); // URL로 이미지 저장
-                        setImageRaw(newImage); // 파일 객체를 그대로 저장
-                    }
-                };
-            };
-        }
+              setImage(dataUrl); // URL로 이미지 저장
+              setImageRaw(newImage); // 파일 객체를 그대로 저장
+            }
+          };
+        };
+      }
     },
     []
-);
+  );
 
   // PC 지원
   const [pcSupport, setPcSupport] = useState("none");

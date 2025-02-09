@@ -18,6 +18,7 @@ import {
   TextField,
   ThemeProvider,
   Typography,
+  useColorScheme,
 } from "@mui/material";
 import {
   isPasswordCombinationValid,
@@ -249,6 +250,8 @@ const UserDialog = (props: UserDialogProps) => {
     user,
   ]);
 
+  const { mode } = useColorScheme();
+
   return (
     <TokenRefresher>
       <ThemeProvider theme={theme}>
@@ -383,6 +386,11 @@ const UserDialog = (props: UserDialogProps) => {
                       justifyContent: "center",
                       padding: "3px 14px",
                       border: "1px solid rgba(0, 0, 0, 0.23)",
+                      borderColor:
+                        mode === "light"
+                          ? "rgba(0, 0, 0, 0.23)"
+                          : "rgba(255, 255, 255, 0.23)",
+                      backgroundColor: "inherit",
                     }}
                   >
                     <RadioGroup row value={state} onChange={handleStateChange}>

@@ -6,7 +6,6 @@ import {
   ListItemButton,
   ListItemText,
   Stack,
-  ThemeProvider,
 } from "@mui/material";
 import { theme } from "../utils";
 import { loginStateAtom, Permission } from "../states";
@@ -79,7 +78,6 @@ const DrawerMenu = (props: DrawerMenuProps) => {
   };
 
   return (
-    <ThemeProvider theme={theme}>
       <Drawer anchor="right" open={drawerOpen} onClose={drawerClose}>
         <Stack
           width={250}
@@ -185,7 +183,6 @@ const DrawerMenu = (props: DrawerMenuProps) => {
           </List>
         </Stack>
       </Drawer>
-    </ThemeProvider>
   );
 };
 

@@ -7,10 +7,8 @@ import {
   OutlinedInput,
   Stack,
   TextField,
-  ThemeProvider,
   Typography,
 } from "@mui/material";
-import { theme } from "../utils";
 import { useCallback, useState } from "react";
 import { Link, useNavigate } from "react-router";
 
@@ -152,102 +150,100 @@ const Login = () => {
 
   return (
     <TokenRefresher>
-      <ThemeProvider theme={theme}>
-        <Stack className="page-root" justifyContent="center">
-          <Stack
-            width={{
-              xs: "90%",
-              sm: "65%",
-            }}
-            maxWidth="600px"
-            padding="80px 0"
-            gap={3}
-          >
-            {/* 페이지명 */}
-            <Typography variant="h2" fontWeight="bold">
-              로그인
-            </Typography>
+      <Stack className="page-root" justifyContent="center">
+        <Stack
+          width={{
+            xs: "90%",
+            sm: "65%",
+          }}
+          maxWidth="600px"
+          padding="80px 0"
+          gap={3}
+        >
+          {/* 페이지명 */}
+          <Typography variant="h2" fontWeight="bold">
+            로그인
+          </Typography>
 
-            {/* 학번 입력란 */}
-            <TextField
-              placeholder="학번"
-              value={studentId}
-              onChange={handleStudentIdChange}
-              fullWidth
+          {/* 학번 입력란 */}
+          <TextField
+            placeholder="학번"
+            value={studentId}
+            onChange={handleStudentIdChange}
+            fullWidth
+          />
+
+          <Stack>
+            {/* 비밀번호 입력란 */}
+            <OutlinedInput
+              type={isPasswordVisible ? "text" : "password"}
+              placeholder="비밀번호"
+              value={password}
+              onChange={handlePasswordChange}
+              required
+              onKeyDown={handlePasswordEnterPressed}
+              // 비밀번호 보임/안보임
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton onClick={handlePasswordVisibleClick}>
+                    {isPasswordVisible ? (
+                      <VisibilityRoundedIcon />
+                    ) : (
+                      <VisibilityOffRoundedIcon />
+                    )}
+                  </IconButton>
+                </InputAdornment>
+              }
             />
 
-            <Stack>
-              {/* 비밀번호 입력란 */}
-              <OutlinedInput
-                type={isPasswordVisible ? "text" : "password"}
-                placeholder="비밀번호"
-                value={password}
-                onChange={handlePasswordChange}
-                required
-                onKeyDown={handlePasswordEnterPressed}
-                // 비밀번호 보임/안보임
-                endAdornment={
-                  <InputAdornment position="end">
-                    <IconButton onClick={handlePasswordVisibleClick}>
-                      {isPasswordVisible ? (
-                        <VisibilityRoundedIcon />
-                      ) : (
-                        <VisibilityOffRoundedIcon />
-                      )}
-                    </IconButton>
-                  </InputAdornment>
-                }
-              />
+            {/* 로그인 상태 유지 체크박스 */}
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={isLoginStateSave}
+                  onChange={handleLoginStateSaveChange}
+                  color="primary"
+                />
+              }
+              label="로그인 상태 유지"
+              sx={{
+                marginTop: "5px",
+              }}
+            />
+          </Stack>
 
-              {/* 로그인 상태 유지 체크박스 */}
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={isLoginStateSave}
-                    onChange={handleLoginStateSaveChange}
-                    color="primary"
-                  />
-                }
-                label="로그인 상태 유지"
-                sx={{
-                  marginTop: "5px",
-                }}
-              />
-            </Stack>
+          <Stack gap={1}>
+            {/* 로그인 버튼 */}
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={handleLoginButtonClick}
+              fullWidth
+              sx={{
+                fontSize: "1.5em",
+                fontWeight: "bold",
+                textTransform: "none",
+              }}
+            >
+              FabLab 로그인
+            </Button>
 
-            <Stack gap={1}>
-              {/* 로그인 버튼 */}
-              <Button
-                variant="contained"
-                color="secondary"
-                onClick={handleLoginButtonClick}
-                fullWidth
-                sx={{
-                  fontSize: "1.5em",
-                  fontWeight: "bold",
-                  textTransform: "none",
-                }}
-              >
-                FabLab 로그인
-              </Button>
-
-              {/* 하단 링크 */}
-              <Stack direction="row" justifyContent="space-between">
-                <Link to="/find-password" css={LinkCss}>
-                  <Typography variant="subtitle1" color="secondary">
-                    비밀번호 찾기
-                  </Typography>
-                </Link>
-                <Link to="/register" css={LinkCss}>
-                  <Typography variant="subtitle1" color="primary">
-                    회원가입
-                  </Typography>
-                </Link>
-              </Stack>
+            {/* 하단 링크 */}
+            <Stack direction="row" justifyContent="space-between">
+              <Link to="/find-password" css={LinkCss}>
+                <Typography variant="subtitle1" color="secondary">
+                  비밀번호 찾기
+                </Typography>
+              </Link>
+              <Link to="/register" css={LinkCss}>
+                <Typography variant="subtitle1" color="primary">
+                  회원가입
+                </Typography>
+              </Link>
             </Stack>
           </Stack>
         </Stack>
-      </ThemeProvider>
+      </Stack>
     </TokenRefresher>
   );
 };

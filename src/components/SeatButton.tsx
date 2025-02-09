@@ -24,28 +24,55 @@ interface SeatButtonProps extends ButtonProps {
 const SeatButton = (props: SeatButtonProps) => {
   const { seatName, selected } = props;
   const loginState = useAtomValue(loginStateAtom);
-  const seatInfo = useAtomValue(seatInfoAtom);
+  const seatInfo =
+    useAtomValue<Record<string, { state: string; userName: string }>>(
+      seatInfoAtom
+    );
   const reservedSeat = useAtomValue(reservationSeatAtom);
   const bookRestrictedSeats = useAtomValue(bookRestrictedSeatsAtom);
 
   // 버튼 테마 색상
   const buttonTheme = createTheme({
-    palette: {
-      primary: {
-        // 빈 좌석
-        main: "#fffcf2",
+    colorSchemes: {
+      light: {
+        palette: {
+          primary: {
+            // 빈 좌석
+            main: "#fffcf2",
+          },
+          secondary: {
+            // 예약된 좌석
+            main: "#33c33b",
+          },
+          error: {
+            // 예약 제한된 좌석
+            main: "#e0e0e0",
+          },
+          success: {
+            // 선택된 좌석
+            main: "#a72b43",
+          },
+        },
       },
-      secondary: {
-        // 예약된 좌석
-        main: "#33c33b",
-      },
-      error: {
-        // 예약 제한된 좌석
-        main: "#e0e0e0",
-      },
-      success: {
-        // 선택된 좌석
-        main: "#a72b43",
+      dark: {
+        palette: {
+          primary: {
+            // 빈 좌석
+            main: "#787878",
+          },
+          secondary: {
+            // 예약된 좌석
+            main: "#bababa",
+          },
+          error: {
+            // 예약 제한된 좌석
+            main: "#bababa",
+          },
+          success: {
+            // 선택된 좌석
+            main: "#a72b43",
+          },
+        },
       },
     },
     typography: {
@@ -95,7 +122,7 @@ const SeatButton = (props: SeatButtonProps) => {
         {...props}
       >
         <Stack width="100%" height="100%" overflow="hidden" minWidth={0}>
-          <Typography variant="subtitle1" textAlign="left">
+          <Typography variant="subtitle1" textAlign="left" color="textPrimary">
             {seatName}
           </Typography>
 

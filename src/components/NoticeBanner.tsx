@@ -1,4 +1,4 @@
-import { Stack, Typography } from "@mui/material";
+import { Stack, Typography, useColorScheme } from "@mui/material";
 import { Link } from "react-router";
 
 interface NoticeBannerProps {
@@ -8,6 +8,9 @@ interface NoticeBannerProps {
 
 const NoticeBanner = (props: NoticeBannerProps) => {
   const { message, moreCount = 0 } = props;
+
+  const { mode } = useColorScheme();
+
   return (
     <Stack
       component={Link}
@@ -21,7 +24,7 @@ const NoticeBanner = (props: NoticeBannerProps) => {
       gap={1}
       overflow="hidden"
       sx={{
-        backgroundColor: "#c90f0f",
+        backgroundColor: mode === "light" ? "#c90f0f" : "#8e0b0b",
         textDecoration: "none",
       }}
     >
@@ -35,7 +38,7 @@ const NoticeBanner = (props: NoticeBannerProps) => {
         {message}
       </Typography>
       <Typography variant="h3" fontWeight="bold">
-        {moreCount && `+${moreCount}`}
+        {moreCount > 0 && `+${moreCount}`}
       </Typography>
     </Stack>
   );

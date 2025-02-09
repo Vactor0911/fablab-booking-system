@@ -1,6 +1,4 @@
-import { ThemeProvider } from "@emotion/react";
 import AdminPage from "../components/AdminPage";
-import { theme } from "../utils";
 import {
   Box,
   debounce,
@@ -18,6 +16,7 @@ import {
   TableRow,
   TextField,
   Typography,
+  useColorScheme,
 } from "@mui/material";
 
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
@@ -172,123 +171,120 @@ const Logs = () => {
     debouncedFetchLogs();
   }, [debouncedFetchLogs]);
 
+  const { mode } = useColorScheme();
+
   return (
     <TokenRefresher>
       <AdminPage>
-        <ThemeProvider theme={theme}>
-          <Stack className="page-root">
-            <Stack className="base-layout" gap={2}>
-              {/* 페이지명 */}
-              <Typography variant="h2">로그 관리</Typography>
+        <Stack className="page-root">
+          <Stack className="base-layout" gap={2}>
+            {/* 페이지명 */}
+            <Typography variant="h2">로그 관리</Typography>
 
-              {/* 구분선 */}
-              <Divider
-                sx={{
-                  borderWidth: "1px",
-                }}
-              />
+            {/* 구분선 */}
+            <Divider
+              sx={{
+                borderWidth: "1px",
+              }}
+            />
 
-              <Stack direction="row" gap={1} justifyContent="flex-end">
-                {/* 필터 콤보박스 */}
-                <Box width="110px">
-                  <Select
-                    value={filter}
-                    onChange={handleFilterChange}
-                    fullWidth
-                  >
-                    <MenuItem value="all">전체</MenuItem>
-                    <MenuItem value="book">예약</MenuItem>
-                    <MenuItem value="end">퇴실</MenuItem>
-                    <MenuItem value="cancel">강제 퇴실</MenuItem>
-                    <MenuItem value="notice/all">공지사항</MenuItem>
-                    <MenuItem value="book_restriction/all">예약 제한</MenuItem>
-                  </Select>
-                </Box>
+            <Stack direction="row" gap={1} justifyContent="flex-end">
+              {/* 필터 콤보박스 */}
+              <Box width="110px">
+                <Select value={filter} onChange={handleFilterChange} fullWidth>
+                  <MenuItem value="all">전체</MenuItem>
+                  <MenuItem value="book">예약</MenuItem>
+                  <MenuItem value="end">퇴실</MenuItem>
+                  <MenuItem value="cancel">강제 퇴실</MenuItem>
+                  <MenuItem value="notice/all">공지사항</MenuItem>
+                  <MenuItem value="book_restriction/all">예약 제한</MenuItem>
+                </Select>
+              </Box>
 
-                {/* 검색어 입력란 */}
-                <Box>
-                  <TextField
-                    variant="outlined"
-                    placeholder="학번 / 이름 검색"
-                    value={search}
-                    onChange={handleSearchChange}
-                    slotProps={{
-                      input: {
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <SearchRoundedIcon />
-                          </InputAdornment>
-                        ),
-                      },
-                    }}
-                  />
-                </Box>
-              </Stack>
-
-              {/* 페이지 선택 */}
-              <Pagination
-                count={totalPages}
-                page={page}
-                onChange={handlePageChange}
-                siblingCount={1}
-                boundaryCount={0}
-                showFirstButton
-                showLastButton
-                sx={{
-                  alignSelf: "flex-end",
-                }}
-              />
-
-              {/* 로그 목록 */}
-              <Box
-                sx={{
-                  overflowX: "auto",
-                }}
-              >
-                <Table
-                  sx={{
-                    tableLayout: "fixed",
-                    minWidth: "600px",
+              {/* 검색어 입력란 */}
+              <Box>
+                <TextField
+                  variant="outlined"
+                  placeholder="학번 / 이름 검색"
+                  value={search}
+                  onChange={handleSearchChange}
+                  slotProps={{
+                    input: {
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <SearchRoundedIcon />
+                        </InputAdornment>
+                      ),
+                    },
                   }}
-                >
-                  <TableHead>
-                    <TableRow>
-                      <TableCell width="7%">번호</TableCell>
-                      <TableCell width="13%">로그 종류</TableCell>
-                      <TableCell width="15%">예약자 정보</TableCell>
-                      <TableCell width="15%">관리자 정보</TableCell>
-                      <TableCell width="10%">좌석 정보</TableCell>
-                      <TableCell width="15%">기록 일자</TableCell>
-                      <TableCell width="25%">비고</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {logs.map((row, index) => (
-                      <TableRow
-                        key={index}
-                        sx={{
-                          "&:nth-of-type(odd)": {
-                            backgroundColor: "#f4f4f6",
-                          },
-                        }}
-                      >
-                        <FixedTableCell keepline>
-                          {logsCount - (page - 1) * 10 - index}
-                        </FixedTableCell>
-                        <FixedTableCell>{row.type}</FixedTableCell>
-                        <FixedTableCell>{row.user}</FixedTableCell>
-                        <FixedTableCell>{row.admin}</FixedTableCell>
-                        <FixedTableCell>{row.seat}</FixedTableCell>
-                        <FixedTableCell>{row.date}</FixedTableCell>
-                        <FixedTableCell>{row.note}</FixedTableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                />
               </Box>
             </Stack>
+
+            {/* 페이지 선택 */}
+            <Pagination
+              count={totalPages}
+              page={page}
+              onChange={handlePageChange}
+              siblingCount={1}
+              boundaryCount={0}
+              showFirstButton
+              showLastButton
+              sx={{
+                alignSelf: "flex-end",
+              }}
+            />
+
+            {/* 로그 목록 */}
+            <Box
+              sx={{
+                overflowX: "auto",
+              }}
+            >
+              <Table
+                sx={{
+                  tableLayout: "fixed",
+                  minWidth: "750px",
+                }}
+              >
+                <TableHead>
+                  <TableRow>
+                    <TableCell width="7%">번호</TableCell>
+                    <TableCell width="13%">로그 종류</TableCell>
+                    <TableCell width="15%">예약자 정보</TableCell>
+                    <TableCell width="15%">관리자 정보</TableCell>
+                    <TableCell width="10%">좌석 정보</TableCell>
+                    <TableCell width="15%">기록 일자</TableCell>
+                    <TableCell width="25%">비고</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {logs.map((row, index) => (
+                    <TableRow
+                      key={index}
+                      sx={{
+                        "&:nth-of-type(odd)": {
+                          backgroundColor:
+                            mode === "light" ? "#f4f4f4" : "#444",
+                        },
+                      }}
+                    >
+                      <FixedTableCell keepline>
+                        {logsCount - (page - 1) * 10 - index}
+                      </FixedTableCell>
+                      <FixedTableCell>{row.type}</FixedTableCell>
+                      <FixedTableCell>{row.user}</FixedTableCell>
+                      <FixedTableCell>{row.admin}</FixedTableCell>
+                      <FixedTableCell>{row.seat}</FixedTableCell>
+                      <FixedTableCell>{row.date}</FixedTableCell>
+                      <FixedTableCell>{row.note}</FixedTableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </Box>
           </Stack>
-        </ThemeProvider>
+        </Stack>
       </AdminPage>
     </TokenRefresher>
   );

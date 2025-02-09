@@ -1,4 +1,3 @@
-import { ThemeProvider } from "@emotion/react";
 import AdminPage from "../components/AdminPage";
 import { theme } from "../utils";
 import {
@@ -134,109 +133,107 @@ const BookRestrictions = () => {
   return (
     <TokenRefresher>
       <AdminPage>
-        <ThemeProvider theme={theme}>
-          <Stack className="page-root">
-            <Stack className="base-layout" gap={2}>
-              {/* 페이지명 */}
-              <Typography variant="h2">예약 제한 관리</Typography>
+        <Stack className="page-root">
+          <Stack className="base-layout" gap={2}>
+            {/* 페이지명 */}
+            <Typography variant="h2">예약 제한 관리</Typography>
 
-              {/* 구분선 */}
-              <Divider
-                sx={{
-                  borderWidth: "1px",
+            {/* 구분선 */}
+            <Divider
+              sx={{
+                borderWidth: "1px",
+              }}
+            />
+
+            {/* 검색어 입력란 */}
+            <Box alignSelf="flex-end">
+              <TextField
+                variant="outlined"
+                placeholder="학번 / 이름 검색"
+                value={search}
+                onChange={handleSearchChange}
+                slotProps={{
+                  input: {
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchRoundedIcon />
+                      </InputAdornment>
+                    ),
+                  },
                 }}
               />
+            </Box>
 
-              {/* 검색어 입력란 */}
-              <Box alignSelf="flex-end">
-                <TextField
-                  variant="outlined"
-                  placeholder="학번 / 이름 검색"
-                  value={search}
-                  onChange={handleSearchChange}
-                  slotProps={{
-                    input: {
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <SearchRoundedIcon />
-                        </InputAdornment>
-                      ),
-                    },
-                  }}
-                />
-              </Box>
+            {/* 페이지 선택 */}
+            <Pagination
+              count={totalPages}
+              page={page}
+              onChange={handlePageChange}
+              siblingCount={1}
+              boundaryCount={0}
+              showFirstButton
+              showLastButton
+              sx={{
+                alignSelf: "flex-end",
+              }}
+            />
 
-              {/* 페이지 선택 */}
-              <Pagination
-                count={totalPages}
-                page={page}
-                onChange={handlePageChange}
-                siblingCount={1}
-                boundaryCount={0}
-                showFirstButton
-                showLastButton
+            {/* 로그 목록 */}
+            <Box sx={{ overflowX: "auto" }}>
+              <Table
                 sx={{
-                  alignSelf: "flex-end",
+                  tableLayout: "fixed",
+                  minWidth: "600px",
                 }}
-              />
+              >
+                <TableHead>
+                  <TableRow>
+                    <TableCell width="10%">번호</TableCell>
+                    <TableCell width="30%">공지사항 배너</TableCell>
+                    <TableCell width="10%">제한 좌석수</TableCell>
+                    <TableCell width="35%">제한 기간</TableCell>
+                    <TableCell width="15%">관리자</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {bookRestrictions
+                    .slice((page - 1) * 10, (page - 1) * 10 + 10)
+                    .map((row, index) => (
+                      <TableRow
+                        key={index}
+                        onClick={() => handleBookRestrictionClick(row.uuid)}
+                        sx={{
+                          cursor: "pointer",
+                          "&:hover td": {
+                            backgroundColor: theme.palette.primary.main,
+                            color: "white",
+                          },
+                        }}
+                      >
+                        <FixedTableCell keepline>
+                          {bookRestrictionCount - (page - 1) * 10 - index}
+                        </FixedTableCell>
+                        <FixedTableCell keepline>{row.notice}</FixedTableCell>
+                        <FixedTableCell>{row.seatCount}</FixedTableCell>
+                        <FixedTableCell>{row.period}</FixedTableCell>
+                        <FixedTableCell>{row.admin}</FixedTableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            </Box>
 
-              {/* 로그 목록 */}
-              <Box sx={{ overflowX: "auto" }}>
-                <Table
-                  sx={{
-                    tableLayout: "fixed",
-                    minWidth: "600px",
-                  }}
-                >
-                  <TableHead>
-                    <TableRow>
-                      <TableCell width="10%">번호</TableCell>
-                      <TableCell width="30%">공지사항 배너</TableCell>
-                      <TableCell width="10%">제한 좌석수</TableCell>
-                      <TableCell width="35%">제한 기간</TableCell>
-                      <TableCell width="15%">관리자</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {bookRestrictions
-                      .slice((page - 1) * 10, (page - 1) * 10 + 10)
-                      .map((row, index) => (
-                        <TableRow
-                          key={index}
-                          onClick={() => handleBookRestrictionClick(row.uuid)}
-                          sx={{
-                            cursor: "pointer",
-                            "&:hover td": {
-                              backgroundColor: theme.palette.primary.main,
-                              color: "white",
-                            },
-                          }}
-                        >
-                          <FixedTableCell keepline>
-                            {bookRestrictionCount - (page - 1) * 10 - index}
-                          </FixedTableCell>
-                          <FixedTableCell keepline>{row.notice}</FixedTableCell>
-                          <FixedTableCell>{row.seatCount}</FixedTableCell>
-                          <FixedTableCell>{row.period}</FixedTableCell>
-                          <FixedTableCell>{row.admin}</FixedTableCell>
-                        </TableRow>
-                      ))}
-                  </TableBody>
-                </Table>
-              </Box>
-
-              {/* 예약 제한 추가 */}
-              <Box alignSelf="flex-end" marginTop={4}>
-                <Button
-                  variant="outlined"
-                  onClick={handleNewBookRestrictionClick}
-                >
-                  <Typography variant="h2">예약 제한 등록</Typography>
-                </Button>
-              </Box>
-            </Stack>
+            {/* 예약 제한 추가 */}
+            <Box alignSelf="flex-end" marginTop={4}>
+              <Button
+                variant="outlined"
+                onClick={handleNewBookRestrictionClick}
+              >
+                <Typography variant="h2">예약 제한 등록</Typography>
+              </Button>
+            </Box>
           </Stack>
-        </ThemeProvider>
+        </Stack>
       </AdminPage>
     </TokenRefresher>
   );
