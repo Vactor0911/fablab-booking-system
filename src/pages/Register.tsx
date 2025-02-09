@@ -154,6 +154,7 @@ const Register = () => {
   }, []);
 
   // 인증번호 요청 버튼 클릭
+  const [isConfirmCodeSending, setIsConfirmCodeSending] = useState(false);
   const handleConfirmCodeSendButtonClick = useCallback(async () => {
     if (isConfirmCodeChecked) {
       return;
@@ -161,6 +162,8 @@ const Register = () => {
 
     // 인증번호 요청 API 호출
     try {
+      setIsConfirmCodeSending(true);
+
       // Step 1: CSRF 토큰 가져오기
       const csrfToken = await getCsrfToken();
 
@@ -195,6 +198,8 @@ const Register = () => {
         console.error("요청 오류:", (error as Error).message);
         alert("예기치 않은 오류가 발생했습니다. 다시 시도해 주세요.");
       }
+    } finally {
+      setIsConfirmCodeSending(false);
     }
   }, [email, isConfirmCodeChecked, name, studentId]);
 
@@ -412,6 +417,8 @@ const Register = () => {
             <Button
               variant="outlined"
               onClick={handleConfirmCodeSendButtonClick}
+              loading={isConfirmCodeSending}
+              loadingPosition="start"
             >
               인증 요청
             </Button>
@@ -448,8 +455,9 @@ const Register = () => {
             <Button
               variant="contained"
               onClick={handleConfirmCodeCheckButtonClick}
+              disabled={isConfirmCodeChecked}
             >
-              인증 확인
+              {isConfirmCodeChecked ? "인증 완료" : "인증 확인"}
             </Button>
           </Stack>
 
@@ -518,9 +526,10 @@ const Register = () => {
                 gap={2}
                 padding={2}
                 sx={{
-                  backgroundColor: mode === "light"
-                  ? theme.palette.secondary.light
-                  : theme.palette.secondary.dark,
+                  backgroundColor:
+                    mode === "light"
+                      ? theme.palette.secondary.light
+                      : theme.palette.secondary.dark,
                 }}
               >
                 <Typography variant="subtitle1">

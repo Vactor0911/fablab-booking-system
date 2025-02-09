@@ -184,7 +184,10 @@ const ReservationDialog = (props: ReservationDialogProps) => {
   );
 
   // 강제 퇴실 버튼 클릭
+  const [isForceCancelSending, setIsForceCancelSending] = useState(false);
   const handleForceCancelButtonClick = useCallback(() => {
+    setIsForceCancelSending(true);
+
     getCsrfToken()
       .then((csrfToken) => {
         return axiosInstance.post(
@@ -210,6 +213,7 @@ const ReservationDialog = (props: ReservationDialogProps) => {
       })
       .finally(() => {
         onClose();
+        setIsForceCancelSending(false);
         window.location.reload(); // 창 새로고침
       });
   }, [loginState.userId, onClose, reason, seatName]);
@@ -469,6 +473,8 @@ const ReservationDialog = (props: ReservationDialogProps) => {
                 fontWeight: "bold",
               }}
               onClick={handleForceCancelButtonClick}
+              loading={isForceCancelSending}
+              loadingPosition="start"
             >
               강제 퇴실
             </Button>

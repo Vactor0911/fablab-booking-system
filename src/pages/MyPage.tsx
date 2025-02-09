@@ -8,10 +8,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import {
-  isPasswordCombinationValid,
-  isPasswordLengthValid,
-} from "../utils";
+import { isPasswordCombinationValid, isPasswordLengthValid } from "../utils";
 import SectionHeader from "../components/SectionHeader";
 import { useCallback, useEffect, useState } from "react";
 
@@ -36,6 +33,7 @@ const MyPage = () => {
   const [name, setName] = useState(""); // 이름
 
   // 인증번호 요청 버튼 클릭
+  const [isConfirmCodeSending, setIsConfirmCodeSending] = useState(false);
   const handleConfirmCodeSendButtonClick = useCallback(async () => {
     if (isConfirmCodeChecked) {
       return;
@@ -43,6 +41,8 @@ const MyPage = () => {
 
     // 인증번호 요청 API 호출
     try {
+      setIsConfirmCodeSending(true);
+
       // Step 1: CSRF 토큰 가져오기
       const csrfToken = await getCsrfToken();
 
@@ -76,6 +76,8 @@ const MyPage = () => {
         console.error("요청 오류:", (error as Error).message);
         alert("예기치 않은 오류가 발생했습니다. 나중에 다시 시도해 주세요.");
       }
+    } finally {
+      setIsConfirmCodeSending(false);
     }
   }, [email, isConfirmCodeChecked, studentId]);
 
@@ -304,6 +306,8 @@ const MyPage = () => {
                   <Button
                     variant="outlined"
                     onClick={handleConfirmCodeSendButtonClick}
+                    loading={isConfirmCodeSending}
+                    loadingPosition="start"
                   >
                     인증 요청
                   </Button>
@@ -342,8 +346,9 @@ const MyPage = () => {
                   <Button
                     variant="contained"
                     onClick={handleConfirmCodeCheckButtonClick}
+                    disabled={isConfirmCodeChecked}
                   >
-                    인증 확인
+                    {isConfirmCodeChecked ? "인증 완료" : "인증 확인"}
                   </Button>
                 </Stack>
               </Stack>
