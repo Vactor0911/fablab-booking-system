@@ -57,7 +57,6 @@ const Reservation = () => {
       const bookRestrictionSeatsResponse = await axios.get(
         `${SERVER_HOST}/book/restriction/seats`
       );
-      console.log(bookRestrictionSeatsResponse);
       setBookRestrictedSeats(bookRestrictionSeatsResponse.data.restrictedSeats);
 
       const newSeatInfo: Record<string, SeatInfoProps> = {};
