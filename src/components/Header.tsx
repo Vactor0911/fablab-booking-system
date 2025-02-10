@@ -298,14 +298,43 @@ const Header = () => {
         >
           {/* 로고 */}
           <Link to="/" css={LinkCss}>
-            <Typography
-              variant="h1"
-              sx={{
-                color: "white",
-              }}
-            >
-              FabLab
-            </Typography>
+            <Stack direction="row" alignItems="center" gap={2}>
+              {/* FabLab */}
+              <Typography
+                variant="h1"
+                sx={{
+                  color: "white",
+                }}
+              >
+                FabLab
+              </Typography>
+
+              {/* 목원대학교 컴퓨터공학과 */}
+              <Stack
+                alignItems="center"
+                css={{
+                  "@media (max-width: 350px)": {
+                    display: "none",
+                  },
+                }}
+              >
+                <Typography
+                  fontFamily="Noto Serif KR, serif"
+                  fontSize="1em"
+                  fontWeight="bold"
+                  lineHeight="1.3"
+                >
+                  목원대학교
+                </Typography>
+                <Typography
+                  fontWeight="bold"
+                  fontSize="0.925em"
+                  lineHeight="1.3"
+                >
+                  컴퓨터공학과
+                </Typography>
+              </Stack>
+            </Stack>
           </Link>
 
           {/* 네비게이션 바 */}

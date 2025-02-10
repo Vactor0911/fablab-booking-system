@@ -2,7 +2,9 @@ import {
   Box,
   Button,
   Checkbox,
+  FormControl,
   FormControlLabel,
+  FormHelperText,
   IconButton,
   InputAdornment,
   Link as MuiLink,
@@ -13,6 +15,9 @@ import {
   useColorScheme,
 } from "@mui/material";
 import {
+  isEmailValid,
+  isNameValid,
+  isNumberValid,
   isPasswordCombinationValid,
   isPasswordLengthValid,
   theme,
@@ -156,7 +161,15 @@ const Register = () => {
   // 인증번호 요청 버튼 클릭
   const [isConfirmCodeSending, setIsConfirmCodeSending] = useState(false);
   const handleConfirmCodeSendButtonClick = useCallback(async () => {
+    // 이미 인증번호를 확인했다면 종료
     if (isConfirmCodeChecked) {
+      alert("이미 인증번호를 확인했습니다.");
+      return;
+    }
+
+    // 이메일이 올바르지 않다면 종료
+    if (!isEmailValid(email)) {
+      alert("이메일이 올바르지 않습니다.");
       return;
     }
 
@@ -273,14 +286,20 @@ const Register = () => {
   const navigate = useNavigate();
   const handleRegisterButtonClick = useCallback(async () => {
     // 학번이 부적절하다면 종료
-    if (!/[0-9]/.test(studentId)) {
-      alert("학번의 형식이 올바르지 않습니다.");
+    if (!isNumberValid(studentId)) {
+      alert("학번이 올바르지 않습니다.");
+      return;
+    }
+
+    // 이름이 부적절하다면 종료
+    if (!isNameValid(name)) {
+      alert("이름이 올바르지 않습니다.");
       return;
     }
 
     // 비밀번호가 일치하지 않는다면
     if (password !== passwordConfirm) {
-      alert("학번의 형식이 올바르지 않습니다.");
+      alert("학번이 올바르지 않습니다.");
       return;
     }
 
@@ -390,6 +409,12 @@ const Register = () => {
             value={studentId}
             onChange={handleStudentIdChange}
             fullWidth
+            error={!!studentId && !isNumberValid(studentId)}
+            helperText={
+              !!studentId &&
+              !isNumberValid(studentId) &&
+              "학번이 올바르지 않습니다."
+            }
           />
 
           {/* 이름 입력란 */}
@@ -398,6 +423,10 @@ const Register = () => {
             value={name}
             onChange={handleNameChange}
             fullWidth
+            error={!!name && !isNameValid(name)}
+            helperText={
+              !!name && !isNameValid(name) && "이름이 올바르지 않습니다."
+            }
           />
 
           {/* 이메일 */}
@@ -408,6 +437,13 @@ const Register = () => {
               type="email"
               value={email}
               onChange={handleEmailChange}
+              disabled={isConfirmCodeChecked}
+              error={!!email && !isEmailValid(email)}
+              helperText={
+                !!email &&
+                !isEmailValid(email) &&
+                "이메일이 올바르지 않습니다."
+              }
               sx={{
                 flex: "1",
               }}
@@ -488,25 +524,32 @@ const Register = () => {
           </Stack>
 
           {/* 비밀번호 재입력 입력란 */}
-          <OutlinedInput
-            type={isPasswordConfirmVisible ? "text" : "password"}
-            placeholder="비밀번호 재입력"
-            value={passwordConfirm}
-            onChange={handlePasswordConfirmChange}
-            required
-            // 비밀번호 보임/안보임
-            endAdornment={
-              <InputAdornment position="end">
-                <IconButton onClick={handlePasswordConfirmVisibleClick}>
-                  {isPasswordConfirmVisible ? (
-                    <VisibilityRoundedIcon />
-                  ) : (
-                    <VisibilityOffRoundedIcon />
-                  )}
-                </IconButton>
-              </InputAdornment>
-            }
-          />
+          <FormControl variant="outlined">
+            <OutlinedInput
+              type={isPasswordConfirmVisible ? "text" : "password"}
+              placeholder="비밀번호 재입력"
+              value={passwordConfirm}
+              onChange={handlePasswordConfirmChange}
+              required
+              error={password !== passwordConfirm}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton onClick={handlePasswordConfirmVisibleClick}>
+                    {isPasswordConfirmVisible ? (
+                      <VisibilityRoundedIcon />
+                    ) : (
+                      <VisibilityOffRoundedIcon />
+                    )}
+                  </IconButton>
+                </InputAdornment>
+              }
+            />
+            <FormHelperText error>
+              {password !== passwordConfirm
+                ? "비밀번호가 일치하지 않습니다."
+                : ""}
+            </FormHelperText>
+          </FormControl>
 
           <Stack gap={1}>
             {/* 개인정보 동의서 */}
@@ -716,8 +759,11 @@ const Register = () => {
               }}
               disabled={
                 !studentId ||
+                !isNumberValid(studentId) ||
                 !name ||
+                !isNameValid(name) ||
                 !email ||
+                !isEmailValid(email) ||
                 !isConfirmCodeChecked ||
                 !password ||
                 password !== passwordConfirm ||

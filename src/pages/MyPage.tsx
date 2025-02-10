@@ -1,6 +1,8 @@
 import {
   Box,
   Button,
+  FormControl,
+  FormHelperText,
   IconButton,
   InputAdornment,
   OutlinedInput,
@@ -8,7 +10,11 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { isPasswordCombinationValid, isPasswordLengthValid } from "../utils";
+import {
+  isEmailValid,
+  isPasswordCombinationValid,
+  isPasswordLengthValid,
+} from "../utils";
 import SectionHeader from "../components/SectionHeader";
 import { useCallback, useEffect, useState } from "react";
 
@@ -297,6 +303,12 @@ const MyPage = () => {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    error={!!email && !isEmailValid(email)}
+                    helperText={
+                      !!email && !isEmailValid(email)
+                        ? "이메일이 올바르지 않습니다."
+                        : ""
+                    }
                     sx={{
                       flex: "1",
                     }}
@@ -412,24 +424,34 @@ const MyPage = () => {
               <PasswordValidation password={newPassword} />
 
               {/* 새 비밀번호 확인 입력란 */}
-              <OutlinedInput
-                type={isNewPasswordConfirmVisible ? "text" : "password"}
-                placeholder="새 비밀번호 재입력"
-                value={newPasswordConfirm}
-                onChange={(e) => setNewPasswordConfirm(e.target.value)}
-                required
-                endAdornment={
-                  <InputAdornment position="end">
-                    <IconButton onClick={handleNewPasswordConfirmVisibleClick}>
-                      {isNewPasswordConfirmVisible ? (
-                        <VisibilityRoundedIcon />
-                      ) : (
-                        <VisibilityOffRoundedIcon />
-                      )}
-                    </IconButton>
-                  </InputAdornment>
-                }
-              />
+              <FormControl variant="outlined">
+                <OutlinedInput
+                  type={isNewPasswordConfirmVisible ? "text" : "password"}
+                  placeholder="새 비밀번호 재입력"
+                  value={newPasswordConfirm}
+                  onChange={(e) => setNewPasswordConfirm(e.target.value)}
+                  required
+                  error={newPasswordConfirm !== newPasswordConfirm}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={handleNewPasswordConfirmVisibleClick}
+                      >
+                        {isNewPasswordConfirmVisible ? (
+                          <VisibilityRoundedIcon />
+                        ) : (
+                          <VisibilityOffRoundedIcon />
+                        )}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                />
+                <FormHelperText error>
+                  {newPassword !== newPasswordConfirm
+                    ? "비밀번호가 일치하지 않습니다."
+                    : ""}
+                </FormHelperText>
+              </FormControl>
 
               {/* 수정하기 버튼 */}
               <Box

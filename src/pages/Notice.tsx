@@ -123,8 +123,11 @@ const Notice = () => {
 
           <Box
             sx={{
-              borderBottom: 1,
-              borderColor: "divider",
+              boxShadow: `0 -2px 0 0 ${
+                mode === "light"
+                  ? theme.palette.divider
+                  : "rgba(255, 255, 255, 0.5)"
+              } inset`,
               position: "relative",
             }}
           >
