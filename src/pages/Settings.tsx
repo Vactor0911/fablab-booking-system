@@ -1,9 +1,17 @@
-import { Box, Stack, Tab, Tabs, Typography } from "@mui/material";
+import {
+  Box,
+  Stack,
+  Tab,
+  Tabs,
+  Typography,
+  useColorScheme,
+} from "@mui/material";
 import AdminPage from "../components/AdminPage";
 import { ReactNode, useCallback, useState } from "react";
 import TokenRefresher from "../components/TokenRefresher";
 import CommonTabPanel from "../components/tabs/CommonTabPanel";
 import SeatInfoTabPanel from "../components/tabs/SeatInfoTabPanel";
+import { theme } from "../utils";
 
 export interface TabPanelProps {
   value: string;
@@ -21,6 +29,8 @@ const Settings = () => {
     []
   );
 
+  const { mode } = useColorScheme();
+
   return (
     <TokenRefresher>
       <AdminPage>
@@ -32,8 +42,11 @@ const Settings = () => {
             {/* 탭 메뉴 */}
             <Box
               sx={{
-                borderBottom: 1,
-                borderColor: "divider",
+                boxShadow: `0 -2px 0 0 ${
+                  mode === "light"
+                    ? theme.palette.divider
+                    : "rgba(255, 255, 255, 0.5)"
+                } inset`,
                 position: "relative",
               }}
             >
