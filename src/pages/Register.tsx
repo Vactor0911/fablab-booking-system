@@ -2,17 +2,22 @@ import {
   Box,
   Button,
   Checkbox,
+  FormControl,
   FormControlLabel,
+  FormHelperText,
   IconButton,
   InputAdornment,
   Link as MuiLink,
   OutlinedInput,
   Stack,
   TextField,
-  ThemeProvider,
   Typography,
+  useColorScheme,
 } from "@mui/material";
 import {
+  isEmailValid,
+  isNameValid,
+  isNumberValid,
   isPasswordCombinationValid,
   isPasswordLengthValid,
   theme,
@@ -36,12 +41,17 @@ interface ScrollBoxProps {
 }
 
 const ScrollBox = ({ children, height }: ScrollBoxProps) => {
+  const { mode } = useColorScheme();
+
   return (
     <Box
       height={height}
       padding={2}
       sx={{
-        backgroundColor: "#f4f4f4",
+        backgroundColor:
+          mode === "light"
+            ? theme.palette.secondary.light
+            : theme.palette.secondary.dark,
         overflowY: "auto",
       }}
     >
@@ -149,13 +159,24 @@ const Register = () => {
   }, []);
 
   // 인증번호 요청 버튼 클릭
+  const [isConfirmCodeSending, setIsConfirmCodeSending] = useState(false);
   const handleConfirmCodeSendButtonClick = useCallback(async () => {
+    // 이미 인증번호를 확인했다면 종료
     if (isConfirmCodeChecked) {
+      alert("이미 인증번호를 확인했습니다.");
+      return;
+    }
+
+    // 이메일이 올바르지 않다면 종료
+    if (!isEmailValid(email)) {
+      alert("이메일이 올바르지 않습니다.");
       return;
     }
 
     // 인증번호 요청 API 호출
     try {
+      setIsConfirmCodeSending(true);
+
       // Step 1: CSRF 토큰 가져오기
       const csrfToken = await getCsrfToken();
 
@@ -190,6 +211,8 @@ const Register = () => {
         console.error("요청 오류:", (error as Error).message);
         alert("예기치 않은 오류가 발생했습니다. 다시 시도해 주세요.");
       }
+    } finally {
+      setIsConfirmCodeSending(false);
     }
   }, [email, isConfirmCodeChecked, name, studentId]);
 
@@ -263,14 +286,20 @@ const Register = () => {
   const navigate = useNavigate();
   const handleRegisterButtonClick = useCallback(async () => {
     // 학번이 부적절하다면 종료
-    if (!/[0-9]/.test(studentId)) {
-      alert("학번의 형식이 올바르지 않습니다.");
+    if (!isNumberValid(studentId)) {
+      alert("학번이 올바르지 않습니다.");
+      return;
+    }
+
+    // 이름이 부적절하다면 종료
+    if (!isNameValid(name)) {
+      alert("이름이 올바르지 않습니다.");
       return;
     }
 
     // 비밀번호가 일치하지 않는다면
     if (password !== passwordConfirm) {
-      alert("학번의 형식이 올바르지 않습니다.");
+      alert("학번이 올바르지 않습니다.");
       return;
     }
 
@@ -355,132 +384,154 @@ const Register = () => {
     studentId,
   ]);
 
+  const { mode } = useColorScheme();
+
   return (
     <TokenRefresher>
-      <ThemeProvider theme={theme}>
-        <Stack className="page-root" justifyContent="center">
-          <Stack
-            width={{
-              xs: "90%",
-              sm: "65%",
-            }}
-            maxWidth="600px"
-            padding="80px 0"
-            gap={3}
-          >
-            {/* 페이지명 */}
-            <Typography variant="h2" fontWeight="bold">
-              회원가입
-            </Typography>
+      <Stack className="page-root" justifyContent="center">
+        <Stack
+          width={{
+            xs: "90%",
+            sm: "65%",
+          }}
+          maxWidth="600px"
+          padding="80px 0"
+          gap={3}
+        >
+          {/* 페이지명 */}
+          <Typography variant="h2" fontWeight="bold">
+            회원가입
+          </Typography>
 
-            {/* 학번 입력란 */}
+          {/* 학번 입력란 */}
+          <TextField
+            placeholder="학번"
+            value={studentId}
+            onChange={handleStudentIdChange}
+            fullWidth
+            error={!!studentId && !isNumberValid(studentId)}
+            helperText={
+              !!studentId &&
+              !isNumberValid(studentId) &&
+              "학번이 올바르지 않습니다."
+            }
+          />
+
+          {/* 이름 입력란 */}
+          <TextField
+            placeholder="이름"
+            value={name}
+            onChange={handleNameChange}
+            fullWidth
+            error={!!name && !isNameValid(name)}
+            helperText={
+              !!name && !isNameValid(name) && "이름이 올바르지 않습니다."
+            }
+          />
+
+          {/* 이메일 */}
+          <Stack direction="row" gap={1}>
+            {/* 이메일 입력란 */}
             <TextField
-              placeholder="학번"
-              value={studentId}
-              onChange={handleStudentIdChange}
-              fullWidth
+              placeholder="이메일"
+              type="email"
+              value={email}
+              onChange={handleEmailChange}
+              disabled={isConfirmCodeChecked}
+              error={!!email && !isEmailValid(email)}
+              helperText={
+                !!email &&
+                !isEmailValid(email) &&
+                "이메일이 올바르지 않습니다."
+              }
+              sx={{
+                flex: "1",
+              }}
             />
 
-            {/* 이름 입력란 */}
-            <TextField
-              placeholder="이름"
-              value={name}
-              onChange={handleNameChange}
-              fullWidth
-            />
-
-            {/* 이메일 */}
-            <Stack direction="row" gap={1}>
-              {/* 이메일 입력란 */}
-              <TextField
-                placeholder="이메일"
-                type="email"
-                value={email}
-                onChange={handleEmailChange}
-                sx={{
-                  flex: "1",
-                }}
-              />
-
-              {/* 인증 요청 버튼 */}
-              <Button
-                variant="outlined"
-                onClick={handleConfirmCodeSendButtonClick}
-              >
-                인증 요청
-              </Button>
-            </Stack>
-
-            {/* 인증번호 */}
-            <Stack
-              direction="row"
-              gap={1}
-              display={isConfirmCodeSent ? "flex" : "none"}
+            {/* 인증 요청 버튼 */}
+            <Button
+              variant="outlined"
+              onClick={handleConfirmCodeSendButtonClick}
+              loading={isConfirmCodeSending}
+              loadingPosition="start"
             >
-              {/* 인증번호 입력란 */}
-              <TextField
-                placeholder="인증번호 입력"
-                value={confirmCode}
-                onChange={handleConfirmCodeChange}
-                sx={{
-                  flex: "1",
-                  minWidth: "120px",
-                }}
-              />
+              인증 요청
+            </Button>
+          </Stack>
 
-              {/* 남은 시간 타이머 */}
-              <Box display="flex" alignItems="center" flex={1}>
-                {!isConfirmCodeChecked && (
-                  <Typography variant="subtitle1" color="primary">
-                    {formatTime(confirmTimeLeft)}
-                  </Typography>
-                )}
-                {isConfirmCodeChecked && <CheckRoundedIcon color="success" />}
-              </Box>
+          {/* 인증번호 */}
+          <Stack
+            direction="row"
+            gap={1}
+            display={isConfirmCodeSent ? "flex" : "none"}
+          >
+            {/* 인증번호 입력란 */}
+            <TextField
+              placeholder="인증번호 입력"
+              value={confirmCode}
+              onChange={handleConfirmCodeChange}
+              sx={{
+                flex: "1",
+                minWidth: "120px",
+              }}
+            />
 
-              {/* 인증 확인 버튼 */}
-              <Button
-                variant="contained"
-                onClick={handleConfirmCodeCheckButtonClick}
-              >
-                인증 확인
-              </Button>
-            </Stack>
+            {/* 남은 시간 타이머 */}
+            <Box display="flex" alignItems="center" flex={1}>
+              {!isConfirmCodeChecked && (
+                <Typography variant="subtitle1" color="primary">
+                  {formatTime(confirmTimeLeft)}
+                </Typography>
+              )}
+              {isConfirmCodeChecked && <CheckRoundedIcon color="success" />}
+            </Box>
 
-            <Stack gap={1}>
-              {/* 비밀번호 입력란 */}
-              <OutlinedInput
-                type={isPasswordVisible ? "text" : "password"}
-                placeholder="비밀번호"
-                value={password}
-                onChange={handlePasswordChange}
-                required
-                // 비밀번호 보임/안보임
-                endAdornment={
-                  <InputAdornment position="end">
-                    <IconButton onClick={handlePasswordVisibleClick}>
-                      {isPasswordVisible ? (
-                        <VisibilityRoundedIcon />
-                      ) : (
-                        <VisibilityOffRoundedIcon />
-                      )}
-                    </IconButton>
-                  </InputAdornment>
-                }
-              />
+            {/* 인증 확인 버튼 */}
+            <Button
+              variant="contained"
+              onClick={handleConfirmCodeCheckButtonClick}
+              disabled={isConfirmCodeChecked}
+            >
+              {isConfirmCodeChecked ? "인증 완료" : "인증 확인"}
+            </Button>
+          </Stack>
 
-              {/* 비밀번호 필요 조건 */}
-              <PasswordValidation password={password} />
-            </Stack>
+          <Stack gap={1}>
+            {/* 비밀번호 입력란 */}
+            <OutlinedInput
+              type={isPasswordVisible ? "text" : "password"}
+              placeholder="비밀번호"
+              value={password}
+              onChange={handlePasswordChange}
+              required
+              // 비밀번호 보임/안보임
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton onClick={handlePasswordVisibleClick}>
+                    {isPasswordVisible ? (
+                      <VisibilityRoundedIcon />
+                    ) : (
+                      <VisibilityOffRoundedIcon />
+                    )}
+                  </IconButton>
+                </InputAdornment>
+              }
+            />
 
-            {/* 비밀번호 재입력 입력란 */}
+            {/* 비밀번호 필요 조건 */}
+            <PasswordValidation password={password} />
+          </Stack>
+
+          {/* 비밀번호 재입력 입력란 */}
+          <FormControl variant="outlined">
             <OutlinedInput
               type={isPasswordConfirmVisible ? "text" : "password"}
               placeholder="비밀번호 재입력"
               value={passwordConfirm}
               onChange={handlePasswordConfirmChange}
               required
-              // 비밀번호 보임/안보임
+              error={password !== passwordConfirm}
               endAdornment={
                 <InputAdornment position="end">
                   <IconButton onClick={handlePasswordConfirmVisibleClick}>
@@ -493,239 +544,250 @@ const Register = () => {
                 </InputAdornment>
               }
             />
+            <FormHelperText error>
+              {password !== passwordConfirm
+                ? "비밀번호가 일치하지 않습니다."
+                : ""}
+            </FormHelperText>
+          </FormControl>
 
-            <Stack gap={1}>
-              {/* 개인정보 동의서 */}
-              <Stack>
-                {/* 개인정보 동의서 제목 */}
-                <Typography
-                  variant="h3"
-                  color="primary"
-                  marginBottom={1}
-                  fontWeight="bold"
-                >
-                  개인정보 처리방침
+          <Stack gap={1}>
+            {/* 개인정보 동의서 */}
+            <Stack>
+              {/* 개인정보 동의서 제목 */}
+              <Typography
+                variant="h3"
+                color="primary"
+                marginBottom={1}
+                fontWeight="bold"
+              >
+                개인정보 처리방침
+              </Typography>
+
+              {/* 개인정보 동의서 본문 */}
+              <Stack
+                gap={2}
+                padding={2}
+                sx={{
+                  backgroundColor:
+                    mode === "light"
+                      ? theme.palette.secondary.light
+                      : theme.palette.secondary.dark,
+                }}
+              >
+                <Typography variant="subtitle1">
+                  목원대학교는 「개인정보 보호법」 및 관계 법령이 정한 바를
+                  준수하여, 적법하게 개인정보를 처리하고 안전하게 관리하고
+                  있습니다.
                 </Typography>
+                <Stack direction="row">
+                  <MuiLink
+                    href="https://www.mokwon.ac.kr/kr/html/sub09/090501.html"
+                    target="_blank"
+                    underline="hover"
+                  >
+                    <Typography variant="h3" color="primary">
+                      전문 보기
+                    </Typography>
+                  </MuiLink>
+                </Stack>
+              </Stack>
 
-                {/* 개인정보 동의서 본문 */}
-                <Stack
-                  gap={2}
-                  padding={2}
-                  sx={{
-                    backgroundColor: "#f4f4f4",
-                  }}
-                >
-                  <Typography variant="subtitle1">
-                    목원대학교는 「개인정보 보호법」 및 관계 법령이 정한 바를
-                    준수하여, 적법하게 개인정보를 처리하고 안전하게 관리하고
-                    있습니다.
-                  </Typography>
-                  <Stack direction="row">
-                    <MuiLink
-                      href="https://www.mokwon.ac.kr/kr/html/sub09/090501.html"
-                      target="_blank"
-                      underline="hover"
-                    >
-                      <Typography variant="h3" color="primary">
-                        전문 보기
-                      </Typography>
-                    </MuiLink>
+              {/* 약관 동의 체크박스 */}
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={isPersonalInfoAgreed}
+                    onChange={handlePersonalInfoAgreeButtonClick}
+                    color="primary"
+                  />
+                }
+                label="동의합니다"
+                sx={{
+                  marginTop: "5px",
+                  alignSelf: "flex-end",
+                }}
+              />
+            </Stack>
+
+            {/* 주의사항 확인서 */}
+            <Stack>
+              {/* 주의사항 확인서 제목 */}
+              <Typography
+                variant="h3"
+                color="primary"
+                marginBottom={1}
+                fontWeight="bold"
+              >
+                사전 주의 및 기본예절 확인서
+              </Typography>
+
+              {/* 주의사항 확인서 본문 */}
+              <ScrollBox height="600px">
+                <Stack gap={5}>
+                  {/* 운영 시간 및 출입 관리 */}
+                  <Stack gap={1}>
+                    <SectionHeader title="운영 시간 및 출입 관리" underline />
+                    <Box marginBottom="5px" />
+                    {[
+                      "운영 시간: 월~금(공휴일 제외), 09:00 ~ 22:00",
+                      "입실시 반드시 출입관리 장치(지문)를 사용하여 출입합니다.",
+                      "입실 기록이 누락되거나 무단 출입이 3회 이상 확인될 경우, 사용 권한이 취소됩니다.",
+                      "시험기간 및 졸업과제, 경진대회 출품 등의 사유로 운영 시간 연장이 필요할 시에는 컴퓨터공학과 과사무실로 신청하시기 바랍니다.",
+                    ].map((text, index) => (
+                      <OrderedListItem text={text} index={index} />
+                    ))}
+                  </Stack>
+
+                  {/* 공용 공간 매너 */}
+                  <Stack gap={1}>
+                    <SectionHeader title="공용 공간 매너" underline />
+                    <Box marginBottom="5px" />
+                    {[
+                      "조용한 환경 유지: 큰 소리로 대화하거나 소음을 발생시키는 행동은 삼가세요.",
+                      "공용 물품 관리: 컴퓨터, 책상, 교탁 등 공용 물품은 신중히 다루며, 손상시 서포터즈에게 즉시 보고합니다.",
+                      "음식물 취식: 음료 및 초콜릿, 사탕 등의 간식은 취식 가능하나, 식사류 및 주류 반입은 불가합니다. 취식 후 쓰레기 처리 및 뒷정리를 깔끔하게 해주시기 바랍니다.",
+                    ].map((text, index) => (
+                      <OrderedListItem text={text} index={index} />
+                    ))}
+                  </Stack>
+
+                  {/* 좌석 및 시설 사용 */}
+                  <Stack gap={1}>
+                    <SectionHeader title="좌석 및 시설 사용" underline />
+                    <Box marginBottom="5px" />
+                    {[
+                      "장기 점유 금지: 자리를 비우고 1시간 이상 미이용 시 서포터즈가 해당 좌석의 예약을 취소할 수 있습니다.",
+                    ].map((text, index) => (
+                      <OrderedListItem text={text} index={index} />
+                    ))}
+                  </Stack>
+
+                  {/* 정리 및 청소 */}
+                  <Stack gap={1}>
+                    <SectionHeader title="정리 및 청소" underline />
+                    <Box marginBottom="5px" />
+                    {[
+                      "사용한 기기 및 자리를 깨끗이 정리하고, 개인 쓰레기는 팹랩 외부 쓰레기통 및 지정된 장소에 버립니다.",
+                      "다음 사용자를 위해 공간을 청결히 유지합니다.",
+                    ].map((text, index) => (
+                      <OrderedListItem text={text} index={index} />
+                    ))}
+                  </Stack>
+
+                  {/* 수업 및 특강 우선 사용 */}
+                  <Stack gap={1}>
+                    <SectionHeader title="수업 및 특강 우선 사용" underline />
+                    <Box marginBottom="5px" />
+                    {[
+                      "학기별 수업(예: 캡스톤디자인2) 및 학과 행사 일정이 우선 적용됩니다.",
+                      "1인석(A좌석)의 경우 팹랩 서포터즈에 우선 배정 예정이며, 미배정 좌석의 경우 자유롭게 사용 가능합니다.",
+                    ].map((text, index) => (
+                      <OrderedListItem text={text} index={index} />
+                    ))}
+                  </Stack>
+
+                  {/* 팹랩 내 기기 및 기구의 이용 */}
+                  <Stack gap={1}>
+                    <SectionHeader
+                      title="팹랩 내 기기 및 기구의 이용"
+                      underline
+                    />
+                    <Box marginBottom="5px" />
+                    {[
+                      "팹랩 실습도구장에 비치되어 있는 노트북 및 실습용 로봇, 아이맥을 포함한 어떤 기기 및 기구도 팹랩 외부 반출 사용을 금합니다.",
+                      "팹랩 내 기기 및 기구의 사용은 팹랩 서포터즈 또는 학과 사무실로 문의하시기 바랍니다.",
+                    ].map((text, index) => (
+                      <OrderedListItem text={text} index={index} />
+                    ))}
+                  </Stack>
+
+                  {/* 위반 시 조치 */}
+                  <Stack gap={1}>
+                    <SectionHeader title="위반 시 조치" underline />
+                    <Box marginBottom="5px" />
+                    {[
+                      "위의 내용을 반복적으로 위반하거나, 공용 물품을 고의로 훼손하는 경우 팹랩 사용 권한이 제한될 수 있습니다.",
+                      "팹랩 서포터즈는 좌석 및 시설 관리 권한을 가지며, 사용자 간 문제 발생 시 중재할 수 있습니다.",
+                    ].map((text, index) => (
+                      <OrderedListItem text={text} index={index} />
+                    ))}
+                  </Stack>
+
+                  {/* 팹랩 이용을 위한 다짐 */}
+                  <Stack gap={1}>
+                    <SectionHeader title="팹랩 이용을 위한 다짐" underline />
+                    <Box marginBottom="5px" />
+                    {[
+                      "모든 사용자는 본 확인서 내용을 숙지하고 준수함으로써 팹랩의 쾌적한 운영에 협조하겠습니다.",
+                    ].map((text, index) => (
+                      <OrderedListItem text={text} index={index} />
+                    ))}
                   </Stack>
                 </Stack>
+              </ScrollBox>
 
-                {/* 약관 동의 체크박스 */}
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={isPersonalInfoAgreed}
-                      onChange={handlePersonalInfoAgreeButtonClick}
-                      color="primary"
-                    />
-                  }
-                  label="동의합니다"
-                  sx={{
-                    marginTop: "5px",
-                    alignSelf: "flex-end",
-                  }}
-                />
-              </Stack>
-
-              {/* 주의사항 확인서 */}
-              <Stack>
-                {/* 주의사항 확인서 제목 */}
-                <Typography
-                  variant="h3"
-                  color="primary"
-                  marginBottom={1}
-                  fontWeight="bold"
-                >
-                  사전 주의 및 기본예절 확인서
-                </Typography>
-
-                {/* 주의사항 확인서 본문 */}
-                <ScrollBox height="600px">
-                  <Stack gap={5}>
-                    {/* 운영 시간 및 출입 관리 */}
-                    <Stack gap={1}>
-                      <SectionHeader title="운영 시간 및 출입 관리" underline />
-                      <Box marginBottom="5px" />
-                      {[
-                        "운영 시간: 월~금(공휴일 제외), 09:00 ~ 22:00",
-                        "입실시 반드시 출입관리 장치(지문)를 사용하여 출입합니다.",
-                        "입실 기록이 누락되거나 무단 출입이 3회 이상 확인될 경우, 사용 권한이 취소됩니다.",
-                        "시험기간 및 졸업과제, 경진대회 출품 등의 사유로 운영 시간 연장이 필요할 시에는 컴퓨터공학과 과사무실로 신청하시기 바랍니다.",
-                      ].map((text, index) => (
-                        <OrderedListItem text={text} index={index} />
-                      ))}
-                    </Stack>
-
-                    {/* 공용 공간 매너 */}
-                    <Stack gap={1}>
-                      <SectionHeader title="공용 공간 매너" underline />
-                      <Box marginBottom="5px" />
-                      {[
-                        "조용한 환경 유지: 큰 소리로 대화하거나 소음을 발생시키는 행동은 삼가세요.",
-                        "공용 물품 관리: 컴퓨터, 책상, 교탁 등 공용 물품은 신중히 다루며, 손상시 서포터즈에게 즉시 보고합니다.",
-                        "음식물 취식: 음료 및 초콜릿, 사탕 등의 간식은 취식 가능하나, 식사류 및 주류 반입은 불가합니다. 취식 후 쓰레기 처리 및 뒷정리를 깔끔하게 해주시기 바랍니다.",
-                      ].map((text, index) => (
-                        <OrderedListItem text={text} index={index} />
-                      ))}
-                    </Stack>
-
-                    {/* 좌석 및 시설 사용 */}
-                    <Stack gap={1}>
-                      <SectionHeader title="좌석 및 시설 사용" underline />
-                      <Box marginBottom="5px" />
-                      {[
-                        "장기 점유 금지: 자리를 비우고 1시간 이상 미이용 시 서포터즈가 해당 좌석의 예약을 취소할 수 있습니다.",
-                      ].map((text, index) => (
-                        <OrderedListItem text={text} index={index} />
-                      ))}
-                    </Stack>
-
-                    {/* 정리 및 청소 */}
-                    <Stack gap={1}>
-                      <SectionHeader title="정리 및 청소" underline />
-                      <Box marginBottom="5px" />
-                      {[
-                        "사용한 기기 및 자리를 깨끗이 정리하고, 개인 쓰레기는 팹랩 외부 쓰레기통 및 지정된 장소에 버립니다.",
-                        "다음 사용자를 위해 공간을 청결히 유지합니다.",
-                      ].map((text, index) => (
-                        <OrderedListItem text={text} index={index} />
-                      ))}
-                    </Stack>
-
-                    {/* 수업 및 특강 우선 사용 */}
-                    <Stack gap={1}>
-                      <SectionHeader title="수업 및 특강 우선 사용" underline />
-                      <Box marginBottom="5px" />
-                      {[
-                        "학기별 수업(예: 캡스톤디자인2) 및 학과 행사 일정이 우선 적용됩니다.",
-                        "1인석(A좌석)의 경우 팹랩 서포터즈에 우선 배정 예정이며, 미배정 좌석의 경우 자유롭게 사용 가능합니다.",
-                      ].map((text, index) => (
-                        <OrderedListItem text={text} index={index} />
-                      ))}
-                    </Stack>
-
-                    {/* 팹랩 내 기기 및 기구의 이용 */}
-                    <Stack gap={1}>
-                      <SectionHeader
-                        title="팹랩 내 기기 및 기구의 이용"
-                        underline
-                      />
-                      <Box marginBottom="5px" />
-                      {[
-                        "팹랩 실습도구장에 비치되어 있는 노트북 및 실습용 로봇, 아이맥을 포함한 어떤 기기 및 기구도 팹랩 외부 반출 사용을 금합니다.",
-                        "팹랩 내 기기 및 기구의 사용은 팹랩 서포터즈 또는 학과 사무실로 문의하시기 바랍니다.",
-                      ].map((text, index) => (
-                        <OrderedListItem text={text} index={index} />
-                      ))}
-                    </Stack>
-
-                    {/* 위반 시 조치 */}
-                    <Stack gap={1}>
-                      <SectionHeader title="위반 시 조치" underline />
-                      <Box marginBottom="5px" />
-                      {[
-                        "위의 내용을 반복적으로 위반하거나, 공용 물품을 고의로 훼손하는 경우 팹랩 사용 권한이 제한될 수 있습니다.",
-                        "팹랩 서포터즈는 좌석 및 시설 관리 권한을 가지며, 사용자 간 문제 발생 시 중재할 수 있습니다.",
-                      ].map((text, index) => (
-                        <OrderedListItem text={text} index={index} />
-                      ))}
-                    </Stack>
-
-                    {/* 팹랩 이용을 위한 다짐 */}
-                    <Stack gap={1}>
-                      <SectionHeader title="팹랩 이용을 위한 다짐" underline />
-                      <Box marginBottom="5px" />
-                      {[
-                        "모든 사용자는 본 확인서 내용을 숙지하고 준수함으로써 팹랩의 쾌적한 운영에 협조하겠습니다.",
-                      ].map((text, index) => (
-                        <OrderedListItem text={text} index={index} />
-                      ))}
-                    </Stack>
-                  </Stack>
-                </ScrollBox>
-
-                {/* 약관 동의 체크박스 */}
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={isGuidelineAgreed}
-                      onChange={handleGuidelineAgreeButtonClick}
-                      color="primary"
-                    />
-                  }
-                  label="동의합니다"
-                  sx={{
-                    marginTop: "5px",
-                    alignSelf: "flex-end",
-                  }}
-                />
-              </Stack>
-            </Stack>
-
-            <Stack gap={1}>
-              {/* 회원가입 버튼 */}
-              <Button
-                variant="contained"
-                color="secondary"
-                onClick={handleRegisterButtonClick}
-                fullWidth
-                sx={{
-                  fontSize: "1.5em",
-                  fontWeight: "bold",
-                  textTransform: "none",
-                }}
-                disabled={
-                  !studentId ||
-                  !name ||
-                  !email ||
-                  !isConfirmCodeChecked ||
-                  !password ||
-                  password !== passwordConfirm ||
-                  !isPersonalInfoAgreed ||
-                  !isGuidelineAgreed
+              {/* 약관 동의 체크박스 */}
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={isGuidelineAgreed}
+                    onChange={handleGuidelineAgreeButtonClick}
+                    color="primary"
+                  />
                 }
-              >
-                FabLab 회원가입
-              </Button>
-
-              <Link
-                to="/login"
-                css={{
-                  textDecoration: "none",
-                  color: theme.palette.secondary.main,
+                label="동의합니다"
+                sx={{
+                  marginTop: "5px",
+                  alignSelf: "flex-end",
                 }}
-              >
-                <Typography variant="subtitle1" color="primary">
-                  로그인으로 돌아가기
-                </Typography>
-              </Link>
+              />
             </Stack>
           </Stack>
+
+          <Stack gap={1}>
+            {/* 회원가입 버튼 */}
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={handleRegisterButtonClick}
+              fullWidth
+              sx={{
+                fontSize: "1.5em",
+                fontWeight: "bold",
+                textTransform: "none",
+              }}
+              disabled={
+                !studentId ||
+                !isNumberValid(studentId) ||
+                !name ||
+                !isNameValid(name) ||
+                !email ||
+                !isEmailValid(email) ||
+                !isConfirmCodeChecked ||
+                !password ||
+                password !== passwordConfirm ||
+                !isPersonalInfoAgreed ||
+                !isGuidelineAgreed
+              }
+            >
+              FabLab 회원가입
+            </Button>
+
+            <Link
+              to="/login"
+              css={{
+                textDecoration: "none",
+                color: theme.palette.secondary.main,
+              }}
+            >
+              <Typography variant="subtitle1" color="primary">
+                로그인으로 돌아가기
+              </Typography>
+            </Link>
+          </Stack>
         </Stack>
-      </ThemeProvider>
+      </Stack>
     </TokenRefresher>
   );
 };

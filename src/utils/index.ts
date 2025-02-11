@@ -1,5 +1,4 @@
 import { createTheme } from "@mui/material";
-import { color } from "./theme";
 import { useSetAtom } from "jotai";
 import {
   bookRestrictedSeatsAtom,
@@ -15,6 +14,24 @@ import { setAccessToken } from "./accessToken";
  * MUI 테마 객체
  */
 export const theme = createTheme({
+  colorSchemes: {
+    light: {
+      palette: {
+        primary: { main: "#a72b43", light: "#a72b43" },
+        secondary: { main: "#6e6e6e", light: "#f4f4f4", dark: "#4d4d4d" },
+        text: { primary: "#000" },
+      },
+    },
+    dark: {
+      palette: {
+        primary: { main: "#cb3452" },
+        secondary: { main: "#ccc" },
+        background: { default: "#323232", paper: "#323232" },
+        divider: "rgba(255, 255, 255, 0.5)",
+        text: { primary: "#fff" },
+      },
+    },
+  },
   components: {
     MuiStack: {
       styleOverrides: {
@@ -51,7 +68,18 @@ export const theme = createTheme({
     },
     MuiTextField: {
       defaultProps: {
-        inputProps: { spellCheck: false },
+        inputProps: {
+          spellCheck: false,
+        },
+      },
+      styleOverrides: {
+        root: ({ theme }) => ({
+          "input:autofill": {
+            boxShadow: `0 0 0 1000px ${
+              theme.palette.mode === "light" ? "white" : "#323232"
+            } inset`,
+          },
+        }),
       },
     },
     MuiTableCell: {
@@ -71,10 +99,6 @@ export const theme = createTheme({
         },
       },
     },
-  },
-  palette: {
-    primary: { main: color.primary },
-    secondary: { main: "#6e6e6e" },
   },
   typography: {
     fontFamily: ["Pretendard-Regular", "sans-serif"].join(","),
@@ -184,4 +208,61 @@ export const useResetStates = () => {
     setMyCurrentReservation,
     setBookRestrictedSeats,
   };
+};
+
+/**
+ * 숫자 형식이 올바른지 확인하는 함수
+ * @param number 숫자
+ * @returns 숫자가 올바른지 여부
+ */
+export const isNumberValid = (number: string) => {
+  if (!number) {
+    return false;
+  }
+
+  const numberRegex = /^[0-9]+$/;
+  if (!numberRegex.test(number)) {
+    return false;
+  }
+
+  return true;
+};
+
+/**
+ * 이름 형식이 올바른지 확인하는 함수
+ * @param name 이름
+ * @returns 이름이 올바른지 여부
+ */
+export const isNameValid = (name: string) => {
+  if (!name) {
+    return false;
+  }
+
+  const nameRegex = /^[ㄱ-ㅎ가-힣]+$/;
+  if (!nameRegex.test(name)) {
+    return false;
+  }
+
+  return true;
+};
+
+/**
+ * 이메일 형식이 올바른지 확인하는 함수
+ * @param email 이메일 주소
+ * @returns 이메일 형식이 올바른지 여부
+ */
+export const isEmailValid = (email: string) => {
+  // 이메일 미입력시
+  if (!email) {
+    return false;
+  }
+
+  // 이메일 정규식 검사
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  if (!emailRegex.test(email)) {
+    return false;
+  }
+
+  // 이메일 형식이 올바름
+  return true;
 };

@@ -1,10 +1,13 @@
-import { Box, Stack, ThemeProvider } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import NoticeBanner from "../components/NoticeBanner";
 import SeatLayout from "../components/SeatLayout";
-import { dateFormatter, theme } from "../utils";
+import { dateFormatter } from "../utils";
 import ReservationDialog from "../components/ReservationDialog";
 import { useCallback, useEffect, useState } from "react";
-import axiosInstance, { getCsrfToken, SERVER_HOST } from "../utils/axiosInstance";
+import axiosInstance, {
+  getCsrfToken,
+  SERVER_HOST,
+} from "../utils/axiosInstance";
 import TokenRefresher from "../components/TokenRefresher";
 import { useAtomValue, useSetAtom } from "jotai";
 import {
@@ -39,7 +42,8 @@ const Reservation = () => {
         const userPermission = response.data.user.permission;
 
         // 권한에 따른 좌석 정보 불러오기
-        const seatsResponse = await (userPermission === "admin" || userPermission === "superadmin"
+        const seatsResponse = await (userPermission === "admin" ||
+        userPermission === "superadmin"
           ? axiosInstance.get("/admin/seats")
           : axios.get(`${SERVER_HOST}/seats`));
         seatsInfo = seatsResponse.data.seats;
@@ -50,8 +54,9 @@ const Reservation = () => {
       }
 
       // 예약 제한된 좌석 불러오기
-      const bookRestrictionSeatsResponse = await axios.get(`${SERVER_HOST}/book/restriction/seats`);
-      console.log(bookRestrictionSeatsResponse);
+      const bookRestrictionSeatsResponse = await axios.get(
+        `${SERVER_HOST}/book/restriction/seats`
+      );
       setBookRestrictedSeats(bookRestrictionSeatsResponse.data.restrictedSeats);
 
       const newSeatInfo: Record<string, SeatInfoProps> = {};
@@ -182,45 +187,43 @@ const Reservation = () => {
 
   return (
     <TokenRefresher>
-      <ThemeProvider theme={theme}>
-        <Stack className="page-root">
-          {/* 공지사항 배너 */}
-          <Box
-            width="100%"
-            padding="10px 0"
-            display={notices && notices.length > 0 ? "block" : "none"}
-          >
-            {notices && (
-              <NoticeBanner
-                message={notices[0]?.title}
-                moreCount={notices.length - 1}
-              />
-            )}
-          </Box>
-
-          {/* 좌석 배치도 */}
-          <Stack
-            width="100%"
-            flex={1}
-            sx={{
-              overflowX: "auto",
-            }}
-          >
-            <SeatLayout
-              minWidth="600px"
-              minHeight="450px"
-              margin="20px 20px"
-              onSeatButtonClick={handleReservationDialogOpen}
+      <Stack className="page-root">
+        {/* 공지사항 배너 */}
+        <Box
+          width="100%"
+          padding="10px 0"
+          display={notices && notices.length > 0 ? "block" : "none"}
+        >
+          {notices && (
+            <NoticeBanner
+              message={notices[0]?.title}
+              moreCount={notices.length - 1}
             />
-          </Stack>
-        </Stack>
+          )}
+        </Box>
 
-        <ReservationDialog
-          seatName={seatName}
-          open={reservationDialogOpen}
-          onClose={handleReservationDialogClose}
-        />
-      </ThemeProvider>
+        {/* 좌석 배치도 */}
+        <Stack
+          width="100%"
+          flex={1}
+          sx={{
+            overflowX: "auto",
+          }}
+        >
+          <SeatLayout
+            minWidth="700px"
+            minHeight="450px"
+            margin="20px 20px"
+            onSeatButtonClick={handleReservationDialogOpen}
+          />
+        </Stack>
+      </Stack>
+
+      <ReservationDialog
+        seatName={seatName}
+        open={reservationDialogOpen}
+        onClose={handleReservationDialogClose}
+      />
     </TokenRefresher>
   );
 };

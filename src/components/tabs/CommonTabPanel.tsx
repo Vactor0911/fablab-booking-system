@@ -170,25 +170,42 @@ const CommonTabPanel = (props: TabPanelProps) => {
                 })}
               >
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <Stack direction="row" gap={2}>
-                    <Box flex={1}>
-                      <MobileTimePicker
-                        label="이용 시작 시간"
-                        value={openingHour}
-                        onChange={setOpeningHour}
-                        sx={{ width: "100%" }}
-                      />
-                    </Box>
-                    <Box flex={1}>
-                      <MobileTimePicker
-                        label="이용 종료 시간"
-                        value={closingHour}
-                        onChange={setClosingHour}
-                        minTime={openingHour?.add(1, "minute")}
-                        sx={{ width: "100%" }}
-                      />
-                    </Box>
-                  </Stack>
+                  <ThemeProvider
+                    theme={createTheme({
+                      colorSchemes: {
+                        light: {
+                          palette: {
+                            primary: { main: "#a72b43" },
+                          },
+                        },
+                        dark: {
+                          palette: {
+                            primary: { main: "#a72b43" },
+                          },
+                        },
+                      },
+                    })}
+                  >
+                    <Stack direction="row" gap={2}>
+                      <Box flex={1}>
+                        <MobileTimePicker
+                          label="이용 시작 시간"
+                          value={openingHour}
+                          onChange={setOpeningHour}
+                          sx={{ width: "100%" }}
+                        />
+                      </Box>
+                      <Box flex={1}>
+                        <MobileTimePicker
+                          label="이용 종료 시간"
+                          value={closingHour}
+                          onChange={setClosingHour}
+                          minTime={openingHour?.add(1, "minute")}
+                          sx={{ width: "100%" }}
+                        />
+                      </Box>
+                    </Stack>
+                  </ThemeProvider>
                 </LocalizationProvider>
               </ThemeProvider>
             </Stack>

@@ -18,8 +18,11 @@ import {
   TextField,
   ThemeProvider,
   Typography,
+  useColorScheme,
 } from "@mui/material";
 import {
+  isEmailValid,
+  isNameValid,
   isPasswordCombinationValid,
   isPasswordLengthValid,
   theme,
@@ -76,6 +79,8 @@ interface DialogTextFieldProps {
   disabled?: boolean;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder?: string;
+  error?: boolean;
+  helperText?: string;
 }
 
 const DialogTextField = ({
@@ -83,6 +88,7 @@ const DialogTextField = ({
   disabled = false,
   onChange,
   placeholder,
+  ...props
 }: DialogTextFieldProps) => {
   return (
     <TextField
@@ -93,6 +99,7 @@ const DialogTextField = ({
       onChange={onChange}
       placeholder={placeholder}
       disabled={disabled}
+      {...props}
     />
   );
 };
@@ -249,6 +256,8 @@ const UserDialog = (props: UserDialogProps) => {
     user,
   ]);
 
+  const { mode } = useColorScheme();
+
   return (
     <TokenRefresher>
       <ThemeProvider theme={theme}>
@@ -321,6 +330,8 @@ const UserDialog = (props: UserDialogProps) => {
                     value={name}
                     onChange={handleNameChange}
                     disabled={isDisabled}
+                    error={!!name && !isNameValid(name)}
+                    helperText={!!name && !isNameValid(name) ? "이름이 올바르지 않습니다." : ""}
                   />
                 </UserDialogContent>
               </Grid2>
@@ -337,6 +348,8 @@ const UserDialog = (props: UserDialogProps) => {
                     value={email}
                     onChange={handleEmailChange}
                     disabled={isDisabled}
+                    error={!!email && !isEmailValid(email)}
+                    helperText={!!email && !isEmailValid(email) ? "이메일이 올바르지 않습니다." : ""}
                   />
                 </UserDialogContent>
               </Grid2>
@@ -383,6 +396,11 @@ const UserDialog = (props: UserDialogProps) => {
                       justifyContent: "center",
                       padding: "3px 14px",
                       border: "1px solid rgba(0, 0, 0, 0.23)",
+                      borderColor:
+                        mode === "light"
+                          ? "rgba(0, 0, 0, 0.23)"
+                          : "rgba(255, 255, 255, 0.23)",
+                      backgroundColor: "inherit",
                     }}
                   >
                     <RadioGroup row value={state} onChange={handleStateChange}>
