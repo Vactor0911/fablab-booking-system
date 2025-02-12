@@ -29,6 +29,7 @@ import TokenRefresher from "./TokenRefresher";
 import { useNavigate } from "react-router";
 import axios from "axios";
 import dayjs from "dayjs";
+import { dateFormatter } from "../utils";
 
 interface ReservationDialogProps {
   seatName: string;
@@ -85,8 +86,6 @@ const ReservationDialog = (props: ReservationDialogProps) => {
         );
         seatInfo = seatsResponse.data.seat;
       }
-
-      console.log(seatInfo);
 
       setEttiqutte(seatInfo.basicManners);
       setCaution(seatInfo.warning);
@@ -319,7 +318,7 @@ const ReservationDialog = (props: ReservationDialogProps) => {
                 >
                   예약좌석
                 </Typography>
-                {loginState.permission !== Permission.USER && (
+                {loginState.isLoggedIn && loginState.permission !== Permission.USER && (
                   <Typography
                     variant="subtitle1"
                     color="primary"
@@ -353,16 +352,27 @@ const ReservationDialog = (props: ReservationDialogProps) => {
 
               {/* 값 */}
               <Stack spacing={0.5}>
+                {/* 좌석명 */}
                 <Typography variant="subtitle1">{seatName}</Typography>
-                {loginState.permission !== Permission.USER && (
+
+                {/* 예약자 */}
+                {loginState.isLoggedIn && loginState.permission !== Permission.USER && (
                   <Typography variant="subtitle1">{person}</Typography>
                 )}
+
+                {/* 예약날짜 */}
                 <Typography variant="subtitle1">
-                  {isBooked || loginState.permission === Permission.USER
+                  {isBooked
                     ? reservationDate
+                    : loginState.permission === Permission.USER
+                    ? dateFormatter.format(new Date())
                     : "예약 없음"}
                 </Typography>
+
+                {/* 예약시간 */}
                 <Typography variant="subtitle1">{reservationTime}</Typography>
+
+                {/* PC 지원 */}
                 <Typography variant="subtitle1">{pcSupport}</Typography>
               </Stack>
             </Stack>
@@ -431,7 +441,8 @@ const ReservationDialog = (props: ReservationDialogProps) => {
               fontWeight: "bold",
               display:
                 !loginState.isLoggedIn ||
-                (loginState.permission === Permission.USER && !reservationSeat)
+                (loginState.permission === Permission.USER &&
+                  reservationSeat !== seatName)
                   ? "block"
                   : "none",
             }}
@@ -439,10 +450,14 @@ const ReservationDialog = (props: ReservationDialogProps) => {
             disabled={
               !dayjs().isBefore(
                 dayjs().hour(endTime.hour).minute(endTime.minute)
-              )
+              ) || !!reservationSeat
             }
           >
-            {dayjs().isBefore(dayjs().hour(endTime.hour).minute(endTime.minute))
+            {reservationSeat
+              ? "이미 좌석을 예약하였습니다."
+              : dayjs().isBefore(
+                  dayjs().hour(endTime.hour).minute(endTime.minute)
+                )
               ? "동의 후 예약"
               : "운영 시간이 아닙니다."}
           </Button>
