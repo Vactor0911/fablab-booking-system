@@ -1,10 +1,8 @@
 import {
   Box,
   Button,
-  createTheme,
   Stack,
   TextField,
-  ThemeProvider,
   Typography,
 } from "@mui/material";
 import { TabPanelProps } from "../../pages/Settings";
@@ -12,12 +10,11 @@ import { useCallback, useEffect, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import axiosInstance from "../../utils/axiosInstance";
 import SectionHeader from "../SectionHeader";
-import { LocalizationProvider, MobileTimePicker } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import axios from "axios";
 import { useAtomValue } from "jotai";
 import { loginStateAtom } from "../../states";
 import TokenRefresher from "../TokenRefresher";
+import TimePicker from "../TimePicker";
 
 const CommonTabPanel = (props: TabPanelProps) => {
   const { value, index } = props;
@@ -159,55 +156,19 @@ const CommonTabPanel = (props: TabPanelProps) => {
             {/* 이용 가능 시간 */}
             <Stack gap={3} flex={1}>
               <SectionHeader title="이용 가능 시간" />
-              <ThemeProvider
-                theme={createTheme({
-                  typography: {
-                    h3: {
-                      fontSize: "3rem",
-                      lineHeight: "3rem",
-                    },
-                  },
-                })}
-              >
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <ThemeProvider
-                    theme={createTheme({
-                      colorSchemes: {
-                        light: {
-                          palette: {
-                            primary: { main: "#a72b43" },
-                          },
-                        },
-                        dark: {
-                          palette: {
-                            primary: { main: "#a72b43" },
-                          },
-                        },
-                      },
-                    })}
-                  >
-                    <Stack direction="row" gap={2}>
-                      <Box flex={1}>
-                        <MobileTimePicker
-                          label="이용 시작 시간"
-                          value={openingHour}
-                          onChange={setOpeningHour}
-                          sx={{ width: "100%" }}
-                        />
-                      </Box>
-                      <Box flex={1}>
-                        <MobileTimePicker
-                          label="이용 종료 시간"
-                          value={closingHour}
-                          onChange={setClosingHour}
-                          minTime={openingHour?.add(1, "minute")}
-                          sx={{ width: "100%" }}
-                        />
-                      </Box>
-                    </Stack>
-                  </ThemeProvider>
-                </LocalizationProvider>
-              </ThemeProvider>
+              <Stack direction="row" gap={2}>
+                <TimePicker
+                  label="이용 시작 시간"
+                  value={openingHour}
+                  setValue={setOpeningHour}
+                />
+                <TimePicker
+                  label="이용 종료 시간"
+                  value={closingHour}
+                  setValue={setClosingHour}
+                  minTime={openingHour?.add(1, "minute")}
+                />
+              </Stack>
             </Stack>
           </Stack>
 
