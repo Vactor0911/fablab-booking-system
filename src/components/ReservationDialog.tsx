@@ -13,7 +13,6 @@ import {
 import SampleImage from "../assets/SampleImage.png";
 
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
-import { dateFormatter } from "../utils";
 import { useCallback, useEffect, useState } from "react";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import {
@@ -44,10 +43,11 @@ const ReservationDialog = (props: ReservationDialogProps) => {
   const [caution, setCaution] = useState("");
   const [pcSupport, setPcSupport] = useState("");
   const [seatImage, setSeatImage] = useState("");
+  const [reservationDate, setReservationDate] = useState("");
   const [reservationTime, setReservationTime] = useState("");
   const [endTime, setEndTime] = useState({ hour: 0, minute: 0 });
   const [isBooked, setIsBooked] = useState(false);
-  const [person, setPerson] = useState(""); // TODO: 명칭 변경 필요
+  const [person, setPerson] = useState("");
 
   const loginState = useAtomValue(loginStateAtom);
 
@@ -86,10 +86,13 @@ const ReservationDialog = (props: ReservationDialogProps) => {
         seatInfo = seatsResponse.data.seat;
       }
 
+      console.log(seatInfo);
+
       setEttiqutte(seatInfo.basicManners);
       setCaution(seatInfo.warning);
       setPcSupport(seatInfo.pc_support);
       setSeatImage(seatInfo.image);
+      setReservationDate(seatInfo.reservationDate);
 
       const newIsBooked = !!seatInfo.userName && seatInfo.userName !== "없음";
       setIsBooked(newIsBooked);
@@ -356,7 +359,7 @@ const ReservationDialog = (props: ReservationDialogProps) => {
                 )}
                 <Typography variant="subtitle1">
                   {isBooked || loginState.permission === Permission.USER
-                    ? dateFormatter.format(new Date())
+                    ? reservationDate
                     : "예약 없음"}
                 </Typography>
                 <Typography variant="subtitle1">{reservationTime}</Typography>
