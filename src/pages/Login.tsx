@@ -29,7 +29,7 @@ const Login = () => {
   const [studentId, setStudentId] = useState(""); // 학번
   const [password, setPassword] = useState(""); // 비밀번호
   const [isPasswordVisible, setIsPasswordVisible] = useState(false); // 비밀번호 표시 여부
-  const [isLoginStateSave, setIsLoginStateSave] = useState(false); // 로그인 상태 유지 여부
+  const [isLoginStateSave, setIsLoginStateSave] = useState(true); // 로그인 상태 유지 여부
   const setLoginState = useSetAtom(loginStateAtom); // 로그인 상태
 
   // 학번 입력

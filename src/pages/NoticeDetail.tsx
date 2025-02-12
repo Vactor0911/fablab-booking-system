@@ -10,6 +10,7 @@ import { useCallback, useEffect, useState } from "react";
 import TokenRefresher from "../components/TokenRefresher";
 import axiosInstance, { getCsrfToken } from "../utils/axiosInstance";
 import axios from "axios";
+import QuillEditor from "../components/QuillEditor";
 
 const NoticeDetail = () => {
   const location = useLocation();
@@ -49,12 +50,6 @@ const NoticeDetail = () => {
 
   // 내용
   const [content, setContent] = useState("");
-  const handleContentChange = useCallback(
-    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      setContent(e.target.value);
-    },
-    []
-  );
 
   // 공지사항 정보 불러오기
   const [author, setAuthor] = useState(""); // 작성자
@@ -63,11 +58,11 @@ const NoticeDetail = () => {
   const fetchNotice = useCallback(async () => {
     try {
       const response = await axiosInstance.get(`/notice/${uuid}`); // 공지사항 ID를 기반으로 API 호출
-      setTitle(response.data.notice.title);
-      setContent(response.data.notice.content);
-      setAuthor(response.data.notice.author_name);
-      setDate(response.data.notice.created_date);
-      setNoticeId(response.data.notice.notice_id);
+      setTitle(response.data.notice.title); // 제목
+      setContent(response.data.notice.content); // 내용
+      setAuthor(response.data.notice.author_name); // 작성자
+      setDate(response.data.notice.created_date); // 작성일
+      setNoticeId(response.data.notice.notice_id); // 공지사항 ID
     } catch (err) {
       console.error("공지사항 데이터를 가져오는 중 오류 발생:", err);
     }
@@ -335,27 +330,11 @@ const NoticeDetail = () => {
               {/* 내용 */}
               <Stack gap={2} flex={1}>
                 <SectionHeader title="내용" />
-
-                {isEditing ? (
-                  <TextField
-                    placeholder="내용"
-                    multiline
-                    rows={18}
-                    value={content}
-                    onChange={handleContentChange}
-                  />
-                ) : (
-                  <Typography
-                    component="pre"
-                    variant="subtitle1"
-                    sx={{
-                      textWrap: "wrap",
-                      wordBreak: "break-all",
-                    }}
-                  >
-                    {content}
-                  </Typography>
-                )}
+                <QuillEditor
+                  value={content}
+                  setValue={setContent}
+                  readonly={!isEditing}
+                />
               </Stack>
 
               <Stack
