@@ -85,7 +85,6 @@ const SeatButton = (props: SeatButtonProps) => {
   return (
     <ThemeProvider theme={buttonTheme}>
       <Button
-        key={seatName}
         variant="contained"
         fullWidth
         color={
