@@ -138,7 +138,7 @@ export const theme = createTheme({
     },
     subtitle2: {
       fontSize: "0.83em",
-      lineHeight: "0.125em",
+      lineHeight: "0.83em",
     },
   },
 });

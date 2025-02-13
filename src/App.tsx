@@ -19,6 +19,7 @@ import {
 } from "./pages";
 import { CssBaseline, Stack, ThemeProvider } from "@mui/material";
 import { theme } from "./utils";
+import Footer from "./components/Footer";
 
 function App() {
   return (
@@ -52,6 +53,7 @@ function App() {
             {/* 404 Not Found */}
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
+          <Footer />
         </BrowserRouter>
       </Stack>
     </ThemeProvider>
