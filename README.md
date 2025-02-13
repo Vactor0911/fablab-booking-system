@@ -1,4 +1,8 @@
 # 📁 팹랩 예약 시스템
+
+![image](https://github.com/user-attachments/assets/4b207f93-0c88-426f-a4a3-b6d198ac6f0a)
+
+
 [ 팹랩 예약 시스템 ] 서비스를 위한 리포지토리입니다.  
 - [팹랩 예약 시스템 프론트엔드 리포지토리](https://github.com/Vactor0911/fablab-booking-system)
 - [팹랩 예약 시스템 백엔드 리포지토리](https://github.com/Vactor0911/fablab-booking-system-server)
