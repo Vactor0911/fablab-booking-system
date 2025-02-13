@@ -113,25 +113,3 @@
 
 ## 🔨 Structure
 ![FabLab 예약 시스템 구조도](https://github.com/user-attachments/assets/9e9bf655-00fb-46b8-8345-93fb5f8bcd82)
-
-<br />
-
-### 사용 라이브러리
-
-- **프론트엔드**
-  - [axios](https://www.npmjs.com/package/axios)
-  - [dayjs](https://www.npmjs.com/package/dayjs)
-  - [dotenv](https://www.npmjs.com/package/dotenv)
-  - [emotion](https://emotion.sh/docs/introduction)
-  - [jotai](https://www.npmjs.com/package/jotai)
-  - [mui](https://mui.com/)
-  - [overlayscrollbars](https://www.npmjs.com/package/overlayscrollbars)
-  - [react-router](https://www.npmjs.com/package/react-router)
-  - [react-router-dom](https://www.npmjs.com/package/react-router-dom)
-
-- **백엔드**
-  - [body-parser](https://www.npmjs.com/package/body-parser)
-  - [cors](https://www.npmjs.com/package/cors)
-  - [dotenv](https://www.npmjs.com/package/dotenv)
-  - [express](https://www.npmjs.com/package/express)
-  - [mariadb](https://www.npmjs.com/package/mariadb)
