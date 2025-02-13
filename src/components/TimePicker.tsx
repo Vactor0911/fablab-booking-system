@@ -10,6 +10,7 @@ import {
   Stack,
   TextField,
   Typography,
+  useColorScheme,
 } from "@mui/material";
 import { useCallback, useEffect, useRef, useState } from "react";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
@@ -24,6 +25,8 @@ interface TimeTextFieldProps {
 const TimeTextField = (props: TimeTextFieldProps) => {
   const { value, onChange } = props;
 
+  const { mode } = useColorScheme();
+
   return (
     <TextField
       slotProps={{
@@ -34,10 +37,11 @@ const TimeTextField = (props: TimeTextFieldProps) => {
             padding: "0",
             fontSize: "3em",
             textAlign: "center",
-            backgroundColor: "#f4f4f4",
+            borderRadius: "5px",
+            backgroundColor: mode === "light" ? "#f4f4f4" : "#333",
             "&:focus": {
               color: theme.palette.primary.main,
-              backgroundColor: "#f0dce3",
+              backgroundColor: mode === "light" ? "#f0dce3" : "#423235",
             },
           },
         },
@@ -69,9 +73,10 @@ const TimePicker = (props: TimePickerProps) => {
 
   // 초기값 설정
   useEffect(() => {
-    if (value) {
+    if (value && value.isValid()) {
       const [newHour, newMinute] = value.format("HH:mm").split(":");
       setLocalValue(`${newHour}:${newMinute}`);
+
       setHour(newHour.padStart(2, "0"));
       setMinute(newMinute.padStart(2, "0"));
     }
@@ -91,7 +96,11 @@ const TimePicker = (props: TimePickerProps) => {
   const handleConfirm = useCallback(() => {
     setLocalValue(`${hour}:${minute}`);
     if (setValue) {
-      setValue(dayjs(`${hour}:${minute}`, "HH:mm"));
+      const newValue = dayjs()
+        .hour(Number(hour))
+        .minute(Number(minute))
+        .second(0);
+      setValue(newValue);
     }
 
     handleClose();
@@ -124,7 +133,7 @@ const TimePicker = (props: TimePickerProps) => {
       const minMinute = minTime ? minTime.minute() : 0;
       const maxMinute = maxTime ? maxTime.minute() : 59;
 
-    const newMinute = Number(e.target.value.slice(-2));
+      const newMinute = Number(e.target.value.slice(-2));
       const newClampedMinute = Math.min(
         Math.max(newMinute, minMinute),
         maxMinute
