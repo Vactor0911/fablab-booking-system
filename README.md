@@ -107,7 +107,7 @@
 <br />
 
 ## 🔨 Structure | 구조
-![FabLab 예약 시스템 구조도](https://github.com/user-attachments/assets/9e9bf655-00fb-46b8-8345-93fb5f8bcd82)
+![FabLab 예약 시스템 구조도](https://github.com/user-attachments/assets/762a7a57-3a19-494b-bf4c-2decce4c3ea8)
 
 
 ## 🔗 Links
