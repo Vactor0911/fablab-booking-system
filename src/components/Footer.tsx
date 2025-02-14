@@ -1,4 +1,15 @@
-import { Avatar, Divider, Link, Stack, Typography } from "@mui/material";
+import {
+  Avatar,
+  Divider,
+  Link,
+  Stack,
+  Tooltip,
+  Typography,
+  useColorScheme,
+} from "@mui/material";
+import GithubIcon from "../assets/icons/Github.svg";
+import GithubWhiteIcon from "../assets/icons/GithubWhite.svg";
+import YoutubeIcon from "../assets/icons/Youtube.svg";
 
 // Divider 객체
 const StyledDivider = () => {
@@ -38,6 +49,8 @@ const StyledLink = (props: StyledLinkProps) => {
 };
 
 const Footer = () => {
+  const { mode } = useColorScheme();
+
   return (
     <Stack
       component="footer"
@@ -78,7 +91,7 @@ const Footer = () => {
               label="개인정보 이용약관"
             />
             <StyledDivider />
-            <StyledLink href="/" label=" 오류 제보" />
+            <StyledLink href="https://docs.google.com/forms/d/e/1FAIpQLSecp7tEXJ8r6BZPqcLwfYqjU4S4tbKdQkBJzZ_CavNrByYQ0w/viewform" label=" 오류 제보" />
           </Stack>
 
           <Typography variant="subtitle2" color="secondary">
@@ -89,15 +102,24 @@ const Footer = () => {
 
         {/* 아이콘 버튼 */}
         <Stack direction="row" gap={2}>
-          <Link href="https://www.mokwon.ac.kr/kr/">
-            <Avatar alt="목원대학교" />
-          </Link>
-          <Link href="https://www.youtube.com/@mw_computer">
-            <Avatar alt="컴퓨터공학과 유튜브" />
-          </Link>
-          <Link href="https://github.com/Vactor0911/fablab-booking-system">
-            <Avatar alt="깃허브 리포지토리" />
-          </Link>
+          <Tooltip title="목원대학교" arrow>
+            <Link href="https://www.mokwon.ac.kr/kr/">
+              <Avatar alt="목원대학교" />
+            </Link>
+          </Tooltip>
+          <Tooltip title="컴퓨터공학과 유튜브" arrow>
+            <Link href="https://www.youtube.com/@mw_computer">
+              <Avatar src={YoutubeIcon} alt="컴퓨터공학과 유튜브" />
+            </Link>
+          </Tooltip>
+          <Tooltip title="깃허브 리포지토리" arrow>
+            <Link href="https://github.com/Vactor0911/fablab-booking-system">
+              <Avatar
+                src={mode === "light" ? GithubIcon : GithubWhiteIcon}
+                alt="깃허브 리포지토리"
+              />
+            </Link>
+          </Tooltip>
         </Stack>
       </Stack>
     </Stack>
