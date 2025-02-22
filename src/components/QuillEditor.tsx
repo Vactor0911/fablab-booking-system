@@ -58,7 +58,7 @@ const QuillEditor = (props: QuillEditorProps) => {
         },
       ],
       ["bold", "italic", "underline", "strike"],
-      ["link", "image"],
+      ["link"],
       [{ align: [] }, { color: [] }, { background: [] }],
       [{ list: "ordered" }, { list: "bullet" }],
     ],
