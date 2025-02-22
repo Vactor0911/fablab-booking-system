@@ -115,7 +115,7 @@ const Footer = () => {
           <Tooltip title="깃허브 리포지토리" arrow>
             <Link href="https://github.com/Vactor0911/fablab-booking-system">
               <Avatar
-                src={mode === "light" ? GithubIcon : GithubWhiteIcon}
+                src={mode !== "dark" ? GithubIcon : GithubWhiteIcon}
                 alt="깃허브 리포지토리"
               />
             </Link>
