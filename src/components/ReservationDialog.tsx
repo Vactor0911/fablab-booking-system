@@ -13,7 +13,6 @@ import {
 import SampleImage from "../assets/SampleImage.png";
 
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
-import { dateFormatter } from "../utils";
 import { useCallback, useEffect, useState } from "react";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import {
@@ -30,6 +29,7 @@ import TokenRefresher from "./TokenRefresher";
 import { useNavigate } from "react-router";
 import axios from "axios";
 import dayjs from "dayjs";
+import { dateFormatter } from "../utils";
 
 interface ReservationDialogProps {
   seatName: string;
@@ -44,10 +44,11 @@ const ReservationDialog = (props: ReservationDialogProps) => {
   const [caution, setCaution] = useState("");
   const [pcSupport, setPcSupport] = useState("");
   const [seatImage, setSeatImage] = useState("");
+  const [reservationDate, setReservationDate] = useState("");
   const [reservationTime, setReservationTime] = useState("");
   const [endTime, setEndTime] = useState({ hour: 0, minute: 0 });
   const [isBooked, setIsBooked] = useState(false);
-  const [person, setPerson] = useState(""); // TODO: 명칭 변경 필요
+  const [person, setPerson] = useState("");
 
   const loginState = useAtomValue(loginStateAtom);
 
@@ -90,6 +91,7 @@ const ReservationDialog = (props: ReservationDialogProps) => {
       setCaution(seatInfo.warning);
       setPcSupport(seatInfo.pc_support);
       setSeatImage(seatInfo.image);
+      setReservationDate(seatInfo.reservationDate);
 
       const newIsBooked = !!seatInfo.userName && seatInfo.userName !== "없음";
       setIsBooked(newIsBooked);
@@ -316,7 +318,7 @@ const ReservationDialog = (props: ReservationDialogProps) => {
                 >
                   예약좌석
                 </Typography>
-                {loginState.permission !== Permission.USER && (
+                {loginState.isLoggedIn && loginState.permission !== Permission.USER && (
                   <Typography
                     variant="subtitle1"
                     color="primary"
@@ -350,16 +352,27 @@ const ReservationDialog = (props: ReservationDialogProps) => {
 
               {/* 값 */}
               <Stack spacing={0.5}>
+                {/* 좌석명 */}
                 <Typography variant="subtitle1">{seatName}</Typography>
-                {loginState.permission !== Permission.USER && (
+
+                {/* 예약자 */}
+                {loginState.isLoggedIn && loginState.permission !== Permission.USER && (
                   <Typography variant="subtitle1">{person}</Typography>
                 )}
+
+                {/* 예약날짜 */}
                 <Typography variant="subtitle1">
-                  {isBooked || loginState.permission === Permission.USER
+                  {isBooked
+                    ? reservationDate
+                    : loginState.permission === Permission.USER
                     ? dateFormatter.format(new Date())
                     : "예약 없음"}
                 </Typography>
+
+                {/* 예약시간 */}
                 <Typography variant="subtitle1">{reservationTime}</Typography>
+
+                {/* PC 지원 */}
                 <Typography variant="subtitle1">{pcSupport}</Typography>
               </Stack>
             </Stack>
@@ -428,7 +441,8 @@ const ReservationDialog = (props: ReservationDialogProps) => {
               fontWeight: "bold",
               display:
                 !loginState.isLoggedIn ||
-                (loginState.permission === Permission.USER && !reservationSeat)
+                (loginState.permission === Permission.USER &&
+                  reservationSeat !== seatName)
                   ? "block"
                   : "none",
             }}
@@ -436,10 +450,14 @@ const ReservationDialog = (props: ReservationDialogProps) => {
             disabled={
               !dayjs().isBefore(
                 dayjs().hour(endTime.hour).minute(endTime.minute)
-              )
+              ) || !!reservationSeat
             }
           >
-            {dayjs().isBefore(dayjs().hour(endTime.hour).minute(endTime.minute))
+            {reservationSeat
+              ? "이미 좌석을 예약하였습니다."
+              : dayjs().isBefore(
+                  dayjs().hour(endTime.hour).minute(endTime.minute)
+                )
               ? "동의 후 예약"
               : "운영 시간이 아닙니다."}
           </Button>

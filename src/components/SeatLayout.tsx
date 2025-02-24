@@ -39,6 +39,7 @@ const SeatLayout = (props: SeatLayoutProps) => {
             i % 2 === 0 ? (
               <SeatButton
                 seatName={`A${i / 2 + 1}`}
+                key={`A${i / 2 + 1}`}
                 onClick={() => {
                   const seatName = `A${i / 2 + 1}`;
                   onSeatButtonClick(seatName);
@@ -104,6 +105,7 @@ const SeatLayout = (props: SeatLayoutProps) => {
                   seatName={
                     i % 4 === 0 ? `C${i / 4 + 1}` : `D${Math.ceil(i / 4)}`
                   }
+                  key={i % 4 === 0 ? `C${i / 4 + 1}` : `D${Math.ceil(i / 4)}`}
                   onClick={() => {
                     const seatName =
                       i % 4 === 0 ? `C${i / 4 + 1}` : `D${Math.ceil(i / 4)}`;
@@ -134,6 +136,7 @@ const SeatLayout = (props: SeatLayoutProps) => {
             i % 2 === 0 ? (
               <SeatButton
                 seatName={`A${i / 2 + 7}`}
+                key={`A${i / 2 + 7}`}
                 onClick={() => {
                   const seatName = `A${i / 2 + 7}`;
                   onSeatButtonClick(seatName);

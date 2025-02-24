@@ -27,6 +27,7 @@ import { loginStateAtom } from "../states";
 import axios from "axios";
 import TokenRefresher from "../components/TokenRefresher";
 import PasswordValidation from "../components/PasswordValidation";
+import WithdrawDialog from "../components/WidthdrawDialog";
 
 const MyPage = () => {
   const [email, setEmail] = useState(""); // 이메일
@@ -261,6 +262,19 @@ const MyPage = () => {
     oldPassword,
   ]);
 
+  // 회원탈퇴 대화상자
+  const [isWithdrawDialogOpen, setIsWithdrawDialogOpen] = useState(false); // 회원 탈퇴 다이얼로그 열림 여부
+  
+  // 회원탈퇴 버튼 클릭
+  const handleWithdrawButtonClick = useCallback(() => {
+    setIsWithdrawDialogOpen(true);
+  }, []);
+
+  // 회원탈퇴 대화상자 닫기
+  const handleWithdrawDialogClose = useCallback(() => {
+    setIsWithdrawDialogOpen(false);
+  }, []);
+
   return (
     <TokenRefresher>
       <Stack className="page-root">
@@ -363,6 +377,18 @@ const MyPage = () => {
                     {isConfirmCodeChecked ? "인증 완료" : "인증 확인"}
                   </Button>
                 </Stack>
+                <Box
+                  display={{
+                    xs: "none",
+                    sm: "block",
+                  }}
+                >
+                  <Button onClick={handleWithdrawButtonClick}>
+                    <Typography variant="h3" fontWeight={500} p={1}>
+                      회원탈퇴하기
+                    </Typography>
+                  </Button>
+                </Box>
               </Stack>
             </Stack>
 
@@ -370,7 +396,7 @@ const MyPage = () => {
               gap={1}
               flex={1}
               paddingBottom={{
-                xs: "100px",
+                xs: "130px",
                 sm: "0",
               }}
               position="relative"
@@ -463,18 +489,35 @@ const MyPage = () => {
                   sm: "auto",
                 }}
               >
-                <Button
-                  variant="contained"
-                  fullWidth
-                  onClick={handleEditButtonClick}
-                >
-                  <Typography variant="h2">수정하기</Typography>
-                </Button>
+                <Stack gap={1}>
+                  <Button
+                    variant="contained"
+                    fullWidth
+                    onClick={handleEditButtonClick}
+                  >
+                    <Typography variant="h2">수정하기</Typography>
+                  </Button>
+                  <Box
+                    display={{
+                      xs: "block",
+                      sm: "none",
+                    }}
+                  >
+                    <Button onClick={handleWithdrawButtonClick}>
+                      <Typography variant="h3" fontWeight={500} p={1}>
+                        회원탈퇴하기
+                      </Typography>
+                    </Button>
+                  </Box>
+                </Stack>
               </Box>
             </Stack>
           </Stack>
         </Stack>
       </Stack>
+
+      {/* 회원탈퇴 대화상자 */}
+      <WithdrawDialog open={isWithdrawDialogOpen} onClose={handleWithdrawDialogClose} />
     </TokenRefresher>
   );
 };
